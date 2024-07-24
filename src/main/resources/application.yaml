@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: finance-management
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/finance-management"
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show-sql: false
+    open-in-view: false
+logging:
+  level:
+    ROOT: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+      springframework: INFO
+    web: ERROR
+    liquibase: ERROR
