@@ -1,3 +1,7 @@
+api:
+  security:
+    token:
+      secret-key: ${JWT_SECRET}
 spring:
   application:
     name: finance-management
@@ -18,8 +22,7 @@ logging:
   level:
     ROOT: INFO
     org:
-      hibernate:
-        SQL: DEBUG
+      hibernate: ERROR
       springframework: INFO
     web: ERROR
     liquibase: ERROR
