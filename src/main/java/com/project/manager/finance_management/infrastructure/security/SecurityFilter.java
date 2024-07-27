@@ -1,6 +1,6 @@
 package com.project.manager.finance_management.infrastructure.security;
 
-import com.project.manager.finance_management.repositories.UserRepository;
+import com.project.manager.finance_management.domains.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

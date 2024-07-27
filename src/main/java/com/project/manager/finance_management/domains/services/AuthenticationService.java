@@ -1,6 +1,6 @@
-package com.project.manager.finance_management.services;
+package com.project.manager.finance_management.domains.services;
 
-import com.project.manager.finance_management.repositories.UserRepository;
+import com.project.manager.finance_management.domains.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

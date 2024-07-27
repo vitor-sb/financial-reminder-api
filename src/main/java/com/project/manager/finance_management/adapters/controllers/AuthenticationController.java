@@ -1,17 +1,15 @@
-package com.project.manager.finance_management.controllers;
+package com.project.manager.finance_management.adapters.controllers;
 
-import com.project.manager.finance_management.domains.user.AuthenticationDTO;
-import com.project.manager.finance_management.domains.user.LoginResponseDTO;
-import com.project.manager.finance_management.domains.user.RegisterDTO;
-import com.project.manager.finance_management.domains.user.User;
+import com.project.manager.finance_management.adapters.dtos.authentication.AuthenticationDTO;
+import com.project.manager.finance_management.adapters.dtos.authentication.LoginResponseDTO;
+import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.infrastructure.security.TokenProvider;
-import com.project.manager.finance_management.repositories.UserRepository;
+import com.project.manager.finance_management.domains.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,19 +21,6 @@ public class AuthenticationController {
     private UserRepository repository;
     @Autowired
     private TokenProvider tokenProvider;
-
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO dto) {
-        if (this.repository.findByLogin(dto.login()) != null)
-            return ResponseEntity.badRequest().build();
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        User user = new User(dto.name(), dto.login(), encryptedPassword, dto.role());
-
-        this.repository.save(user);
-
-        return ResponseEntity.ok().build();
-    }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO dto) {

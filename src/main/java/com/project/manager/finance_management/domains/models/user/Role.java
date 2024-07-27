@@ -1,4 +1,4 @@
-package com.project.manager.finance_management.domains.user;
+package com.project.manager.finance_management.domains.models.user;
 
 public enum Role {
     ADMIN("Admin"),
