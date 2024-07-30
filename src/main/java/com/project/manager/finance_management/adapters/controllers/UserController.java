@@ -27,7 +27,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listAll")
     public ResponseEntity<List<ListAllUsersResponseDTO>> listAll() {
         var response = listAllUsersUseCase.execute();

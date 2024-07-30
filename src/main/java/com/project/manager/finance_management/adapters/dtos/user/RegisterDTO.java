@@ -1,6 +1,15 @@
 package com.project.manager.finance_management.adapters.dtos.user;
 
 import com.project.manager.finance_management.domains.models.user.Role;
+import jakarta.validation.constraints.NotNull;
 
-public record RegisterDTO(String name, String login, String password, Role role) {
-}
+public record RegisterDTO (
+        @NotNull
+        String name,
+        @NotNull
+        String login,
+        @NotNull
+        String password,
+        @NotNull
+        Role role
+) { }
