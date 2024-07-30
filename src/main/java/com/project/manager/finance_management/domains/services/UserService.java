@@ -6,13 +6,15 @@ import com.project.manager.finance_management.infrastructure.midlewares.exceptio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     @Autowired
     private UserRepository repository;
 
     public boolean userExists(String login) {
-        return repository.findByLogin(login) != null;
+        return repository.findUserByLogin(login) != null;
     }
 
     public User createUser(User user) {
@@ -23,6 +25,10 @@ public class UserService {
     }
 
     public User getUserByLogin(String login) {
-        return this.repository.findByLogin(login);
+        return this.repository.findUserByLogin(login);
+    }
+
+    public List<User> listAllUsers() {
+        return this.repository.findAll();
     }
 }
