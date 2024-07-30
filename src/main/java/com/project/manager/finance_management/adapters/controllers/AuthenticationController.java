@@ -1,6 +1,7 @@
 package com.project.manager.finance_management.adapters.controllers;
 
 import com.project.manager.finance_management.adapters.dtos.authentication.AuthenticationDTO;
+import com.project.manager.finance_management.adapters.dtos.authentication.LoginResponseDTO;
 import com.project.manager.finance_management.adapters.usecases.authentication.LoginUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class AuthenticationController {
     private LoginUseCase loginUseCase;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO dto) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO dto) {
         var response = loginUseCase.execute(dto);
 
         return ResponseEntity.ok(response);

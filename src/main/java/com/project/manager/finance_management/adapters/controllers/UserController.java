@@ -21,7 +21,7 @@ public class UserController {
     private ListAllUsersUseCase listAllUsersUseCase;
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO dto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO dto) {
         registerUserUseCase.execute(dto);
 
         return ResponseEntity.ok().build();
