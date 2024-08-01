@@ -1,6 +1,8 @@
 package com.project.manager.finance_management.infrastructure.security;
 
 import com.project.manager.finance_management.domains.repositories.UserRepository;
+import com.project.manager.finance_management.domains.services.AuthenticationService;
+import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +21,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     TokenProvider tokenProvider;
     @Autowired
-    UserRepository userRepository;
+    AuthenticationService authenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -27,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null) {
             var login = tokenProvider.validateToken(token);
-            UserDetails user = userRepository.findByLogin(login);
+            UserDetails user = authenticationService.loadUserByUsername(login);
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

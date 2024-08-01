@@ -3,6 +3,7 @@ package com.project.manager.finance_management.domains.services;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.repositories.UserRepository;
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.ConflictException;
+import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class UserService {
     private UserRepository repository;
 
     public boolean userExists(String login) {
-        return repository.findUserByLogin(login) != null;
+        return repository.findUserByLogin(login).isPresent();
     }
 
     public User createUser(User user) {
@@ -25,7 +26,9 @@ public class UserService {
     }
 
     public User getUserByLogin(String login) {
-        return this.repository.findUserByLogin(login);
+        return this.repository.findUserByLogin(login).orElseThrow(
+                () -> new NotFoundException("User with login " + login + " not found")
+        );
     }
 
     public List<User> listAllUsers() {

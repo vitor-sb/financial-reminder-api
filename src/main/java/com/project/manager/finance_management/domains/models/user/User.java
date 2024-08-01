@@ -1,11 +1,9 @@
 package com.project.manager.finance_management.domains.models.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
@@ -16,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -52,12 +51,10 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        if (this.roles.contains(Role.ADMIN))
-//            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-//
-//        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.roles.contains(Role.ADMIN))
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
 
-        return null;
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
