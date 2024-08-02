@@ -17,7 +17,7 @@ public class LoginUseCase {
     private TokenProvider tokenProvider;
 
     public LoginResponseDTO execute(AuthenticationDTO dto) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
+        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = this.tokenProvider.generateToken((User) auth.getPrincipal());
 

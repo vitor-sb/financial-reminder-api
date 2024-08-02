@@ -1,8 +1,6 @@
 package com.project.manager.finance_management.infrastructure.security;
 
-import com.project.manager.finance_management.domains.repositories.UserRepository;
 import com.project.manager.finance_management.domains.services.AuthenticationService;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +26,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
 
         if (token != null) {
-            var login = tokenProvider.validateToken(token);
-            UserDetails user = authenticationService.loadUserByUsername(login);
+            var email = tokenProvider.validateToken(token);
+            UserDetails user = authenticationService.loadUserByUsername(email);
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

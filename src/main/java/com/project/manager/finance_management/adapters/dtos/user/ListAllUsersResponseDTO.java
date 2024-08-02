@@ -4,5 +4,5 @@ import com.project.manager.finance_management.domains.models.user.Role;
 
 import java.util.List;
 
-public record ListAllUsersResponseDTO(String name, String login, List<Role> roles) {
+public record ListAllUsersResponseDTO(String name, String email, List<Role> roles) {
 }

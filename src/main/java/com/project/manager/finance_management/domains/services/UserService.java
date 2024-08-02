@@ -14,20 +14,20 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    public boolean userExists(String login) {
-        return repository.findUserByLogin(login).isPresent();
+    public boolean userExists(String email) {
+        return repository.findUserByEmail(email).isPresent();
     }
 
     public User createUser(User user) {
-        if(this.userExists(user.getLogin()))
-            throw new ConflictException("User with login " + user.getLogin() + " already exists");
+        if(this.userExists(user.getEmail()))
+            throw new ConflictException("User with email " + user.getEmail() + " already exists");
 
         return repository.save(user);
     }
 
-    public User getUserByLogin(String login) {
-        return this.repository.findUserByLogin(login).orElseThrow(
-                () -> new NotFoundException("User with login " + login + " not found")
+    public User getUserByEmail(String email) {
+        return this.repository.findUserByEmail(email).orElseThrow(
+                () -> new NotFoundException("User with email " + email + " not found")
         );
     }
 

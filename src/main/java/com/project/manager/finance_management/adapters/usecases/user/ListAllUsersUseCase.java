@@ -16,7 +16,7 @@ public class ListAllUsersUseCase {
         var allUsers = this.service.listAllUsers();
 
         return allUsers.stream()
-                .map(user -> new ListAllUsersResponseDTO(user.getName(), user.getLogin(), user.getRoles()))
+                .map(user -> new ListAllUsersResponseDTO(user.getName(), user.getEmail(), user.getRoles()))
                 .toList();
     }
 }

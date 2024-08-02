@@ -44,7 +44,7 @@ class RegisterUserUseCaseTest {
 
         User capturedUser = userCaptor.getValue();
         assertEquals("John Doe", capturedUser.getName());
-        assertEquals("johndoe@example.com", capturedUser.getLogin());
+        assertEquals("johndoe@example.com", capturedUser.getEmail());
         assertEquals(1, capturedUser.getRoles().size());
         assertEquals(Role.USER, capturedUser.getRoles().get(0));
         assertTrue(new BCryptPasswordEncoder().matches("password123", capturedUser.getPassword()));

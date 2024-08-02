@@ -37,14 +37,14 @@ class UserServiceTest {
     @DisplayName("Should return true when user exists")
     void userExistsCaseOne() {
         User user = new User("John Doe", "johndoe@example.com", encodePassword("password"), Role.USER);
-        when(repository.findUserByLogin("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
         assertTrue(userService.userExists("johndoe@example.com"));
     }
 
     @Test
     @DisplayName("Should return false when user does not exist")
     void userExistsCaseTwo() {
-        when(repository.findUserByLogin("nonexistent@example.com")).thenReturn(Optional.empty());
+        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
         assertFalse(userService.userExists("nonexistent@example.com"));
     }
 
@@ -52,13 +52,13 @@ class UserServiceTest {
     @DisplayName("Should create user if it does not exist")
     void createUser() {
         User user = new User("John Doe", "johndoe@example.com", encodePassword("password"), Role.USER);
-        when(repository.findUserByLogin("johndoe@example.com")).thenReturn(Optional.empty());
+        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.empty());
         when(repository.save(user)).thenReturn(user);
 
         User createdUser = userService.createUser(user);
 
         assertEquals("John Doe", createdUser.getName());
-        assertEquals("johndoe@example.com", createdUser.getLogin());
+        assertEquals("johndoe@example.com", createdUser.getEmail());
         Assertions.assertTrue(new BCryptPasswordEncoder().matches("password", createdUser.getPassword()));
     }
 
@@ -66,31 +66,31 @@ class UserServiceTest {
     @DisplayName("Should throw ConflictException if user already exists")
     void createUserThrowsConflictException() {
         User user = new User("John Doe", "johndoe@example.com", encodePassword("password"), Role.USER);
-        when(repository.findUserByLogin("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
 
         Exception exception = assertThrows(ConflictException.class, () -> userService.createUser(user));
-        assertEquals("User with login johndoe@example.com already exists", exception.getMessage());
+        assertEquals("User with email johndoe@example.com already exists", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Should return user by login")
-    void getUserByLogin() {
+    @DisplayName("Should return user by email")
+    void getUserByEmail() {
         User user = new User("John Doe", "johndoe@example.com", encodePassword("password"), Role.USER);
-        when(repository.findUserByLogin("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
 
-        User foundUser = userService.getUserByLogin("johndoe@example.com");
+        User foundUser = userService.getUserByEmail("johndoe@example.com");
 
         assertEquals("John Doe", foundUser.getName());
-        assertEquals("johndoe@example.com", foundUser.getLogin());
+        assertEquals("johndoe@example.com", foundUser.getEmail());
     }
 
     @Test
     @DisplayName("Should throw NotFoundException if user not found")
-    void getUserByLoginThrowsNotFoundException() {
-        when(repository.findUserByLogin("nonexistent@example.com")).thenReturn(Optional.empty());
+    void getUserByEmailThrowsNotFoundException() {
+        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(NotFoundException.class, () -> userService.getUserByLogin("nonexistent@example.com"));
-        assertEquals("User with login nonexistent@example.com not found", exception.getMessage());
+        Exception exception = assertThrows(NotFoundException.class, () -> userService.getUserByEmail("nonexistent@example.com"));
+        assertEquals("User with email nonexistent@example.com not found", exception.getMessage());
     }
 
     @Test

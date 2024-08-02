@@ -43,7 +43,7 @@ class AuthenticationServiceTest {
     @DisplayName("Should return UserDetails when user is found")
     void loadUserByUsername() {
         User user = new User("John Doe", "johndoe@example.com", "password", Role.USER);
-        when(repository.findByLogin("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = authenticationService.loadUserByUsername("johndoe@example.com");
 
@@ -54,8 +54,8 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("Should throw NotFoundException when user is not found")
     void loadUserByUsernameThrowsNotFoundException() {
-        when(repository.findByLogin("nonexistent@example.com")).thenReturn(Optional.empty());
+        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(NotFoundException.class, () -> authenticationService.loadUserByUsername("nonexistent@example.com"));
-        assertEquals("User with login nonexistent@example.com not found", exception.getMessage());
+        assertEquals("User with email nonexistent@example.com not found", exception.getMessage());
     }}

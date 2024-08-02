@@ -9,7 +9,7 @@ public record RegisterDTO(
         String name,
         @NotNull
         @Email
-        String login,
+        String email,
         @NotNull
         String password,
         @NotNull

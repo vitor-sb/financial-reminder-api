@@ -14,7 +14,7 @@ public class RegisterUserUseCase {
 
     public void execute(RegisterDTO dto) {
         String encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        User user = new User(dto.name(), dto.login(), encryptedPassword, dto.role());
+        User user = new User(dto.name(), dto.email(), encryptedPassword, dto.role());
 
         this.service.createUser(user);
     }

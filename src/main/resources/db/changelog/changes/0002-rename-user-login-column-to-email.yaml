@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0002-rename-user-login-column-to-email
+      author: vitor-sb
+      changes:
+        - renameColumn:
+            tableName: users
+            oldColumnName: login
+            newColumnName: email
+            columnDataType: varchar(254)
+        - dropUniqueConstraint:
+            tableName: users
+            constraintName: unique_login_constraint
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: unique_email_constraint
+            tableName: users

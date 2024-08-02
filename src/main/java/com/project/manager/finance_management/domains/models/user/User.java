@@ -31,7 +31,7 @@ public class User implements UserDetails, Serializable {
     private String name;
 
     @Column(nullable = false, unique = true)
-    private String login;
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -42,9 +42,9 @@ public class User implements UserDetails, Serializable {
     @Column(name = "role_name")
     private List<Role> roles = new ArrayList<>();
 
-    public User(String name, String login, String password, Role role) {
+    public User(String name, String email, String password, Role role) {
         this.name = name;
-        this.login = login;
+        this.email = email;
         this.password = password;
         this.roles.add(role);
     }
@@ -64,6 +64,6 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return this.login;
+        return this.email;
     }
 }
