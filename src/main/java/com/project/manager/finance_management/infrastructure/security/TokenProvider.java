@@ -14,20 +14,19 @@ import java.time.ZoneOffset;
 
 @Service
 public class TokenProvider {
-    @Value("${api.security.token.secret-key}")
+    @Value("${api.infrastructure.security.token.secret-key}")
     private String secretKey;
 
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
 
-            return token;
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating token", exception);
         }

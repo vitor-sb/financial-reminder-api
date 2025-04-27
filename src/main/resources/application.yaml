@@ -1,7 +1,13 @@
 api:
-  security:
-    token:
-      secret-key: ${JWT_SECRET}
+  infrastructure:
+    security:
+      token:
+        secret-key: ${JWT_SECRET}
+    redis:
+      login-attempt:
+        max-attempts: 5
+        block-time-minutes: 5
+        block-time-multiplier: 2
 spring:
   application:
     name: finance-management
@@ -18,6 +24,11 @@ spring:
       hibernate:
         show-sql: false
     open-in-view: false
+  data:
+    redis:
+      host: {REDIS_HOST}
+      port: {REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 logging:
   level:
     ROOT: INFO
