@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-create-owner-user
+      author: vitor-sb
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 4c752af8-2b0d-479f-8a92-8512cb1516af
+              - column:
+                  name: email
+                  value: owner@finance-management.com
+              - column:
+                  name: name
+                  value: Owner
+              - column:
+                  name: password
+                  value: "${APPLICATION_OWNER_PASSWORD_HASH}"
+              - column:
+                  name: role
+                  value: OWNER

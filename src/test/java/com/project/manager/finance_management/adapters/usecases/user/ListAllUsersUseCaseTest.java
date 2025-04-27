@@ -48,12 +48,12 @@ class ListAllUsersUseCaseTest {
         ListAllUsersResponseDTO dto1 = response.get(0);
         assertEquals("John Doe", dto1.name());
         assertEquals("johndoe@example.com", dto1.email());
-        assertEquals(List.of(Role.USER), dto1.roles());
+        assertEquals(Role.USER, dto1.role());
 
         ListAllUsersResponseDTO dto2 = response.get(1);
         assertEquals("Jane Smith", dto2.name());
         assertEquals("janesmith@example.com", dto2.email());
-        assertEquals(List.of(Role.ADMIN), dto2.roles());
+        assertEquals(Role.ADMIN, dto2.role());
 
         verify(userService, times(1)).listAllUsers();
     }
