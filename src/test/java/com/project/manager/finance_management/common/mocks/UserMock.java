@@ -1,4 +1,4 @@
-package com.project.manager.finance_management.mocks.models;
+package com.project.manager.finance_management.common.mocks;
 
 import com.project.manager.finance_management.domains.models.user.Role;
 import com.project.manager.finance_management.domains.models.user.User;

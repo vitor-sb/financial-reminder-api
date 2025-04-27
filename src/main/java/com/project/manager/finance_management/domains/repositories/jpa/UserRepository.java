@@ -1,4 +1,4 @@
-package com.project.manager.finance_management.domains.repositories;
+package com.project.manager.finance_management.domains.repositories.jpa;
 
 import com.project.manager.finance_management.domains.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

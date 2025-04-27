@@ -3,6 +3,8 @@ package com.project.manager.finance_management.infrastructure.midlewares.excepti
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.dtos.ErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -66,6 +68,61 @@ public class ApplicationExceptionHandler {
         return new ErrorDTO(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDTO handleAuthenticationException(AuthenticationException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(TooManyLoginAttemptsException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDTO handleTooManyLoginAttemptsException(TooManyLoginAttemptsException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                HttpStatus.TOO_MANY_REQUESTS.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDTO handleInvalidCredentialsException(InvalidCredentialsException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(RedisConnectionException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDTO handleRedisConnectionException(RedisConnectionException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDTO handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.name(),
                 exception.getMessage(),
                 request.getServletPath()
         );

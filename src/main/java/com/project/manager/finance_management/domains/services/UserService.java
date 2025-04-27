@@ -1,7 +1,7 @@
 package com.project.manager.finance_management.domains.services;
 
 import com.project.manager.finance_management.domains.models.user.User;
-import com.project.manager.finance_management.domains.repositories.UserRepository;
+import com.project.manager.finance_management.domains.repositories.jpa.UserRepository;
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.ConflictException;
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
