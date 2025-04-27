@@ -81,12 +81,12 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should list all users successfully for ADMIN role")
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should list all users successfully for ADMIN_PERMISSION")
+    @WithMockUser(username = "admin", authorities = {"ADMIN_PERMISSION"})
     public void testListAllUsersSuccess() throws Exception {
         // Arrange
         List<ListAllUsersResponseDTO> usersList = Collections.singletonList(
-                new ListAllUsersResponseDTO("Test User", "test@example.com", Collections.singletonList(Role.USER))
+                new ListAllUsersResponseDTO("Test User", "test@example.com", Role.USER)
         );
         Mockito.when(listAllUsersUseCase.execute()).thenReturn(usersList);
 

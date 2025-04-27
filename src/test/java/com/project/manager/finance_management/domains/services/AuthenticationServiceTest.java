@@ -48,7 +48,7 @@ class AuthenticationServiceTest {
         UserDetails userDetails = authenticationService.loadUserByUsername("johndoe@example.com");
 
         assertEquals("johndoe@example.com", userDetails.getUsername());
-        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("USER_PERMISSION")));
     }
 
     @Test
