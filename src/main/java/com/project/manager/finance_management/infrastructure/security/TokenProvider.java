@@ -6,15 +6,15 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.project.manager.finance_management.domains.models.user.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@Service
+@Component
 public class TokenProvider {
-    @Value("${api.infrastructure.security.token.secret-key}")
+    @Value("${infrastructure.security.authentication.token.secret-key}")
     private String secretKey;
 
     public String generateToken(User user) {
