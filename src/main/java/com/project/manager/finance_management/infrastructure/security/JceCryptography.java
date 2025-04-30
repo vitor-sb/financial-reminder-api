@@ -1,8 +1,6 @@
 package com.project.manager.finance_management.infrastructure.security;
 
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.CryptographyException;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.SecretKeyNotSetException;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +20,9 @@ public class JceCryptography {
     private static final int IV_LENGTH_BYTE = 16;
 
     @Value("${infrastructure.security.jce.secret-key}")
-    private static String encryptionKey;
+    private String encryptionKey;
 
-    public static String encrypt(String plainText) {
+    public String encrypt(String plainText) {
         try {
             SecretKey key = generateKeyFromString(encryptionKey);
             byte[] iv = generateIv();
@@ -43,7 +41,7 @@ public class JceCryptography {
         }
     }
 
-    public static String decrypt(String encryptedTextWithIV) {
+    public String decrypt(String encryptedTextWithIV) {
         try {
             SecretKey key = generateKeyFromString(encryptionKey);
             byte[] encryptedIVAndText = Base64.getDecoder().decode(encryptedTextWithIV);
@@ -63,12 +61,12 @@ public class JceCryptography {
         }
     }
 
-    private static SecretKey generateKeyFromString(String keyString) {
+    private SecretKey generateKeyFromString(String keyString) {
         byte[] keyBytes = Base64.getDecoder().decode(keyString);
         return new SecretKeySpec(keyBytes, ALGORITHM);
     }
 
-    private static byte[] generateIv() {
+    private byte[] generateIv() {
         byte[] iv = new byte[IV_LENGTH_BYTE];
         java.security.SecureRandom random = new java.security.SecureRandom();
         random.nextBytes(iv);
