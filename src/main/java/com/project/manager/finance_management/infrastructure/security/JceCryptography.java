@@ -2,6 +2,7 @@ package com.project.manager.finance_management.infrastructure.security;
 
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.CryptographyException;
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.SecretKeyNotSetException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +24,7 @@ public class JceCryptography {
     @Value("${infrastructure.security.jce.secret-key}")
     private static String encryptionKey;
 
-    private static void validateKey() {
-        if (encryptionKey == null || encryptionKey.isEmpty()) {
-            throw new SecretKeyNotSetException("The encryption key has not been configured.");
-        }
-    }
-
     public static String encrypt(String plainText) {
-        validateKey();
-
         try {
             SecretKey key = generateKeyFromString(encryptionKey);
             byte[] iv = generateIv();
@@ -51,8 +44,6 @@ public class JceCryptography {
     }
 
     public static String decrypt(String encryptedTextWithIV) {
-        validateKey();
-
         try {
             SecretKey key = generateKeyFromString(encryptionKey);
             byte[] encryptedIVAndText = Base64.getDecoder().decode(encryptedTextWithIV);
