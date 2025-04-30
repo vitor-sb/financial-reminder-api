@@ -1,10 +1,10 @@
 package com.project.manager.finance_management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.manager.finance_management.adapters.dtos.user.ListAllUsersResponseDTO;
-import com.project.manager.finance_management.adapters.dtos.user.RegisterDTO;
-import com.project.manager.finance_management.adapters.usecases.user.ListAllUsersUseCase;
-import com.project.manager.finance_management.adapters.usecases.user.RegisterUserUseCase;
+import com.project.manager.finance_management.adapters.dtos.user.ListUsersResponseDTO;
+import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance_management.adapters.usecases.user.ListUsersUseCase;
+import com.project.manager.finance_management.adapters.usecases.user.CreateUserUseCase;
 import com.project.manager.finance_management.domains.models.user.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,18 +35,18 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private RegisterUserUseCase registerUserUseCase;
+    private CreateUserUseCase createUserUseCase;
 
     @MockBean
-    private ListAllUsersUseCase listAllUsersUseCase;
+    private ListUsersUseCase listUsersUseCase;
 
-    private RegisterDTO validRegisterDTO;
+    private CreateUserDTO validCreateUserDTO;
 
     @BeforeEach
     public void setup() {
-        Mockito.reset(registerUserUseCase, listAllUsersUseCase);
+        Mockito.reset(createUserUseCase, listUsersUseCase);
 
-        validRegisterDTO = new RegisterDTO(
+        validCreateUserDTO = new CreateUserDTO(
                 "Test User",
                 "test@example.com",
                 "password123",
@@ -55,26 +55,26 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should register a user successfully")
-    public void testRegisterUserSuccess() throws Exception {
+    @DisplayName("Should create a user successfully")
+    public void testCreateUserSuccess() throws Exception {
         // Arrange
-        Mockito.doNothing().when(registerUserUseCase).execute(Mockito.any(RegisterDTO.class));
+        Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserDTO.class));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validRegisterDTO)))
+                        .content(objectMapper.writeValueAsString(validCreateUserDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @DisplayName("Should return Bad Request for invalid RegisterDTO")
-    public void testRegisterUserBadRequest() throws Exception {
+    @DisplayName("Should return Bad Request for invalid CreateDTO")
+    public void testCreaterUserBadRequest() throws Exception {
         // Arrange
-        RegisterDTO invalidDTO = new RegisterDTO(null, null, null, null);
+        CreateUserDTO invalidDTO = new CreateUserDTO(null, null, null, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -83,15 +83,15 @@ public class UserControllerTest {
     @Test
     @DisplayName("Should list all users successfully for ADMIN_PERMISSION")
     @WithMockUser(username = "admin", authorities = {"ADMIN_PERMISSION"})
-    public void testListAllUsersSuccess() throws Exception {
+    public void testListUsersSuccess() throws Exception {
         // Arrange
-        List<ListAllUsersResponseDTO> usersList = Collections.singletonList(
-                new ListAllUsersResponseDTO("Test User", "test@example.com", Role.USER)
+        List<ListUsersResponseDTO> usersList = Collections.singletonList(
+                new ListUsersResponseDTO("Test User", "test@example.com", Role.USER)
         );
-        Mockito.when(listAllUsersUseCase.execute()).thenReturn(usersList);
+        Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/listAll")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Test User"))
@@ -101,9 +101,9 @@ public class UserControllerTest {
     @Test
     @DisplayName("Should return Forbidden for non-ADMIN role")
     @WithMockUser(username = "user", roles = {"USER"})
-    public void testListAllUsersForbidden() throws Exception {
+    public void testListUsersForbidden() throws Exception {
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/listAll")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }

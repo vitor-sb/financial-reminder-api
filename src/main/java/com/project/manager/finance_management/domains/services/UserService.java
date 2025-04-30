@@ -20,18 +20,18 @@ public class UserService {
 
     public User createUser(User user) {
         if(this.userExists(user.getEmail()))
-            throw new ConflictException("User with email " + user.getEmail() + " already exists");
+            throw new ConflictException("Email already in use");
 
         return repository.save(user);
     }
 
     public User getUserByEmail(String email) {
         return this.repository.findUserByEmail(email).orElseThrow(
-                () -> new NotFoundException("User with email " + email + " not found")
+                () -> new NotFoundException("User not found")
         );
     }
 
-    public List<User> listAllUsers() {
+    public List<User> listUsers() {
         return this.repository.findAll();
     }
 }

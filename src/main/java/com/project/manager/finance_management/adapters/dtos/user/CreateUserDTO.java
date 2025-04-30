@@ -4,7 +4,7 @@ import com.project.manager.finance_management.domains.models.user.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
-public record RegisterDTO(
+public record CreateUserDTO(
         @NotNull
         String name,
         @NotNull

@@ -1,9 +1,9 @@
 package com.project.manager.finance_management.adapters.controllers;
 
-import com.project.manager.finance_management.adapters.dtos.user.ListAllUsersResponseDTO;
-import com.project.manager.finance_management.adapters.dtos.user.RegisterDTO;
-import com.project.manager.finance_management.adapters.usecases.user.ListAllUsersUseCase;
-import com.project.manager.finance_management.adapters.usecases.user.RegisterUserUseCase;
+import com.project.manager.finance_management.adapters.dtos.user.ListUsersResponseDTO;
+import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance_management.adapters.usecases.user.ListUsersUseCase;
+import com.project.manager.finance_management.adapters.usecases.user.CreateUserUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +16,21 @@ import java.util.List;
 @RequestMapping("user")
 public class UserController {
     @Autowired
-    private RegisterUserUseCase registerUserUseCase;
+    private CreateUserUseCase createUserUseCase;
     @Autowired
-    private ListAllUsersUseCase listAllUsersUseCase;
+    private ListUsersUseCase listUsersUseCase;
 
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO dto) {
-        registerUserUseCase.execute(dto);
+    @PostMapping
+    public ResponseEntity<Void> create(@RequestBody @Valid CreateUserDTO dto) {
+        createUserUseCase.execute(dto);
 
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('ADMIN_PERMISSION')")
-    @GetMapping("/listAll")
-    public ResponseEntity<List<ListAllUsersResponseDTO>> listAll() {
-        var response = listAllUsersUseCase.execute();
+    @GetMapping("/list")
+    public ResponseEntity<List<ListUsersResponseDTO>> listAll() {
+        var response = listUsersUseCase.execute();
 
         return ResponseEntity.ok(response);
     }

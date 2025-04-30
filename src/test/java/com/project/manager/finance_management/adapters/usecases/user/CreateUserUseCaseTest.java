@@ -1,24 +1,33 @@
 package com.project.manager.finance_management.adapters.usecases.user;
 
-import com.project.manager.finance_management.adapters.dtos.user.RegisterDTO;
+import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
 import com.project.manager.finance_management.domains.models.user.Role;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.services.UserService;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-class RegisterUserUseCaseTest {
+@SpringBootTest
+@ActiveProfiles("test")
+class CreateUserUseCaseTest {
 
-    @Mock
+    @MockBean
     private UserService userService;
 
-    @InjectMocks
-    private RegisterUserUseCase registerUserUseCase;
+    @Autowired
+    private CreateUserUseCase createUserUseCase;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private AutoCloseable closeable;
 
@@ -35,10 +44,10 @@ class RegisterUserUseCaseTest {
     @Test
     @DisplayName("Should create user with encrypted password and valid email")
     void executeCreatesUserWithEncryptedPassword() {
-        RegisterDTO registerDTO = new RegisterDTO("John Doe", "johndoe@example.com", "password123", Role.USER);
+        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", Role.USER);
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
-        registerUserUseCase.execute(registerDTO);
+        createUserUseCase.execute(createUserDTO);
 
         verify(userService, times(1)).createUser(userCaptor.capture());
 
@@ -46,6 +55,6 @@ class RegisterUserUseCaseTest {
         assertEquals("John Doe", capturedUser.getName());
         assertEquals("johndoe@example.com", capturedUser.getEmail());
         assertEquals(Role.USER, capturedUser.getRole());
-        assertTrue(new BCryptPasswordEncoder().matches("password123", capturedUser.getPassword()));
+        assertTrue(passwordEncoder.matches("password123", capturedUser.getPassword()));
     }
 }
