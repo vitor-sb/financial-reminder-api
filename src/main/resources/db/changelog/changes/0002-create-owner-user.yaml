@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 0004-create-owner-user
+      id: 0002-create-owner-user
       author: vitor-sb
       changes:
         - insert:
@@ -11,10 +11,10 @@ databaseChangeLog:
                   value: 4c752af8-2b0d-479f-8a92-8512cb1516af
               - column:
                   name: email
-                  value: owner@finance-management.com
+                  value: "${APPLICATION_OWNER_EMAIL}"
               - column:
                   name: name
-                  value: Owner
+                  value: The boss
               - column:
                   name: password
                   value: "${APPLICATION_OWNER_PASSWORD_HASH}"

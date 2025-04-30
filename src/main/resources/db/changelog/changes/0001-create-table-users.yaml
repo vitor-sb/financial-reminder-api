@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 0001-create-table-users-and-roles
+      id: 0001-create-table-users
       author: vitor-sb
       changes:
         - createTable:
@@ -18,7 +18,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: login
+                  name: email
                   type: varchar(254)
                   constraints:
                     nullable: false
@@ -28,9 +28,14 @@ databaseChangeLog:
                   type: varchar(128)
                   constraints:
                     nullable: false
+              - column:
+                  name: role
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
         - addUniqueConstraint:
-            columnNames: login
-            constraintName: unique_login_constraint
+            columnNames: email
+            constraintName: unique_email_constraint
             tableName: users
 
         - createTable:
