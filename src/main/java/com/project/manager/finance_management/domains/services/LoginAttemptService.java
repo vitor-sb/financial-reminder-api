@@ -14,13 +14,13 @@ public class LoginAttemptService {
     @Autowired
     private LoginAttemptRepository loginAttemptRepository;
 
-    @Value("${api.infrastructure.redis.login-attempt.max-attempts}")
+    @Value("${infrastructure.redis.login-attempt.max-attempts}")
     private int maxAttempts;
 
-    @Value("${api.infrastructure.redis.login-attempt.block-time-minutes}")
+    @Value("${infrastructure.redis.login-attempt.block-time-minutes}")
     private long blockTimeMinutes;
 
-    @Value("${api.infrastructure.redis.login-attempt.block-time-multiplier}")
+    @Value("${infrastructure.redis.login-attempt.block-time-multiplier}")
     private long blockTimeMultiplier;
 
 
