@@ -57,5 +57,5 @@ class AuthenticationServiceTest {
         when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(NotFoundException.class, () -> authenticationService.loadUserByUsername("nonexistent@example.com"));
-        assertEquals("User with email nonexistent@example.com not found", exception.getMessage());
+        assertEquals("User not found", exception.getMessage());
     }}
