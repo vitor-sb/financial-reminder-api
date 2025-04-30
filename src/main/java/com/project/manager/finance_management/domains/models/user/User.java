@@ -42,7 +42,7 @@ public class User implements UserDetails, Serializable {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role =role;
+        this.role = role;
     }
 
     @Override
