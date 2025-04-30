@@ -1,13 +1,15 @@
-api:
-  infrastructure:
-    security:
+infrastructure:
+  security:
+    authentication:
       token:
         secret-key: testSecret
-    redis:
-      login-attempt:
-        max-attempts: 5
-        block-time-minutes: 5
-        block-time-multiplier: 2
+    jce:
+      secret-key: testSecret
+  redis:
+    login-attempt:
+      max-attempts: 5
+      block-time-minutes: 5
+      block-time-multiplier: 2
 spring:
   application:
     name: finance-management-test
@@ -20,6 +22,3 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: validate
-#  liquibase:
-#    enabled: true
-#    change-log: classpath:db/changelog/db.changelog-master.yaml

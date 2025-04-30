@@ -127,4 +127,26 @@ public class ApplicationExceptionHandler {
                 request.getServletPath()
         );
     }
+
+    @ExceptionHandler(SecretKeyNotSetException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDTO handleSecretKeyNotSetException(SecretKeyNotSetException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(CryptographyException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDTO handleCryptographyException(CryptographyException exception, HttpServletRequest request) {
+        return new ErrorDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
 }
