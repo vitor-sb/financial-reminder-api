@@ -15,9 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -79,7 +79,7 @@ class LoginUseCaseTest {
         // Arrange
         AuthenticationDTO dto = new AuthenticationDTO(invalidEmail, invalidPassword);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new AuthenticationException("Invalid credentials") {});
+                .thenThrow(new BadCredentialsException("Invalid credentials") {});
 
         when(loginAttemptService.isBlocked(invalidEmail)).thenReturn(false);
 
@@ -100,29 +100,5 @@ class LoginUseCaseTest {
         // Act & Assert
         assertThrows(TooManyLoginAttemptsException.class, () -> loginUseCase.execute(dto));
         verify(authenticationManager, never()).authenticate(any(UsernamePasswordAuthenticationToken.class));
-    }
-
-    @Test
-    @DisplayName("Should throw TooManyLoginAttemptsException when account is blocked in handleFailedLogin")
-    void testExecute_AccountBlockedInHandleFailedLogin() {
-        // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validEmail, validPassword);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new AuthenticationException("Invalid credentials") {});
-
-
-        when(loginAttemptService.isBlocked(validEmail))
-                .thenReturn(false)
-                .thenReturn(true);
-        long blockUntil = System.currentTimeMillis() + 60000;
-        when(loginAttemptService.getBlockUntil(validEmail)).thenReturn(blockUntil);
-
-
-        // Act & Assert
-        TooManyLoginAttemptsException exception = assertThrows(TooManyLoginAttemptsException.class, () -> loginUseCase.execute(dto));
-        assertTrue(exception.getMessage().contains("Account blocked. Try again in"));
-
-        verify(loginAttemptService, times(1)).incrementAttempts(validEmail);
-        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 }

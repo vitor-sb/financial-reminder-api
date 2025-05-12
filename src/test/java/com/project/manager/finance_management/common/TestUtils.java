@@ -25,6 +25,7 @@ public class TestUtils {
         return System.currentTimeMillis() + expectedBlockTimeMillis;
     }
 
+    // TODO: Study the possibility of removing this function
     public static void assertTimeEqualsWithTolerance(long expected, long actual, String message) {
         assertTrue(actual >= (expected - TIME_TOLERANCE_MS) && actual <= (expected + TIME_TOLERANCE_MS),
                 message + " (Expected: " + expected + ", Actual: " + actual + ")");

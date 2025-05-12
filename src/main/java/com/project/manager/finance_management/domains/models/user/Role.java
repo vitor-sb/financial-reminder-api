@@ -9,8 +9,8 @@ import java.util.Set;
 
 @Getter
 public enum Role {
-    OWNER(EnumSet.of(Permission.OWNER_PERMISSION, Permission.ADMIN_PERMISSION, Permission.MEMBER_PERMISSION, Permission.USER_PERMISSION)),
-    ADMIN(EnumSet.of(Permission.ADMIN_PERMISSION, Permission.MEMBER_PERMISSION, Permission.USER_PERMISSION)),
+    OWNER(EnumSet.of(Permission.OWNER_PERMISSION, Permission.ADMIN_PERMISSION)),
+    ADMIN(EnumSet.of(Permission.ADMIN_PERMISSION)),
     MEMBER(EnumSet.of(Permission.MEMBER_PERMISSION, Permission.USER_PERMISSION)),
     USER(EnumSet.of(Permission.USER_PERMISSION));
 
@@ -19,5 +19,4 @@ public enum Role {
     Role(Set<Permission> permissions) {
         this.permissions = Collections.unmodifiableSet(EnumSet.copyOf(permissions));
     }
-
 }
