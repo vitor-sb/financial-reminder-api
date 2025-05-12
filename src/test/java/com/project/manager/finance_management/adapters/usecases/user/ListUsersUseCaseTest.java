@@ -1,7 +1,7 @@
 package com.project.manager.finance_management.adapters.usecases.user;
 
 import com.project.manager.finance_management.adapters.dtos.user.ListUsersResponseDTO;
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.services.UserService;
 import org.junit.jupiter.api.*;
@@ -34,8 +34,8 @@ class ListUsersUseCaseTest {
     @DisplayName("Should return list of ListUsersResponseDTO")
     void executeReturnsListOfListUsersResponseDTO() {
         // Arrange
-        User user1 = new User("John Doe", "johndoe@example.com", "password1", Role.USER);
-        User user2 = new User("Jane Smith", "janesmith@example.com", "password2", Role.ADMIN);
+        User user1 = new User("John Doe", "johndoe@example.com", "password1", RoleEnum.USER);
+        User user2 = new User("Jane Smith", "janesmith@example.com", "password2", RoleEnum.ADMIN);
         List<User> users = List.of(user1, user2);
 
         when(userService.listUsers()).thenReturn(users);
@@ -48,12 +48,12 @@ class ListUsersUseCaseTest {
         ListUsersResponseDTO dto1 = response.get(0);
         assertEquals("John Doe", dto1.name());
         assertEquals("johndoe@example.com", dto1.email());
-        assertEquals(Role.USER, dto1.role());
+        assertEquals(RoleEnum.USER, dto1.role());
 
         ListUsersResponseDTO dto2 = response.get(1);
         assertEquals("Jane Smith", dto2.name());
         assertEquals("janesmith@example.com", dto2.email());
-        assertEquals(Role.ADMIN, dto2.role());
+        assertEquals(RoleEnum.ADMIN, dto2.role());
 
         verify(userService, times(1)).listUsers();
     }

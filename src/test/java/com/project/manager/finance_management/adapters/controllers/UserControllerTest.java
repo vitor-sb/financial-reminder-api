@@ -5,7 +5,7 @@ import com.project.manager.finance_management.adapters.dtos.user.ListUsersRespon
 import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
 import com.project.manager.finance_management.adapters.usecases.user.ListUsersUseCase;
 import com.project.manager.finance_management.adapters.usecases.user.CreateUserUseCase;
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ public class UserControllerTest {
                 "Test User",
                 "test@example.com",
                 "password123",
-                Role.USER
+                RoleEnum.USER
         );
     }
 
@@ -86,7 +86,7 @@ public class UserControllerTest {
     public void testListUsersSuccess() throws Exception {
         // Arrange
         List<ListUsersResponseDTO> usersList = Collections.singletonList(
-                new ListUsersResponseDTO("Test User", "test@example.com", Role.USER)
+                new ListUsersResponseDTO("Test User", "test@example.com", RoleEnum.USER)
         );
         Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
 

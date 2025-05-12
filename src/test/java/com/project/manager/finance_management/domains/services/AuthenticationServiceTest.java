@@ -1,6 +1,6 @@
 package com.project.manager.finance_management.domains.services;
 
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.repositories.jpa.UserRepository;
 import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
@@ -42,7 +42,7 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("Should return UserDetails when user is found")
     void loadUserByUsername() {
-        User user = new User("John Doe", "johndoe@example.com", "password", Role.USER);
+        User user = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
         when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = authenticationService.loadUserByUsername("johndoe@example.com");

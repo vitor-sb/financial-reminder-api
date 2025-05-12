@@ -1,6 +1,6 @@
 package com.project.manager.finance_management.adapters.dtos.user;
 
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,6 +13,6 @@ public record CreateUserDTO(
         @NotNull
         String password,
         @NotNull
-        Role role
+        RoleEnum role
 ) {
 }

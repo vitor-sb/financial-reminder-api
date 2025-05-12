@@ -1,6 +1,6 @@
 package com.project.manager.finance_management.common.mocks;
 
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance_management.domains.models.user.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -14,7 +14,7 @@ public class UserMock {
                 name.orElse("User Admin name"),
                 email.orElse("admin@example.com"),
                 new BCryptPasswordEncoder().encode(password.orElse("securepassword")),
-                Role.ADMIN
+                RoleEnum.ADMIN
         );
     }
 
@@ -23,7 +23,7 @@ public class UserMock {
                 name.orElse("Normal User name"),
                 email.orElse("user@example.com"),
                 new BCryptPasswordEncoder().encode(password.orElse("password")),
-                Role.USER
+                RoleEnum.USER
         );
     }
 }

@@ -1,7 +1,7 @@
 package com.project.manager.finance_management.adapters.usecases.user;
 
 import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
-import com.project.manager.finance_management.domains.models.user.Role;
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.services.UserService;
 import org.junit.jupiter.api.*;
@@ -44,7 +44,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Should create user with encrypted password and valid email")
     void executeCreatesUserWithEncryptedPassword() {
-        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", Role.USER);
+        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         createUserUseCase.execute(createUserDTO);
@@ -54,7 +54,7 @@ class CreateUserUseCaseTest {
         User capturedUser = userCaptor.getValue();
         assertEquals("John Doe", capturedUser.getName());
         assertEquals("johndoe@example.com", capturedUser.getEmail());
-        assertEquals(Role.USER, capturedUser.getRole());
+        assertEquals(RoleEnum.USER, capturedUser.getRole());
         assertTrue(passwordEncoder.matches("password123", capturedUser.getPassword()));
     }
 }

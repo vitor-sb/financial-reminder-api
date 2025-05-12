@@ -1,5 +1,6 @@
 package com.project.manager.finance_management.domains.models.user;
 
+import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,9 +37,9 @@ public class User implements UserDetails, Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private Role role;
+    private RoleEnum role;
 
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password, RoleEnum role) {
         this.name = name;
         this.email = email;
         this.password = password;
