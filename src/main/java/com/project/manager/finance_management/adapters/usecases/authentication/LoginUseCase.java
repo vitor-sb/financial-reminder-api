@@ -9,6 +9,7 @@ import com.project.manager.finance_management.domains.services.LoginAttemptServi
 import com.project.manager.finance_management.infrastructure.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -42,18 +43,10 @@ public class LoginUseCase {
             return new LoginResponseDTO(token);
 
         } catch (AuthenticationException e) {
-            handleFailedLogin(email, e);
-            return null;
-        }
-    }
-
-    private void handleFailedLogin(String email, AuthenticationException e) {
-        loginAttemptService.incrementAttempts(email);
-        if (loginAttemptService.isBlocked(email)) {
-            long waitTime = loginAttemptService.getBlockUntil(email) - System.currentTimeMillis();
-            throw new TooManyLoginAttemptsException("Account blocked. Try again in " + TimeUnit.MILLISECONDS.toSeconds(waitTime) + " seconds.");
-        } else {
-            throw new InvalidCredentialsException("Invalid email or password");
+            loginAttemptService.incrementAttempts(email);
+            if(e instanceof BadCredentialsException)
+                throw new InvalidCredentialsException("Invalid email or password");
+            throw e;
         }
     }
 }
