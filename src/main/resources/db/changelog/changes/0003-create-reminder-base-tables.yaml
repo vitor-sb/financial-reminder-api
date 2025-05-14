@@ -1,0 +1,142 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-transaction_methods-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: transaction_methods
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: method
+                  type: VARCHAR(35)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-payment_reminders-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: payment_reminders
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+                    foreignKey: true
+                    references: users(id)
+                    foreignKeyName: fk_payment_reminder_user
+              - column:
+                  name: title
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(100)
+              - column:
+                  name: base_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recurrence
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: base_value
+                  type: DECIMAL(15, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: installments_number
+                  type: INT
+              - column:
+                  name: transaction_method
+                  type: VARCHAR(36)
+                  constraints:
+                    foreignKey: true
+                    references: transaction_methods(id)
+                    foreignKeyName: fk_payment_reminder_transaction_method
+              - column:
+                  name: due_date
+                  type: DATE
+              - column:
+                  name: enable
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-payment_transactions-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: payment_transactions
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: reminder_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+                    foreignKey: true
+                    references: payment_reminders(id)
+                    foreignKeyName: fk_payment_transaction_payment_reminder
+              - column:
+                  name: payment_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(36)
+                  constraints:
+                    foreignKey: true
+                    references: transaction_methods(id)
+                    foreignKeyName: fk_payment_transaction_payment_method
+              - column:
+                  name: installment_number
+                  type: INT
+              - column:
+                  name: payment_value
+                  type: DECIMAL(10, 2)
+              - column:
+                  name: status
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enable
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false

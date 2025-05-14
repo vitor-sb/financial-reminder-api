@@ -25,6 +25,6 @@ public class TransactionMethod implements Serializable {
     private String id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "method", nullable = false)
     private TransactionMethodEnum method;
 }
