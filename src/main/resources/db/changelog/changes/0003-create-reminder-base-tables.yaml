@@ -66,7 +66,7 @@ databaseChangeLog:
                   name: installments_number
                   type: INT
               - column:
-                  name: transaction_method
+                  name: payment_method
                   type: VARCHAR(36)
                   constraints:
                     foreignKey: true

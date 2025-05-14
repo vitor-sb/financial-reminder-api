@@ -49,10 +49,6 @@ public abstract class Reminder implements Serializable {
     @Column
     private Integer installmentsNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "transaction_method", referencedColumnName = "id")
-    private TransactionMethod transactionMethod;
-
     @Column(nullable = false)
     private Boolean enable = true;
 

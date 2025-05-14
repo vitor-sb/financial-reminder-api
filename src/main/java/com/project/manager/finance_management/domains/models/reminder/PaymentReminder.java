@@ -1,8 +1,6 @@
 package com.project.manager.finance_management.domains.models.reminder;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,6 +14,10 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "payment_reminders")
 public class PaymentReminder extends Reminder implements Serializable {
+
+    @ManyToOne
+    @JoinColumn(name = "payment_method", referencedColumnName = "id")
+    private TransactionMethod paymentMethod;
 
     @Column
     private LocalDate dueDate;
