@@ -1,12 +1,12 @@
 package com.project.manager.finance_management.adapters.dtos.authentication;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record AuthenticationDTO(
-        @NotNull
+        @NotBlank
         @Email
         String email,
-        @NotNull
+        @NotBlank
         String password
 ) { }
