@@ -3,6 +3,7 @@ infrastructure:
     authentication:
       token:
         secret-key: ${JWT_SECRET}
+        expiration-minutes: 30
     jce:
       secret-key: ${JCE_SECRET}
   redis:

@@ -17,6 +17,9 @@ public class TokenProvider {
     @Value("${infrastructure.security.authentication.token.secret-key}")
     private String secretKey;
 
+    @Value("${infrastructure.security.authentication.token.expiration-minutes}")
+    private int expirationMinutes;
+
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
@@ -47,6 +50,6 @@ public class TokenProvider {
     }
 
     private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
     }
 }
