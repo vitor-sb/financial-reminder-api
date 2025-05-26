@@ -1,5 +1,6 @@
 package com.project.manager.finance_management.domains.models.reminder;
 
+import com.project.manager.finance_management.domains.models.reminder.enums.TransactionMethodEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,9 +16,9 @@ import java.time.LocalDate;
 @Table(name = "payment_reminders")
 public class PaymentReminder extends Reminder implements Serializable {
 
-    @ManyToOne
-    @JoinColumn(name = "payment_method", referencedColumnName = "id")
-    private TransactionMethod paymentMethod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "method", nullable = false)
+    private TransactionMethodEnum method;
 
     @Column
     private LocalDate dueDate;

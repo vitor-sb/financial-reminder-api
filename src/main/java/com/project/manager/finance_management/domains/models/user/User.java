@@ -1,8 +1,11 @@
 package com.project.manager.finance_management.domains.models.user;
 
+import com.project.manager.finance_management.domains.models.audit.Audit;
+import com.project.manager.finance_management.domains.models.audit.interfaces.IAuditable;
 import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +21,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "users")
-public class User implements UserDetails, Serializable {
+@EntityListeners(AuditingEntityListener.class)
+public class User implements UserDetails, IAuditable, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +42,9 @@ public class User implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private RoleEnum role;
+
+    @Embedded
+    private Audit audit = new Audit();
 
     public User(String name, String email, String password, RoleEnum role) {
         this.name = name;

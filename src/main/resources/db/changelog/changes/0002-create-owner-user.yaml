@@ -21,3 +21,9 @@ databaseChangeLog:
               - column:
                   name: role
                   value: OWNER
+              - column:
+                  name: created_by
+                  value: system
+              - column:
+                  name: created_at
+                  value: NOW()
