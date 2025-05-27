@@ -51,7 +51,7 @@ class AuthenticationControllerTest {
         Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class))).thenReturn(response);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -67,7 +67,7 @@ class AuthenticationControllerTest {
                 .thenThrow(new InvalidCredentialsException("Invalid email or password"));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(401))
@@ -83,7 +83,7 @@ class AuthenticationControllerTest {
                 .thenThrow(new TooManyLoginAttemptsException("Account blocked. Try again later."));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(429))
@@ -97,7 +97,7 @@ class AuthenticationControllerTest {
         AuthenticationDTO dto = new AuthenticationDTO(null, validUserPassword);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(400));
@@ -110,7 +110,7 @@ class AuthenticationControllerTest {
         AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(400));

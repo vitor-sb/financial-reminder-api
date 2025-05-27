@@ -53,7 +53,7 @@
 //    public void testLoginWithValidCredentials() throws Exception {
 //        AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, validUserPassword);
 //
-//        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+//        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsString(dto)))
 //                .andExpect(MockMvcResultMatchers.status().isOk())
@@ -64,7 +64,7 @@
 //    public void testLoginWithInvalidCredentials() throws Exception {
 //        AuthenticationDTO dto = new AuthenticationDTO("invalid@example.com", "invalidPassword");
 //
-//        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+//        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsString(dto)))
 //                .andExpect(MockMvcResultMatchers.status().is(403));

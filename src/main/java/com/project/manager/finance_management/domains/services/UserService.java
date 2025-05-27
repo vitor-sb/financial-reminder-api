@@ -19,9 +19,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if(this.userExists(user.getEmail()))
-            throw new ConflictException("Email already in use");
-
         return repository.save(user);
     }
 

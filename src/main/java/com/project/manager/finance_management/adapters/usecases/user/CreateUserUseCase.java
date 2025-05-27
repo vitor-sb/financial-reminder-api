@@ -3,6 +3,7 @@ package com.project.manager.finance_management.adapters.usecases.user;
 import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
 import com.project.manager.finance_management.domains.models.user.User;
 import com.project.manager.finance_management.domains.services.UserService;
+import com.project.manager.finance_management.infrastructure.midlewares.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,9 @@ public class CreateUserUseCase {
     private PasswordEncoder passwordEncoder;
 
     public void execute(CreateUserDTO dto) {
+        if(this.service.userExists(dto.email()))
+            throw new ConflictException("Email already in use");
+
         String encryptedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.name(), dto.email(), encryptedPassword, dto.role());
 

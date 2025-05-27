@@ -61,7 +61,7 @@ public class UserControllerTest {
         Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserDTO.class));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCreateUserDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -74,7 +74,7 @@ public class UserControllerTest {
         CreateUserDTO invalidDTO = new CreateUserDTO(null, null, null, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -91,7 +91,7 @@ public class UserControllerTest {
         Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Test User"))
@@ -103,7 +103,7 @@ public class UserControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     public void testListUsersForbidden() throws Exception {
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
