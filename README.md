@@ -6,7 +6,7 @@ API for financial and account management.
 
 This project is a RESTful API built with Spring Boot to assist in personal finance management, including user control, authentication, and payment reminders.
 
-## Prerequisites (What you need to install)
+## Requirements
 
 * **Git**
 * **JDK 17 (or higher)**
