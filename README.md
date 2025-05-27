@@ -10,26 +10,26 @@ This project is a RESTful API built with Spring Boot to assist in personal finan
 
 * **Git**
 * **JDK 17 (or higher)**
-* **Apache Maven 3.6.x (or higher)** (This project does not include the Maven Wrapper, so a manual Maven installation is required).
-* **Docker and Docker Compose:** To run database services (PostgreSQL) and Redis in containers.
+* **Apache Maven 3.6.x (or higher)**
+* **Docker and Docker Compose**
 * **Optional:**
     * An SQL client (e.g., DBeaver, pgAdmin).
     * An API client (e.g., Postman, Insomnia).
 
 ## Technologies Used
 
-* **Java:** Version 17
-* **Spring Boot:** Version 3.3.2 (including Web, Security, Data JPA, Validation, Cache)
-* **Maven:** Project dependency and build manager.
-* **Spring Security:** For authentication and authorization via JWT.
-* **JWT (Java JWT):** Generation and validation of JSON Web Tokens.
-* **JPA (Hibernate):** For relational data persistence.
-* **PostgreSQL:** Primary relational database.
-* **H2 Database:** In-memory database for tests.
-* **Liquibase:** For database schema versioning and management.
-* **Redis:** In-memory database (cache and login attempt control).
-* **Lombok:** To reduce boilerplate code (getters, setters, etc.).
-* **Docker & Docker Compose:** For managing infrastructure service containers (PostgreSQL, Redis).
+* **Java:** 
+* **Spring Boot**
+* **Maven**
+* **Spring Security**
+* **JWT (Java JWT)**
+* **JPA (Hibernate)**
+* **PostgreSQL**
+* **H2 Database** (For unit test)
+* **Liquibase** 
+* **Redis**
+* **Lombok**
+* **Docker & Docker Compose** 
 
 ## Environment Setup
 
