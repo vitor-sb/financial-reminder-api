@@ -1,7 +1,7 @@
 package com.project.manager.finance.management.adapters.usecases.authentication;
 
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.LoginResponseDTO;
+import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
@@ -65,7 +65,7 @@ class LoginUseCaseTest {
         when(tokenProvider.generateToken(user)).thenReturn("mockedToken");
 
         // Act
-        LoginResponseDTO response = loginUseCase.execute(dto);
+        ResponseAuthenticationDTO response = loginUseCase.execute(dto);
 
         // Assert
         assertNotNull(response);

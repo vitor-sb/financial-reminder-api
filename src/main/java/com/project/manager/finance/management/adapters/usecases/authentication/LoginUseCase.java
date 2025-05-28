@@ -1,7 +1,7 @@
 package com.project.manager.finance.management.adapters.usecases.authentication;
 
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.LoginResponseDTO;
+import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
@@ -26,7 +26,7 @@ public class LoginUseCase {
     private LoginAttemptService loginAttemptService;
 
 
-    public LoginResponseDTO execute(AuthenticationDTO dto) {
+    public ResponseAuthenticationDTO execute(AuthenticationDTO dto) {
         String email = dto.email();
 
         if (loginAttemptService.isBlocked(email)) {
@@ -40,7 +40,7 @@ public class LoginUseCase {
             var token = this.tokenProvider.generateToken((User) auth.getPrincipal());
 
             loginAttemptService.resetAttempts(email);
-            return new LoginResponseDTO(token);
+            return new ResponseAuthenticationDTO(token);
 
         } catch (AuthenticationException e) {
             loginAttemptService.incrementAttempts(email);

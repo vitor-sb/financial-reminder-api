@@ -2,7 +2,7 @@ package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.LoginResponseDTO;
+import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
 import com.project.manager.finance.management.adapters.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
@@ -47,7 +47,7 @@ class AuthenticationControllerTest {
     public void testLoginSuccess() throws Exception {
         // Arrange
         AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, validUserPassword);
-        LoginResponseDTO response = new LoginResponseDTO("mockedToken");
+        ResponseAuthenticationDTO response = new ResponseAuthenticationDTO("mockedToken");
         Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class))).thenReturn(response);
 
         // Act & Assert
@@ -80,14 +80,14 @@ class AuthenticationControllerTest {
         // Arrange
         AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, validUserPassword);
         Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class)))
-                .thenThrow(new TooManyLoginAttemptsException("Account blocked. Try again later."));
+                .thenThrow(new TooManyLoginAttemptsException("Account blocked. Try again later"));
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(429))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Account blocked. Try again later."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Account blocked. Try again later"));
     }
 
     @Test
