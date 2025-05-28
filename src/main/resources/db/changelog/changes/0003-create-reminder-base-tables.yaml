@@ -50,9 +50,6 @@ databaseChangeLog:
                   name: method
                   type: VARCHAR(30)
               - column:
-                  name: due_date
-                  type: DATE
-              - column:
                   name: enable
                   type: BOOLEAN
                   constraints:

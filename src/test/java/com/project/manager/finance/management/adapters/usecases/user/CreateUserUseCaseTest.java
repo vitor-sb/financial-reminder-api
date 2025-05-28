@@ -1,9 +1,10 @@
-package com.project.manager.finance_management.adapters.usecases.user;
+package com.project.manager.finance.management.adapters.usecases.user;
 
-import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
-import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
-import com.project.manager.finance_management.domains.models.user.User;
-import com.project.manager.finance_management.domains.services.UserService;
+import com.project.manager.finance.management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
+import com.project.manager.finance.management.domains.models.user.User;
+import com.project.manager.finance.management.domains.services.UserService;
+import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -43,7 +43,7 @@ class CreateUserUseCaseTest {
 
     @Test
     @DisplayName("Should create user with encrypted password and valid email")
-    void executeCreatesUserWithEncryptedPassword() {
+    void executeCreatesUser() {
         CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -56,5 +56,15 @@ class CreateUserUseCaseTest {
         assertEquals("johndoe@example.com", capturedUser.getEmail());
         assertEquals(RoleEnum.USER, capturedUser.getRole());
         assertTrue(passwordEncoder.matches("password123", capturedUser.getPassword()));
+    }
+
+    @Test
+    @DisplayName("Should throw ConflictException if user already exists")
+    void executeCreateUserThrowsConflictException() {
+        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
+        when(userService.userExists("johndoe@example.com")).thenReturn(true);
+
+        Exception exception = assertThrows(ConflictException.class, () -> createUserUseCase.execute(createUserDTO));
+        assertEquals("Email already in use", exception.getMessage());
     }
 }

@@ -1,7 +1,7 @@
-package com.project.manager.finance_management.adapters.usecases.user;
+package com.project.manager.finance.management.adapters.usecases.user;
 
-import com.project.manager.finance_management.adapters.dtos.user.ListUsersResponseDTO;
-import com.project.manager.finance_management.domains.services.UserService;
+import com.project.manager.finance.management.adapters.dtos.user.ListUsersResponseDTO;
+import com.project.manager.finance.management.domains.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

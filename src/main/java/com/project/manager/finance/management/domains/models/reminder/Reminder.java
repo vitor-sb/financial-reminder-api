@@ -1,9 +1,10 @@
-package com.project.manager.finance_management.domains.models.reminder;
+package com.project.manager.finance.management.domains.models.reminder;
 
-import com.project.manager.finance_management.domains.models.audit.Audit;
-import com.project.manager.finance_management.domains.models.audit.interfaces.IAuditable;
-import com.project.manager.finance_management.domains.models.reminder.enums.RecurrenceEnum;
-import com.project.manager.finance_management.domains.models.user.User;
+import com.project.manager.finance.management.domains.models.audit.Audit;
+import com.project.manager.finance.management.domains.models.audit.interfaces.IAuditable;
+import com.project.manager.finance.management.domains.models.reminder.enums.RecurrenceEnum;
+import com.project.manager.finance.management.domains.models.reminder.enums.TransactionMethodEnum;
+import com.project.manager.finance.management.domains.models.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,6 +48,10 @@ public abstract class Reminder implements IAuditable, Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "recurrence", nullable = false)
     private RecurrenceEnum recurrence;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "method", nullable = false)
+    private TransactionMethodEnum method;
 
     @Column(nullable = false)
     private BigDecimal baseValue;

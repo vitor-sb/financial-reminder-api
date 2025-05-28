@@ -10,9 +10,6 @@ infrastructure:
       block-time-minutes: 5
       block-time-multiplier: 2
 
-server:
-  servlet:
-    context-path: /api
 spring:
   application:
     name: finance-management

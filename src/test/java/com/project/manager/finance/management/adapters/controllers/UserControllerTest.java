@@ -1,11 +1,11 @@
-package com.project.manager.finance_management.adapters.controllers;
+package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.manager.finance_management.adapters.dtos.user.ListUsersResponseDTO;
-import com.project.manager.finance_management.adapters.dtos.user.CreateUserDTO;
-import com.project.manager.finance_management.adapters.usecases.user.ListUsersUseCase;
-import com.project.manager.finance_management.adapters.usecases.user.CreateUserUseCase;
-import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
+import com.project.manager.finance.management.adapters.dtos.user.ListUsersResponseDTO;
+import com.project.manager.finance.management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance.management.adapters.usecases.user.ListUsersUseCase;
+import com.project.manager.finance.management.adapters.usecases.user.CreateUserUseCase;
+import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class UserControllerTest {
         Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserDTO.class));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCreateUserDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -74,7 +74,7 @@ public class UserControllerTest {
         CreateUserDTO invalidDTO = new CreateUserDTO(null, null, null, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -91,7 +91,7 @@ public class UserControllerTest {
         Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Test User"))
@@ -103,7 +103,7 @@ public class UserControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     public void testListUsersForbidden() throws Exception {
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }

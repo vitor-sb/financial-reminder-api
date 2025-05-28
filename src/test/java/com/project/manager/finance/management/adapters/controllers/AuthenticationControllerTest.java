@@ -1,11 +1,11 @@
-package com.project.manager.finance_management.adapters.controllers;
+package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.manager.finance_management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance_management.adapters.dtos.authentication.LoginResponseDTO;
-import com.project.manager.finance_management.adapters.usecases.authentication.LoginUseCase;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
+import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
+import com.project.manager.finance.management.adapters.dtos.authentication.LoginResponseDTO;
+import com.project.manager.finance.management.adapters.usecases.authentication.LoginUseCase;
+import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
+import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class AuthenticationControllerTest {
         Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class))).thenReturn(response);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -67,7 +67,7 @@ class AuthenticationControllerTest {
                 .thenThrow(new InvalidCredentialsException("Invalid email or password"));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(401))
@@ -83,7 +83,7 @@ class AuthenticationControllerTest {
                 .thenThrow(new TooManyLoginAttemptsException("Account blocked. Try again later."));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(429))
@@ -97,7 +97,7 @@ class AuthenticationControllerTest {
         AuthenticationDTO dto = new AuthenticationDTO(null, validUserPassword);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(400));
@@ -110,7 +110,7 @@ class AuthenticationControllerTest {
         AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.status().is(400));

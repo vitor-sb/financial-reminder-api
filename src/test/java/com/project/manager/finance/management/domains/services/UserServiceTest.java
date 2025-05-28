@@ -1,10 +1,9 @@
-package com.project.manager.finance_management.domains.services;
+package com.project.manager.finance.management.domains.services;
 
-import com.project.manager.finance_management.domains.models.user.enums.RoleEnum;
-import com.project.manager.finance_management.domains.models.user.User;
-import com.project.manager.finance_management.domains.repositories.jpa.UserRepository;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.ConflictException;
-import com.project.manager.finance_management.infrastructure.midlewares.exceptions.NotFoundException;
+import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
+import com.project.manager.finance.management.domains.models.user.User;
+import com.project.manager.finance.management.domains.repositories.jpa.UserRepository;
+import com.project.manager.finance.management.infrastructure.midlewares.exceptions.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,22 +71,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw ConflictException if user already exists")
-    void createUserThrowsConflictException() {
-        User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
-        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
-
-        Exception exception = assertThrows(ConflictException.class, () -> userService.createUser(user));
-        assertEquals("Email already in use", exception.getMessage());
-    }
-
-    @Test
     @DisplayName("Should return user by email")
     void getUserByEmail() {
         User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
         when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
 
-        User foundUser = userService.getUserByEmail("johndoe@example.com");
+        User foundUser = userService.getUserByEmail("johndoe@example.com").orElseThrow(
+                () -> new NotFoundException("User not found")
+        );
 
         assertEquals("John Doe", foundUser.getName());
         assertEquals("johndoe@example.com", foundUser.getEmail());
@@ -98,8 +89,8 @@ class UserServiceTest {
     void getUserByEmailThrowsNotFoundException() {
         when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(NotFoundException.class, () -> userService.getUserByEmail("nonexistent@example.com"));
-        assertEquals("User not found", exception.getMessage());
+        Optional<User> foundUser = userService.getUserByEmail("nonexistent@example.com");
+        assertTrue(foundUser.isEmpty());
     }
 
     @Test

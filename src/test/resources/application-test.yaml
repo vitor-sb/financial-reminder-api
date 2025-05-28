@@ -3,8 +3,6 @@ infrastructure:
     authentication:
       token:
         secret-key: testSecret
-    jce:
-      secret-key: testSecret
   redis:
     login-attempt:
       max-attempts: 5
