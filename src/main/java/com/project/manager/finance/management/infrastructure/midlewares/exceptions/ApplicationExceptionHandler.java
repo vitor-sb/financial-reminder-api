@@ -106,45 +106,12 @@ public class ApplicationExceptionHandler {
         );
     }
 
-    @ExceptionHandler(RedisConnectionException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleRedisConnectionException(RedisConnectionException exception, HttpServletRequest request) {
-        return new ErrorDTO(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                exception.getMessage(),
-                request.getServletPath()
-        );
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDTO handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
         return new ErrorDTO(
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.name(),
-                exception.getMessage(),
-                request.getServletPath()
-        );
-    }
-
-    @ExceptionHandler(SecretKeyNotSetException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleSecretKeyNotSetException(SecretKeyNotSetException exception, HttpServletRequest request) {
-        return new ErrorDTO(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                exception.getMessage(),
-                request.getServletPath()
-        );
-    }
-
-    @ExceptionHandler(CryptographyException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDTO handleCryptographyException(CryptographyException exception, HttpServletRequest request) {
-        return new ErrorDTO(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 exception.getMessage(),
                 request.getServletPath()
         );
