@@ -42,21 +42,6 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should return true when user exists")
-    void userExistsCaseOne() {
-        User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
-        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
-        assertTrue(userService.userExists("johndoe@example.com"));
-    }
-
-    @Test
-    @DisplayName("Should return false when user does not exist")
-    void userExistsCaseTwo() {
-        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
-        assertFalse(userService.userExists("nonexistent@example.com"));
-    }
-
-    @Test
     @DisplayName("Should create user if it does not exist")
     void createUser() {
         User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
@@ -74,7 +59,7 @@ class UserServiceTest {
     @DisplayName("Should return user by email")
     void getUserByEmail() {
         User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
-        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(repository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse("johndoe@example.com")).thenReturn(Optional.of(user));
 
         User foundUser = userService.getUserByEmail("johndoe@example.com").orElseThrow(
                 () -> new NotFoundException("User not found")

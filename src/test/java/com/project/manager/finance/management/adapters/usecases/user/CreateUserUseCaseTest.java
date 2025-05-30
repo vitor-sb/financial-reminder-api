@@ -62,9 +62,13 @@ class CreateUserUseCaseTest {
     @DisplayName("Should throw ConflictException if user already exists")
     void executeCreateUserThrowsConflictException() {
         CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
-        when(userService.userExists("johndoe@example.com")).thenReturn(true);
+        doThrow(new ConflictException("Email already in use."))
+                .when(userService)
+                .checkEmailAvailability("johndoe@example.com");
 
         Exception exception = assertThrows(ConflictException.class, () -> createUserUseCase.execute(createUserDTO));
-        assertEquals("Email already in use", exception.getMessage());
+
+        assertEquals("Email already in use.", exception.getMessage());
+        verify(userService).checkEmailAvailability("johndoe@example.com");
     }
 }

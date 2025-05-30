@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 class AuthenticationServiceTest {
     @Mock
-    private UserRepository repository;
+    private UserService userService;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -43,19 +43,11 @@ class AuthenticationServiceTest {
     @DisplayName("Should return UserDetails when user is found")
     void loadUserByUsername() {
         User user = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
-        when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.of(user));
+        when(userService.findValidUserByEmailForAuthentication("johndoe@example.com")).thenReturn(user);
 
         UserDetails userDetails = authenticationService.loadUserByUsername("johndoe@example.com");
 
         assertEquals("johndoe@example.com", userDetails.getUsername());
         assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("USER_PERMISSION")));
     }
-
-    @Test
-    @DisplayName("Should throw NotFoundException when user is not found")
-    void loadUserByUsernameThrowsNotFoundException() {
-        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(NotFoundException.class, () -> authenticationService.loadUserByUsername("nonexistent@example.com"));
-        assertEquals("User not found", exception.getMessage());
-    }}
+}
