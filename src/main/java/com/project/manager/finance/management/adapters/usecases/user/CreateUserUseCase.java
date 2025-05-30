@@ -11,17 +11,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateUserUseCase {
     @Autowired
-    private UserService service;
+    private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public void execute(CreateUserDTO dto) {
-        if(this.service.userExists(dto.email()))
-            throw new ConflictException("Email already in use");
+        userService.checkEmailAvailability(dto.email());
 
         String encryptedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.name(), dto.email(), encryptedPassword, dto.role());
 
-        this.service.createUser(user);
+        userService.createUser(user);
     }
 }

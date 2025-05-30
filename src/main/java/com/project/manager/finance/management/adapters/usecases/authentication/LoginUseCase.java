@@ -23,7 +23,7 @@ public class LoginUseCase {
     @Autowired
     private TokenProvider tokenProvider;
     @Autowired
-    private LoginAttemptService loginAttemptService;
+    private     LoginAttemptService loginAttemptService;
 
 
     public ResponseAuthenticationDTO execute(AuthenticationDTO dto) {
@@ -36,15 +36,15 @@ public class LoginUseCase {
 
         try {
             var usernamePassword = new UsernamePasswordAuthenticationToken(email, dto.password());
-            var auth = this.authenticationManager.authenticate(usernamePassword);
-            var token = this.tokenProvider.generateToken((User) auth.getPrincipal());
+            var auth = authenticationManager.authenticate(usernamePassword);
+            var token = tokenProvider.generateToken((User) auth.getPrincipal());
 
             loginAttemptService.resetAttempts(email);
             return new ResponseAuthenticationDTO(token);
 
         } catch (AuthenticationException e) {
             loginAttemptService.incrementAttempts(email);
-            if(e instanceof BadCredentialsException)
+            if (e instanceof BadCredentialsException)
                 throw new InvalidCredentialsException("Invalid email or password");
             throw e;
         }

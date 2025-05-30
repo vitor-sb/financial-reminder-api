@@ -10,10 +10,10 @@ import java.util.List;
 @Component
 public class ListUsersUseCase {
     @Autowired
-    private UserService service;
+    private UserService userService;
 
     public List<ListUsersResponseDTO> execute() {
-        var users = this.service.listUsers();
+        var users = userService.listUsers();
 
         return users.stream()
                 .map(user -> new ListUsersResponseDTO(user.getName(), user.getEmail(), user.getRole()))

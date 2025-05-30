@@ -1,6 +1,75 @@
+definitions:
+  - &auditColumns
+    - column:
+        name: id
+        type: varchar(36)
+        constraints:
+          primaryKey: true
+          nullable: false
+    - column:
+        name: enabled
+        type: BOOLEAN
+        defaultValueBoolean: true
+        constraints:
+          nullable: false
+    - column:
+        name: enabled_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
+    - column:
+        name: enabled_by
+        type: varchar(36)
+        constraints:
+          nullable: true
+    - column:
+        name: deleted
+        type: BOOLEAN
+        defaultValueBoolean: false
+        constraints:
+          nullable: false
+    - column:
+        name: deleted_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
+    - column:
+        name: deleted_by
+        type: varchar(36)
+        constraints:
+          nullable: true
+    - column:
+        name: created_by
+        type: VARCHAR(254)
+        constraints:
+          nullable: true
+    - column:
+        name: created_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: false
+        defaultValueComputed: CURRENT_TIMESTAMP
+    - column:
+        name: updated_by
+        type: VARCHAR(254)
+        constraints:
+          nullable: true
+    - column:
+        name: updated_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
 databaseChangeLog:
   - changeSet:
-      id: 0001-create-table-users
+      id: create-users-audit-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: users_audit
+            columns: *auditColumns
+
+  - changeSet:
+      id: create-table-users
       author: vitor-sb
       changes:
         - createTable:
@@ -34,27 +103,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: created_by
-                  type: VARCHAR(254)
+                  name: audit_id
+                  type: varchar(36)
                   constraints:
-                    nullable: true
-              - column:
-                  name: created_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: false
-                  defaultValueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: updated_by
-                  type: VARCHAR(254)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: true
-        - addUniqueConstraint:
-            columnNames: email
-            constraintName: unique_email_constraint
-            tableName: users
+                    unique: true
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: audit_id
+            constraintName: fk_users_audit_id
+            referencedTableName: users_audit
+            referencedColumnNames: id

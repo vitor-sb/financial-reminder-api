@@ -1,7 +1,6 @@
 package com.project.manager.finance.management.domains.models.user;
 
-import com.project.manager.finance.management.domains.models.audit.Audit;
-import com.project.manager.finance.management.domains.models.audit.interfaces.IAuditable;
+import com.project.manager.finance.management.domains.models.audit.UserAudit;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = "id")
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails, IAuditable, Serializable {
+public class User implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -43,8 +42,9 @@ public class User implements UserDetails, IAuditable, Serializable {
     @Column(name = "role", nullable = false)
     private RoleEnum role;
 
-    @Embedded
-    private Audit audit = new Audit();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "audit_id", referencedColumnName = "id")
+    private UserAudit audit = new UserAudit();
 
     public User(String name, String email, String password, RoleEnum role) {
         this.name = name;
