@@ -1,14 +1,10 @@
 package com.project.manager.finance.management.domains.models.reminder;
 
-import com.project.manager.finance.management.domains.models.audit.Audit;
-import com.project.manager.finance.management.domains.models.audit.interfaces.IAuditable;
+import com.project.manager.finance.management.domains.models.audit.PaymentTransactionAudit;
 import com.project.manager.finance.management.domains.models.reminder.enums.TransactionMethodEnum;
 import com.project.manager.finance.management.domains.models.reminder.enums.TransactionStatusEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serial;
@@ -23,7 +19,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = "id")
 @Table(name = "payment_transactions")
 @EntityListeners(AuditingEntityListener.class)
-public class PaymentTransaction implements IAuditable, Serializable {
+public class PaymentTransaction implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -53,12 +49,21 @@ public class PaymentTransaction implements IAuditable, Serializable {
     @Column(name = "status", nullable = false)
     private TransactionStatusEnum status;
 
-    @Column(nullable = false)
-    private Boolean enable = true;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "audit_id", referencedColumnName = "id")
+    private PaymentTransactionAudit audit = new PaymentTransactionAudit();
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
-    @Embedded
-    private Audit audit = new Audit();
+    public PaymentTransaction(
+            PaymentReminder reminder,
+            LocalDate paymentDate,
+            TransactionMethodEnum method,
+            Integer installmentNumber,
+            TransactionStatusEnum status
+    ) {
+        this.reminder = reminder;
+        this.paymentDate = paymentDate;
+        this.method = method;
+        this.installmentNumber = installmentNumber;
+        this.status = status;
+    }
 }

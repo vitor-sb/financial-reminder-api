@@ -8,20 +8,19 @@ import com.project.manager.finance.management.infrastructure.midlewares.exceptio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Component
 public class GetPaymentReminderUseCase {
     @Autowired
-    PaymentReminderService service;
+    PaymentReminderService paymentReminderService;
 
     public ResponseGetPaymentReminderDTO execute(String id, String email) {
-        PaymentReminder paymentReminder = this.service.getPaymentReminderById(id).orElseThrow(
+        PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderById(id).orElseThrow(
                 () -> new NotFoundException("Payment reminder not found")
         );
 
-        if(!Objects.equals(paymentReminder.getUser().getEmail(), email))
+        if (!Objects.equals(paymentReminder.getUser().getEmail(), email))
             throw new ConflictException("This reminder does not belong to the logged in user");
 
         return new ResponseGetPaymentReminderDTO(

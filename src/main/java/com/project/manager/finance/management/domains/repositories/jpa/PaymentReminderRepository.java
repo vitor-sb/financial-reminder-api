@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentReminderRepository extends JpaRepository<PaymentReminder, String> {
-    Optional<PaymentReminder> findByTitleAndUserEmailAndDeletedFalse(String title, String email);
+    Optional<PaymentReminder> findByTitleAndUserEmailAndAuditDeletedFalse(String title, String email);
 
-    List<PaymentReminder> findByUserEmailAndDeletedFalse(String email);
+    List<PaymentReminder> findByUserEmailAndAuditDeletedFalse(String email);
 }

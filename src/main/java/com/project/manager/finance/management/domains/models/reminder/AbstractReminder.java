@@ -1,16 +1,10 @@
 package com.project.manager.finance.management.domains.models.reminder;
 
-import com.project.manager.finance.management.domains.models.audit.Audit;
-import com.project.manager.finance.management.domains.models.audit.interfaces.IAuditable;
 import com.project.manager.finance.management.domains.models.reminder.enums.RecurrenceEnum;
 import com.project.manager.finance.management.domains.models.reminder.enums.TransactionMethodEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,8 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public abstract class Reminder implements IAuditable, Serializable {
+public abstract class AbstractReminder implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -58,14 +51,5 @@ public abstract class Reminder implements IAuditable, Serializable {
 
     @Column
     private Integer installmentsNumber;
-
-    @Column(nullable = false)
-    private Boolean enable = true;
-
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
-    @Embedded
-    private Audit audit = new Audit();
 
 }

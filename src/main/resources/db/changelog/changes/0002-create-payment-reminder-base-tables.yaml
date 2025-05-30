@@ -1,6 +1,76 @@
+definitions:
+  - &auditColumns
+    - column:
+        name: id
+        type: varchar(36)
+        constraints:
+          primaryKey: true
+          nullable: false
+    - column:
+        name: enabled
+        type: BOOLEAN
+        defaultValueBoolean: true
+        constraints:
+          nullable: false
+    - column:
+        name: enabled_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
+    - column:
+        name: enabled_by
+        type: varchar(36)
+        constraints:
+          nullable: true
+    - column:
+        name: deleted
+        type: BOOLEAN
+        defaultValueBoolean: false
+        constraints:
+          nullable: false
+    - column:
+        name: deleted_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
+    - column:
+        name: deleted_by
+        type: varchar(36)
+        constraints:
+          nullable: true
+    - column:
+        name: created_by
+        type: VARCHAR(254)
+        constraints:
+          nullable: true
+    - column:
+        name: created_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: false
+        defaultValueComputed: CURRENT_TIMESTAMP
+    - column:
+        name: updated_by
+        type: VARCHAR(254)
+        constraints:
+          nullable: true
+    - column:
+        name: updated_at
+        type: TIMESTAMP WITH TIME ZONE
+        constraints:
+          nullable: true
+
 databaseChangeLog:
   - changeSet:
-      id: create-payment_reminders-table
+      id: 0002-create-payment-reminders-audit-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: payment_reminders_audit
+            columns: *auditColumns
+
+  - changeSet:
+      id: 0002-create-payment-reminders-table
       author: vitor-sb
       changes:
         - createTable:
@@ -50,39 +120,28 @@ databaseChangeLog:
                   name: method
                   type: VARCHAR(30)
               - column:
-                  name: enable
-                  type: BOOLEAN
+                  name: audit_id
+                  type: varchar(36)
                   constraints:
-                    nullable: false
-              - column:
-                  name: deleted
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_by
-                  type: VARCHAR(254)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: created_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: false
-                  defaultValueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: updated_by
-                  type: VARCHAR(254)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: true
+                    unique: true
+
+        - addForeignKeyConstraint:
+            baseTableName: payment_reminders
+            baseColumnNames: audit_id
+            constraintName: fk_payment_reminders_audit_id
+            referencedTableName: payment_reminders_audit
+            referencedColumnNames: id
 
   - changeSet:
-      id: create-payment_transactions-table
+      id: 0002-create-payment-transactions-audit-table
+      author: vitor-sb
+      changes:
+        - createTable:
+            tableName: payment_transactions_audit
+            columns: *auditColumns
+
+  - changeSet:
+      id: 0002-create-payment-transactions-table
       author: vitor-sb
       changes:
         - createTable:
@@ -122,33 +181,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: enable
-                  type: BOOLEAN
+                  name: audit_id
+                  type: varchar(36)
                   constraints:
-                    nullable: false
-              - column:
-                  name: deleted
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-              - column:
-                  name: created_by
-                  type: VARCHAR(254)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: created_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: false
-                  defaultValueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: updated_by
-                  type: VARCHAR(254)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP WITH TIME ZONE
-                  constraints:
-                    nullable: true
+                    unique: true
+
+        - addForeignKeyConstraint:
+            baseTableName: payment_transactions
+            baseColumnNames: audit_id
+            constraintName: fk_payment_transactions_audit_id
+            referencedTableName: payment_transactions_audit
+            referencedColumnNames: id

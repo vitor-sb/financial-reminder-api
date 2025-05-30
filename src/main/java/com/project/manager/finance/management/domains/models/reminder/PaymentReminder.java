@@ -1,12 +1,11 @@
 package com.project.manager.finance.management.domains.models.reminder;
 
+import com.project.manager.finance.management.domains.models.audit.PaymentReminderAudit;
 import com.project.manager.finance.management.domains.models.reminder.enums.RecurrenceEnum;
 import com.project.manager.finance.management.domains.models.reminder.enums.TransactionMethodEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,7 +16,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "payment_reminders")
-public class PaymentReminder extends Reminder implements Serializable {
+public class PaymentReminder extends AbstractReminder implements Serializable {
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "audit_id", referencedColumnName = "id")
+    private PaymentReminderAudit audit = new PaymentReminderAudit();
+
     public PaymentReminder(
             User user,
             String title,

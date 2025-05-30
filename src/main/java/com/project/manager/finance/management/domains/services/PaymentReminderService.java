@@ -2,6 +2,7 @@ package com.project.manager.finance.management.domains.services;
 
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.repositories.jpa.PaymentReminderRepository;
+import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,25 +12,26 @@ import java.util.Optional;
 @Service
 public class PaymentReminderService {
     @Autowired
-    private PaymentReminderRepository repository;
-
-    public boolean paymentReminderExists(String title, String email) {
-        return repository.findByTitleAndUserEmailAndDeletedFalse(title, email).isPresent();
-    }
+    private PaymentReminderRepository paymentReminderRepository;
 
     public PaymentReminder createPaymentReminder(PaymentReminder reminder) {
-        return repository.save(reminder);
+        return paymentReminderRepository.save(reminder);
     }
 
     public Optional<PaymentReminder> getPaymentReminderById(String id) {
-        return this.repository.findById(id);
+        return paymentReminderRepository.findById(id);
     }
 
     public Optional<PaymentReminder> getPaymentReminderByTitleAndEmail(String title, String email) {
-        return this.repository.findByTitleAndUserEmailAndDeletedFalse(title, email);
+        return paymentReminderRepository.findByTitleAndUserEmailAndAuditDeletedFalse(title, email);
     }
 
     public List<PaymentReminder> listPaymentRemindersByEmail(String email) {
-        return this.repository.findByUserEmailAndDeletedFalse(email);
+        return paymentReminderRepository.findByUserEmailAndAuditDeletedFalse(email);
+    }
+
+    public void validateReminderTitleConflict(String title, String email) {
+        if (getPaymentReminderByTitleAndEmail(title, email).isPresent())
+            throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
     }
 }
