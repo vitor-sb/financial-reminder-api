@@ -16,8 +16,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/finance-management"
-    username: ${APP_DB_USER}
-    password: ${APP_DB_PASSWORD}
+    username: ${API_DB_USER}
+    password: ${API_DB_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
