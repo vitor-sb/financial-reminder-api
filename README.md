@@ -9,11 +9,27 @@ API RESTful para gestão de finanças pessoais, construída com Spring Boot e se
 
 1.  Clone o repositório.
 2.  Crie e configure o arquivo `.env` a partir do `.env.example` na raiz do projeto.
-3.  Inicie a infraestrutura:
+3.  Inicie a infraestrutura com Docker:
     ```bash
     docker-compose up -d
     ```
-4.  Execute a aplicação:
-    ```bash
-    mvn spring-boot:run
-    ```
+4. Execute a aplicação:
+   1. **Opção 1: Via Terminal (Linux & macOS)**
+      1. No terminal, navegue até a raiz do projeto. 
+      2. Carregue as variáveis de ambiente do arquivo `.env`: 
+      ```bash
+      export $(grep -v '^#' .env | xargs)
+      ```
+      3. Execute a aplicação:
+        ```bash
+        ./mvnw spring-boot:run
+        ```
+
+   2. **Opção 2: Via IntelliJ IDEA (Qualquer SO)**
+      1.  Abra o projeto na IDE IntelliJ.
+      2.  No canto superior direito, clique em **"Edit Configurations..."**.
+      6.  Encontre o campo **"Environment variables"** e clique no primeiro ícone ao final da linha para abrir a janela de seleção de arquivo.
+      7.  Selecione o arquivo `.env` configurado anteriormente.
+      8.  Clique em **OK** e depois em **Apply** e **OK** para salvar a configuração.
+      9.  Agora você pode executar ou depurar a aplicação usando os botões de Play/Debug no topo da IDE.
+
