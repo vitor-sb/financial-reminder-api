@@ -1,21 +1,21 @@
-package com.project.manager.finance.management.adapters.usecases.user;
+package com.project.manager.finance.management.application.usecases.user.impl;
 
-import com.project.manager.finance.management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance.management.application.dtos.CreateUserCommand;
+import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateUserUseCase {
+public class CreateUserUseCaseImpl implements CreateUserUseCase {
     @Autowired
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void execute(CreateUserDTO dto) {
+    public void execute(CreateUserCommand dto) {
         userService.checkEmailAvailability(dto.email());
 
         String encryptedPassword = passwordEncoder.encode(dto.password());

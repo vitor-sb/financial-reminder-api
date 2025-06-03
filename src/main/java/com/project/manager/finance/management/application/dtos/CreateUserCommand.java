@@ -1,9 +1,12 @@
-package com.project.manager.finance.management.adapters.dtos.user;
+package com.project.manager.finance.management.application.dtos;
 
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-public record CreateUserDTO(
+public record CreateUserCommand(
         @NotBlank
         @Size(max=100)
         String name,

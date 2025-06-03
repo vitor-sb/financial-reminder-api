@@ -1,12 +1,13 @@
-package com.project.manager.finance.management.adapters.usecases.paymentreminder;
+package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
-import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderDTO;
+import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
+import com.project.manager.finance.management.application.dtos.CreatePaymentReminderCommand;
+import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
 import com.project.manager.finance.management.domains.services.PaymentTransactionService;
 import com.project.manager.finance.management.domains.services.UserService;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 @Component
-public class CreatePaymentReminderUseCase {
+public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUseCase {
     @Autowired
     PaymentReminderService reminderService;
     @Autowired
@@ -23,10 +24,10 @@ public class CreatePaymentReminderUseCase {
     @Autowired
     PaymentTransactionService transactionService;
 
-    public PaymentReminder execute(CreatePaymentReminderDTO dto, String email) {
-        reminderService.validateReminderTitleConflict(dto.title(), email);
+    public PaymentReminder execute(CreatePaymentReminderCommand dto) {
+        reminderService.validateReminderTitleConflict(dto.title(), dto.email());
 
-        User user = userService.getUserByEmail(email).orElseThrow(
+        User user = userService.getUserByEmail(dto.email()).orElseThrow(
                 () -> new NotFoundException("Authenticated user not found")
         );
 

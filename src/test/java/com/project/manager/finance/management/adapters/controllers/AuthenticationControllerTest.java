@@ -1,9 +1,10 @@
 package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
-import com.project.manager.finance.management.adapters.usecases.authentication.LoginUseCase;
+import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationRequest;
+import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.AuthenticationResult;
+import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +47,9 @@ class AuthenticationControllerTest {
     @DisplayName("Should return a token on successful login")
     public void testLoginSuccess() throws Exception {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, validUserPassword);
-        ResponseAuthenticationDTO response = new ResponseAuthenticationDTO("mockedToken");
-        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class))).thenReturn(response);
+        AuthenticationRequest dto = new AuthenticationRequest(validUserEmail, validUserPassword);
+        AuthenticationResult result = new AuthenticationResult("mockedToken");
+        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationCommand.class))).thenReturn(result);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
@@ -62,8 +63,8 @@ class AuthenticationControllerTest {
     @DisplayName("Should throw an InvalidCredentialsException if authentication fails")
     public void testLoginInvalidCredentials() throws Exception {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO("invalid@example.com", "invalidPassword");
-        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class)))
+        AuthenticationRequest dto = new AuthenticationRequest("invalid@example.com", "invalidPassword");
+        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationCommand.class)))
                 .thenThrow(new InvalidCredentialsException("Invalid email or password"));
 
         // Act & Assert
@@ -78,8 +79,8 @@ class AuthenticationControllerTest {
     @DisplayName("Should throw an TooManyLoginAttemptsException if the account is blocked")
     public void testLoginAccountBlocked() throws Exception {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, validUserPassword);
-        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationDTO.class)))
+        AuthenticationRequest dto = new AuthenticationRequest(validUserEmail, validUserPassword);
+        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationCommand.class)))
                 .thenThrow(new TooManyLoginAttemptsException("Account blocked. Try again later"));
 
         // Act & Assert
@@ -94,7 +95,7 @@ class AuthenticationControllerTest {
     @DisplayName("Should return Bad Request if email is missing")
     public void testLoginWithMissingEmail() throws Exception {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(null, validUserPassword);
+        AuthenticationRequest dto = new AuthenticationRequest(null, validUserPassword);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
@@ -107,7 +108,7 @@ class AuthenticationControllerTest {
     @DisplayName("Should return Bad Request if password is missing")
     public void testLoginWithMissingPassword() throws Exception {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validUserEmail, null);
+        AuthenticationRequest dto = new AuthenticationRequest(validUserEmail, null);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")

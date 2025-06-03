@@ -1,6 +1,8 @@
 package com.project.manager.finance.management.adapters.usecases.user;
 
-import com.project.manager.finance.management.adapters.dtos.user.ListUsersResponseDTO;
+import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
+import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
+import com.project.manager.finance.management.application.usecases.user.impl.ListUsersUseCaseImpl;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;
@@ -16,7 +18,7 @@ class ListUsersUseCaseTest {
     private UserService userService;
 
     @InjectMocks
-    private ListUsersUseCase listUsersUseCase;
+    private ListUsersUseCaseImpl listUsersUseCase;
 
     private AutoCloseable closeable;
 
@@ -40,17 +42,17 @@ class ListUsersUseCaseTest {
 
         when(userService.listUsers()).thenReturn(users);
 
-        List<ListUsersResponseDTO> response = listUsersUseCase.execute();
+        List<ListUsersSingleResult> response = listUsersUseCase.execute();
 
         assertNotNull(response);
         assertEquals(2, response.size());
 
-        ListUsersResponseDTO dto1 = response.get(0);
+        ListUsersSingleResult dto1 = response.get(0);
         assertEquals("John Doe", dto1.name());
         assertEquals("johndoe@example.com", dto1.email());
         assertEquals(RoleEnum.USER, dto1.role());
 
-        ListUsersResponseDTO dto2 = response.get(1);
+        ListUsersSingleResult dto2 = response.get(1);
         assertEquals("Jane Smith", dto2.name());
         assertEquals("janesmith@example.com", dto2.email());
         assertEquals(RoleEnum.ADMIN, dto2.role());

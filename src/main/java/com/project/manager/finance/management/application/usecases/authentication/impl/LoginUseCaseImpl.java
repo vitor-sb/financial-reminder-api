@@ -1,7 +1,8 @@
-package com.project.manager.finance.management.adapters.usecases.authentication;
+package com.project.manager.finance.management.application.usecases.authentication.impl;
 
-import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
+import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.AuthenticationResult;
+import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
@@ -17,16 +18,16 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class LoginUseCase {
+public class LoginUseCaseImpl implements LoginUseCase {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private TokenProvider tokenProvider;
     @Autowired
-    private     LoginAttemptService loginAttemptService;
+    private LoginAttemptService loginAttemptService;
 
 
-    public ResponseAuthenticationDTO execute(AuthenticationDTO dto) {
+    public AuthenticationResult execute(AuthenticationCommand dto) {
         String email = dto.email();
 
         if (loginAttemptService.isBlocked(email)) {
@@ -40,7 +41,7 @@ public class LoginUseCase {
             var token = tokenProvider.generateToken((User) auth.getPrincipal());
 
             loginAttemptService.resetAttempts(email);
-            return new ResponseAuthenticationDTO(token);
+            return new AuthenticationResult(token);
 
         } catch (AuthenticationException e) {
             loginAttemptService.incrementAttempts(email);

@@ -1,10 +1,12 @@
 package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.manager.finance.management.adapters.dtos.user.ListUsersResponseDTO;
-import com.project.manager.finance.management.adapters.dtos.user.CreateUserDTO;
-import com.project.manager.finance.management.adapters.usecases.user.ListUsersUseCase;
-import com.project.manager.finance.management.adapters.usecases.user.CreateUserUseCase;
+import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
+import com.project.manager.finance.management.adapters.dtos.user.ListUsersSingleResponse;
+import com.project.manager.finance.management.application.dtos.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
+import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
+import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,13 +42,13 @@ public class UserControllerTest {
     @MockBean
     private ListUsersUseCase listUsersUseCase;
 
-    private CreateUserDTO validCreateUserDTO;
+    private CreateUserRequest validCreateUserDTO;
 
     @BeforeEach
     public void setup() {
         Mockito.reset(createUserUseCase, listUsersUseCase);
 
-        validCreateUserDTO = new CreateUserDTO(
+        validCreateUserDTO = new CreateUserRequest(
                 "Test User",
                 "test@example.com",
                 "password123",
@@ -58,7 +60,7 @@ public class UserControllerTest {
     @DisplayName("Should create a user successfully")
     public void testCreateUserSuccess() throws Exception {
         // Arrange
-        Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserDTO.class));
+        Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserCommand.class));
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/user")
@@ -71,7 +73,7 @@ public class UserControllerTest {
     @DisplayName("Should return Bad Request for invalid CreateDTO")
     public void testCreaterUserBadRequest() throws Exception {
         // Arrange
-        CreateUserDTO invalidDTO = new CreateUserDTO(null, null, null, null);
+        CreateUserRequest invalidDTO = new CreateUserRequest(null, null, null, null);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/user")
@@ -85,8 +87,8 @@ public class UserControllerTest {
     @WithMockUser(username = "admin", authorities = {"ADMIN_PERMISSION"})
     public void testListUsersSuccess() throws Exception {
         // Arrange
-        List<ListUsersResponseDTO> usersList = Collections.singletonList(
-                new ListUsersResponseDTO("Test User", "test@example.com", RoleEnum.USER)
+        List<ListUsersSingleResult> usersList = Collections.singletonList(
+                new ListUsersSingleResult("Test User", "test@example.com", RoleEnum.USER, true, false)
         );
         Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
 

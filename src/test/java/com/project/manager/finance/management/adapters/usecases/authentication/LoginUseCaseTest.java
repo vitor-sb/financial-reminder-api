@@ -1,7 +1,11 @@
 package com.project.manager.finance.management.adapters.usecases.authentication;
 
-import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationDTO;
-import com.project.manager.finance.management.adapters.dtos.authentication.ResponseAuthenticationDTO;
+import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationRequest;
+import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationResponse;
+import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.AuthenticationResult;
+import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
+import com.project.manager.finance.management.application.usecases.authentication.impl.LoginUseCaseImpl;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
@@ -17,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +37,7 @@ class LoginUseCaseTest {
     private LoginAttemptService loginAttemptService;
 
     @InjectMocks
-    private LoginUseCase loginUseCase;
+    private LoginUseCaseImpl loginUseCase;
 
     private AutoCloseable closeable;
 
@@ -57,15 +60,15 @@ class LoginUseCaseTest {
     @DisplayName("Should return a LoginResponseDTO on successful login")
     void testExecuteSuccessfulLogin() {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validEmail, validPassword);
-        Authentication authResult = mock(Authentication.class);
+        AuthenticationCommand dto = new AuthenticationCommand(validEmail, validPassword);
+        org.springframework.security.core.Authentication authResult = mock(org.springframework.security.core.Authentication.class);
         User user = new User();
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authResult);
         when(authResult.getPrincipal()).thenReturn(user);
         when(tokenProvider.generateToken(user)).thenReturn("mockedToken");
 
         // Act
-        ResponseAuthenticationDTO response = loginUseCase.execute(dto);
+        AuthenticationResult response = loginUseCase.execute(dto);
 
         // Assert
         assertNotNull(response);
@@ -77,7 +80,7 @@ class LoginUseCaseTest {
     @DisplayName("Should throw InvalidCredentialsException for invalid credentials and handle login attempts")
     void testExecuteInvalidCredentialsAndHandleAttempts() {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(invalidEmail, invalidPassword);
+        AuthenticationCommand dto = new AuthenticationCommand(invalidEmail, invalidPassword);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials") {});
 
@@ -93,7 +96,7 @@ class LoginUseCaseTest {
     @DisplayName("Should throw TooManyLoginAttemptsException when account is blocked")
     void testExecute_AccountBlocked() {
         // Arrange
-        AuthenticationDTO dto = new AuthenticationDTO(validEmail, validPassword);
+        AuthenticationCommand dto = new AuthenticationCommand(validEmail, validPassword);
         when(loginAttemptService.isBlocked(validEmail)).thenReturn(true);
         when(loginAttemptService.getBlockUntil(validEmail)).thenReturn(System.currentTimeMillis() + 60000);
 

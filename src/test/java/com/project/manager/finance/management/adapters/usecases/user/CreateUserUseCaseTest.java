@@ -1,6 +1,8 @@
 package com.project.manager.finance.management.adapters.usecases.user;
 
-import com.project.manager.finance.management.adapters.dtos.user.CreateUserDTO;
+import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
+import com.project.manager.finance.management.application.dtos.CreateUserCommand;
+import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;
@@ -44,7 +46,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Should create user with encrypted password and valid email")
     void executeCreatesUser() {
-        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
+        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         createUserUseCase.execute(createUserDTO);
@@ -61,7 +63,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Should throw ConflictException if user already exists")
     void executeCreateUserThrowsConflictException() {
-        CreateUserDTO createUserDTO = new CreateUserDTO("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
+        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
         doThrow(new ConflictException("Email already in use."))
                 .when(userService)
                 .checkEmailAvailability("johndoe@example.com");

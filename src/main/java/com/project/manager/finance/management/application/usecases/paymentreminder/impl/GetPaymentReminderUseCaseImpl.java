@@ -1,6 +1,8 @@
-package com.project.manager.finance.management.adapters.usecases.paymentreminder;
+package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
-import com.project.manager.finance.management.adapters.dtos.paymentremider.ResponseGetPaymentReminderDTO;
+import com.project.manager.finance.management.application.dtos.GetPaymentReminderQuery;
+import com.project.manager.finance.management.application.dtos.PaymentReminderResult;
+import com.project.manager.finance.management.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
 import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
@@ -11,19 +13,19 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class GetPaymentReminderUseCase {
+public class GetPaymentReminderUseCaseImpl implements GetPaymentReminderUseCase {
     @Autowired
     PaymentReminderService paymentReminderService;
 
-    public ResponseGetPaymentReminderDTO execute(String id, String email) {
-        PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderById(id).orElseThrow(
+    public PaymentReminderResult execute(GetPaymentReminderQuery dto) {
+        PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderById(dto.id()).orElseThrow(
                 () -> new NotFoundException("Payment reminder not found")
         );
 
-        if (!Objects.equals(paymentReminder.getUser().getEmail(), email))
+        if (!Objects.equals(paymentReminder.getUser().getEmail(), dto.email()))
             throw new ConflictException("This reminder does not belong to the logged in user");
 
-        return new ResponseGetPaymentReminderDTO(
+        return new PaymentReminderResult(
                 paymentReminder.getTitle(),
                 paymentReminder.getDescription(),
                 paymentReminder.getBaseDate().toString(),
