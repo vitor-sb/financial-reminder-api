@@ -29,14 +29,18 @@ public class SecurityConfiguration {
 
     private static final int ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
+    private static final String[] PUBLIC_POST_ENDPOINTS = {
+            "/user",
+            "/auth/login"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(this::configureHttpHeaders)
