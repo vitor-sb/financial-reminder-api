@@ -1,5 +1,6 @@
 package com.project.manager.finance.management.adapters.usecases.user;
 
+import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
 import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.impl.ListUsersUseCaseImpl;
@@ -8,6 +9,11 @@ import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,30 +39,28 @@ class ListUsersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should return list of ListUsersResponseDTO")
-    void executeReturnsListOfListUsersResponseDTO() {
+    @DisplayName("Should return page of ListUsersSingleResult")
+    void execute_shouldReturnPageOfListUsersSingleResult() {
         // Arrange
-        User user1 = new User("John Doe", "johndoe@example.com", "password1", RoleEnum.USER);
-        User user2 = new User("Jane Smith", "janesmith@example.com", "password2", RoleEnum.ADMIN);
-        List<User> users = List.of(user1, user2);
+        ListUsersFilterQuery filter = new ListUsersFilterQuery(null, null, RoleEnum.USER, null, null);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        when(userService.listUsers()).thenReturn(users);
+        User user1 = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
+        Page<User> userPage = new PageImpl<>(List.of(user1), pageable, 1);
 
-        List<ListUsersSingleResult> response = listUsersUseCase.execute();
+        when(userService.listUsers(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(userPage);
 
-        assertNotNull(response);
-        assertEquals(2, response.size());
+        // Act
+        Page<ListUsersSingleResult> resultPage = listUsersUseCase.execute(filter, pageable);
 
-        ListUsersSingleResult dto1 = response.get(0);
-        assertEquals("John Doe", dto1.name());
-        assertEquals("johndoe@example.com", dto1.email());
-        assertEquals(RoleEnum.USER, dto1.role());
+        // Assert
+        assertNotNull(resultPage);
+        assertEquals(1, resultPage.getTotalElements());
+        ListUsersSingleResult resultDto = resultPage.getContent().get(0);
+        assertEquals("John Doe", resultDto.name());
+        assertEquals("johndoe@example.com", resultDto.email());
+        assertEquals(RoleEnum.USER, resultDto.role());
 
-        ListUsersSingleResult dto2 = response.get(1);
-        assertEquals("Jane Smith", dto2.name());
-        assertEquals("janesmith@example.com", dto2.email());
-        assertEquals(RoleEnum.ADMIN, dto2.role());
-
-        verify(userService, times(1)).listUsers();
+        verify(userService, times(1)).listUsers(filter, pageable);
     }
 }

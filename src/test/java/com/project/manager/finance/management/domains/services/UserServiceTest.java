@@ -1,13 +1,19 @@
 package com.project.manager.finance.management.domains.services;
 
+import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.repositories.jpa.UserRepository;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.NotFoundException;
+import com.project.manager.finance.management.application.exceptions.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -79,18 +85,28 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should return list of users")
-    void listAllUsers() {
-        User userOne = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
-        User userTwo = new User("Jane Smith", "janesmith@example.com", passwordEncoder.encode("password2"), RoleEnum.ADMIN);
+    @DisplayName("Should return a page of users")
+    void listUsersReturnsPageOfUsers() {
+        // Arrange
+        ListUsersFilterQuery filter = new ListUsersFilterQuery(null, null, null, null, null);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        User userOne = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
+        User userTwo = new User("Jane Smith", "janesmith@example.com", "password2", RoleEnum.ADMIN);
         List<User> users = List.of(userOne, userTwo);
+        Page<User> userPage = new PageImpl<>(users, pageable, users.size());
 
-        when(repository.findAll()).thenReturn(users);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(userPage);
 
-        List<User> result = userService.listUsers();
+        // Act
+        Page<User> result = userService.listUsers(filter, pageable);
 
-        assertEquals(2, result.size());
-        assertTrue(result.contains(userTwo));
-        assertTrue(result.contains(userTwo));
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+        assertEquals("John Doe", result.getContent().get(0).getName());
+
+        verify(repository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 }

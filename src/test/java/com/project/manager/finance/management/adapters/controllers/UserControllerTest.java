@@ -2,8 +2,8 @@ package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
-import com.project.manager.finance.management.adapters.dtos.user.ListUsersSingleResponse;
 import com.project.manager.finance.management.application.dtos.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
 import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,8 +27,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Collections;
 import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,22 +90,29 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should list all users successfully for ADMIN_PERMISSION")
+    @DisplayName("Should list all users successfully with pagination")
     @WithMockUser(username = "admin", authorities = {"ADMIN_PERMISSION"})
-    public void testListUsersSuccess() throws Exception {
+    void testListUsersSuccess() throws Exception {
         // Arrange
-        List<ListUsersSingleResult> usersList = Collections.singletonList(
-                new ListUsersSingleResult("Test User", "test@example.com", RoleEnum.USER, true, false)
-        );
-        Mockito.when(listUsersUseCase.execute()).thenReturn(usersList);
+        ListUsersSingleResult userResult = new ListUsersSingleResult("Test User", "test@example.com", RoleEnum.USER, true, false);
+        Page<ListUsersSingleResult> resultPage = new PageImpl<>(List.of(userResult), PageRequest.of(0, 10), 1);
+
+        when(listUsersUseCase.execute(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(resultPage);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
+                        .param("page", "0")
+                        .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Test User"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].email").value("test@example.com"));
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].name").value("Test User"))
+                .andExpect(jsonPath("$.content[0].email").value("test@example.com"))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
+
 
     @Test
     @DisplayName("Should return Forbidden for non-ADMIN role")

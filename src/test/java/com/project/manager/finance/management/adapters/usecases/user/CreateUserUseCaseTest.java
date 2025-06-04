@@ -1,12 +1,11 @@
 package com.project.manager.finance.management.adapters.usecases.user;
 
-import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
 import com.project.manager.finance.management.application.dtos.CreateUserCommand;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
+import com.project.manager.finance.management.application.exceptions.ConflictException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;

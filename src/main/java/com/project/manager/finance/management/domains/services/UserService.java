@@ -1,15 +1,19 @@
 package com.project.manager.finance.management.domains.services;
 
+import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.repositories.jpa.UserRepository;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.NotFoundException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.UserDisabledException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.UserSoftDeletedException;
+import com.project.manager.finance.management.infrastructure.persistence.SpecificationFactory;
+import com.project.manager.finance.management.application.exceptions.ConflictException;
+import com.project.manager.finance.management.application.exceptions.NotFoundException;
+import com.project.manager.finance.management.application.exceptions.UserDisabledException;
+import com.project.manager.finance.management.application.exceptions.UserSoftDeletedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,8 +29,15 @@ public class UserService {
         return userRepository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse(email);
     }
 
-    public List<User> listUsers() {
-        return userRepository.findAll();
+    public Page<User> listUsers(ListUsersFilterQuery query, Pageable pageable) {
+        Specification<User> spec = Specification
+                .where(SpecificationFactory.<User>like("name", query.name()))
+                .and(SpecificationFactory.like("email", query.email()))
+                .and(SpecificationFactory.equal("role", query.role()))
+                .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
+                .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
+
+        return userRepository.findAll(spec, pageable);
     }
 
     public User findValidUserByEmailForAuthentication(String email) {
