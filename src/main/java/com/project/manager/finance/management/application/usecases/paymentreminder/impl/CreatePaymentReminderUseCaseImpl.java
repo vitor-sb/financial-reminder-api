@@ -1,6 +1,5 @@
 package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
-import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
 import com.project.manager.finance.management.application.dtos.CreatePaymentReminderCommand;
 import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
@@ -8,7 +7,7 @@ import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
 import com.project.manager.finance.management.domains.services.PaymentTransactionService;
 import com.project.manager.finance.management.domains.services.UserService;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.NotFoundException;
+import com.project.manager.finance.management.application.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

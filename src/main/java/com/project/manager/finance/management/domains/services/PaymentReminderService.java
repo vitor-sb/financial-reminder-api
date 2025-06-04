@@ -2,7 +2,7 @@ package com.project.manager.finance.management.domains.services;
 
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.repositories.jpa.PaymentReminderRepository;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.ConflictException;
+import com.project.manager.finance.management.application.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

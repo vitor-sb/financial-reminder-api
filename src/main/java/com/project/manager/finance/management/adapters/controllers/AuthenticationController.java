@@ -24,7 +24,6 @@ public class AuthenticationController {
         var result = loginUseCase.execute(command);
 
         AuthenticationResponse response = authenticationMapper.toResponse(result);
-
         return ResponseEntity.ok(response);
     }
 }

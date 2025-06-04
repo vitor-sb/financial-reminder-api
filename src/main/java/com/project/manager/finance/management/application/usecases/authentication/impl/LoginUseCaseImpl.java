@@ -4,8 +4,8 @@ import com.project.manager.finance.management.application.dtos.AuthenticationCom
 import com.project.manager.finance.management.application.dtos.AuthenticationResult;
 import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.domains.models.user.User;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
+import com.project.manager.finance.management.application.exceptions.InvalidCredentialsException;
+import com.project.manager.finance.management.application.exceptions.TooManyLoginAttemptsException;
 import com.project.manager.finance.management.domains.services.LoginAttemptService;
 import com.project.manager.finance.management.infrastructure.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;

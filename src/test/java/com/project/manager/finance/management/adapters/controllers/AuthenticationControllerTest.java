@@ -5,8 +5,8 @@ import com.project.manager.finance.management.adapters.dtos.authentication.Authe
 import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
 import com.project.manager.finance.management.application.dtos.AuthenticationResult;
 import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
+import com.project.manager.finance.management.application.exceptions.InvalidCredentialsException;
+import com.project.manager.finance.management.application.exceptions.TooManyLoginAttemptsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

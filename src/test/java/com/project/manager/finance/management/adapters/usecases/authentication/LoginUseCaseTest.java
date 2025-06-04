@@ -1,14 +1,11 @@
 package com.project.manager.finance.management.adapters.usecases.authentication;
 
-import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationRequest;
-import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationResponse;
 import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
 import com.project.manager.finance.management.application.dtos.AuthenticationResult;
-import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.application.usecases.authentication.impl.LoginUseCaseImpl;
 import com.project.manager.finance.management.domains.models.user.User;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.InvalidCredentialsException;
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.TooManyLoginAttemptsException;
+import com.project.manager.finance.management.application.exceptions.InvalidCredentialsException;
+import com.project.manager.finance.management.application.exceptions.TooManyLoginAttemptsException;
 import com.project.manager.finance.management.domains.services.LoginAttemptService;
 import com.project.manager.finance.management.infrastructure.security.TokenProvider;
 import org.junit.jupiter.api.AfterEach;
