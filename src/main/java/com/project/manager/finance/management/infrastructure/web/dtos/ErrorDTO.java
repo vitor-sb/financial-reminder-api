@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.midlewares.exceptions.dtos;
+package com.project.manager.finance.management.infrastructure.web.dtos;
 
 import java.time.LocalDateTime;
 

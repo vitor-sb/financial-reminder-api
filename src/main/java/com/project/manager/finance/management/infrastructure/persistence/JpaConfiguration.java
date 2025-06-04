@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.configurations;
+package com.project.manager.finance.management.infrastructure.persistence;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

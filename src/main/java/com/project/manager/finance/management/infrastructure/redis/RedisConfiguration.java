@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.configurations;
+package com.project.manager.finance.management.infrastructure.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

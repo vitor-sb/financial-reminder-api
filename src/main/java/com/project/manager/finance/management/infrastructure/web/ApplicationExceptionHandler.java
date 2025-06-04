@@ -1,6 +1,7 @@
-package com.project.manager.finance.management.infrastructure.midlewares.exceptions;
+package com.project.manager.finance.management.infrastructure.web;
 
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.dtos.ErrorDTO;
+import com.project.manager.finance.management.application.exceptions.*;
+import com.project.manager.finance.management.infrastructure.web.dtos.ErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

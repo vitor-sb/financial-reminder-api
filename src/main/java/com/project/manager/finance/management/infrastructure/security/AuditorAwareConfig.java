@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.configurations;
+package com.project.manager.finance.management.infrastructure.security;
 
 import com.project.manager.finance.management.domains.models.user.User;
 import org.slf4j.Logger;

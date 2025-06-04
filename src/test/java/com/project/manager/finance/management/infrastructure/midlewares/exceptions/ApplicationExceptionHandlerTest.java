@@ -1,6 +1,10 @@
 package com.project.manager.finance.management.infrastructure.midlewares.exceptions;
 
-import com.project.manager.finance.management.infrastructure.midlewares.exceptions.dtos.ErrorDTO;
+import com.project.manager.finance.management.infrastructure.web.ApplicationExceptionHandler;
+import com.project.manager.finance.management.application.exceptions.ConflictException;
+import com.project.manager.finance.management.application.exceptions.NotFoundException;
+import com.project.manager.finance.management.application.exceptions.UnauthorizedException;
+import com.project.manager.finance.management.infrastructure.web.dtos.ErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

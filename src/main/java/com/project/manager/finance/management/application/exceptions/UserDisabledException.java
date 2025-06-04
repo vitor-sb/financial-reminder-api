@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.midlewares.exceptions;
+package com.project.manager.finance.management.application.exceptions;
 
 import lombok.Getter;
 
