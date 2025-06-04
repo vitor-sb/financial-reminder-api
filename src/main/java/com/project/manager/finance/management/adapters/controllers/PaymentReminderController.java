@@ -10,10 +10,10 @@ import com.project.manager.finance.management.application.usecases.paymentremind
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/reminders/payments")
@@ -27,24 +27,26 @@ public class PaymentReminderController {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            Principal loggedUser,
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @RequestBody @Valid CreatePaymentReminderRequest dto,
             UriComponentsBuilder uriBuilder
     ) {
-        CreatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, loggedUser.getName());
+        CreatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, loggedUserEmail);
         var result = createUseCase.execute(command);
-        var uri = uriBuilder.path("/reminders/payments/" + result.getId()).build().toUri();
 
+        var uri = uriBuilder.path("/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetPaymentReminderResponse> getById(Principal loggedUser, @PathVariable String id) {
-        GetPaymentReminderQuery query = paymentReminderMapper.toQuery(id, loggedUser.getName());
+    public ResponseEntity<GetPaymentReminderResponse> getById(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @PathVariable String id
+    ) {
+        GetPaymentReminderQuery query = paymentReminderMapper.toQuery(id, loggedUserEmail);
         var result = getByIdUseCase.execute(query);
 
         GetPaymentReminderResponse response = paymentReminderMapper.toResponse(result);
-
         return ResponseEntity.ok(response);
     }
 }
