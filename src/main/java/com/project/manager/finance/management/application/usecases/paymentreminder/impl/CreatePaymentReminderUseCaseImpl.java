@@ -16,10 +16,13 @@ import java.time.format.DateTimeParseException;
 
 @Component
 public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUseCase {
+
     @Autowired
     PaymentReminderService reminderService;
+
     @Autowired
     UserService userService;
+
     @Autowired
     PaymentTransactionService transactionService;
 

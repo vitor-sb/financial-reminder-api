@@ -19,13 +19,15 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginUseCaseImpl implements LoginUseCase {
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private TokenProvider tokenProvider;
+
     @Autowired
     private LoginAttemptService loginAttemptService;
-
 
     public AuthenticationResult execute(AuthenticationCommand dto) {
         String email = dto.email();

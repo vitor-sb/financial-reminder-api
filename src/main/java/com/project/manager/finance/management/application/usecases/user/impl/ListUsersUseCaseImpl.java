@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ListUsersUseCaseImpl implements ListUsersUseCase {
+
     @Autowired
     private UserService userService;
 

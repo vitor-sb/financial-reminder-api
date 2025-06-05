@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("user")
 public class UserController {
+
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private CreateUserUseCase createUserUseCase;
+
     @Autowired
     private ListUsersUseCase listUsersUseCase;
 

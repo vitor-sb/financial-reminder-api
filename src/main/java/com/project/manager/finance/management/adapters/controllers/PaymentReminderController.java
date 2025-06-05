@@ -18,10 +18,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/reminders/payments")
 public class PaymentReminderController {
+
     @Autowired
     private PaymentReminderMapper paymentReminderMapper;
+
     @Autowired
     private CreatePaymentReminderUseCase createUseCase;
+
     @Autowired
     private GetPaymentReminderUseCase getByIdUseCase;
 

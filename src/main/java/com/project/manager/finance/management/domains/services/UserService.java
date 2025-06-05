@@ -6,8 +6,6 @@ import com.project.manager.finance.management.domains.repositories.jpa.UserRepos
 import com.project.manager.finance.management.infrastructure.persistence.SpecificationFactory;
 import com.project.manager.finance.management.application.exceptions.ConflictException;
 import com.project.manager.finance.management.application.exceptions.NotFoundException;
-import com.project.manager.finance.management.application.exceptions.UserDisabledException;
-import com.project.manager.finance.management.application.exceptions.UserSoftDeletedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -44,12 +43,7 @@ public class UserService {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
-        if (Boolean.TRUE.equals(user.getAudit().getDeleted())) {
-            throw new UserSoftDeletedException(user.getAudit().getDeletedBy());
-        }
-        if (Boolean.FALSE.equals(user.getAudit().getEnabled())) {
-            throw new UserDisabledException(user.getAudit().getEnabledBy());
-        }
+        user.getAudit().validateIsActive("User");
 
         return user;
     }

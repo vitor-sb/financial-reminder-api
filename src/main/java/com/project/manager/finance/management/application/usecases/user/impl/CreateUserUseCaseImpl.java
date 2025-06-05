@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateUserUseCaseImpl implements CreateUserUseCase {
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
