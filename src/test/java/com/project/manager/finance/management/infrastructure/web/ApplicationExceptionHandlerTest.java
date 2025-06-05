@@ -1,6 +1,5 @@
-package com.project.manager.finance.management.infrastructure.midlewares.exceptions;
+package com.project.manager.finance.management.infrastructure.web;
 
-import com.project.manager.finance.management.infrastructure.web.ApplicationExceptionHandler;
 import com.project.manager.finance.management.application.exceptions.ConflictException;
 import com.project.manager.finance.management.application.exceptions.NotFoundException;
 import com.project.manager.finance.management.application.exceptions.UnauthorizedException;
