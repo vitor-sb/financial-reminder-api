@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.application.dtos;
+package com.project.manager.finance.management.application.dtos.paymentreminder;
 
 import jakarta.validation.constraints.NotBlank;
 

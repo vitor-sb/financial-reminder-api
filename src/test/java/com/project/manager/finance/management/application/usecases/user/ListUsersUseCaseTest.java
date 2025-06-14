@@ -1,8 +1,7 @@
 package com.project.manager.finance.management.application.usecases.user;
 
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
-import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
-import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersSingleResult;
 import com.project.manager.finance.management.application.usecases.user.impl.ListUsersUseCaseImpl;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;

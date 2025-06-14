@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.application.dtos;
+package com.project.manager.finance.management.application.dtos.user;
 
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 

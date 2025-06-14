@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.application.dtos;
+package com.project.manager.finance.management.application.dtos.authentication;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

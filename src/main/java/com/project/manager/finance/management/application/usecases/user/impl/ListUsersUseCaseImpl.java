@@ -1,9 +1,8 @@
 package com.project.manager.finance.management.application.usecases.user.impl;
 
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
-import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersSingleResult;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
-import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

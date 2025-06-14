@@ -3,8 +3,8 @@ package com.project.manager.finance.management.adapters.controllers;
 import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
 import com.project.manager.finance.management.adapters.dtos.paymentremider.GetPaymentReminderResponse;
 import com.project.manager.finance.management.adapters.mappers.PaymentReminderMapper;
-import com.project.manager.finance.management.application.dtos.CreatePaymentReminderCommand;
-import com.project.manager.finance.management.application.dtos.GetPaymentReminderQuery;
+import com.project.manager.finance.management.application.dtos.paymentreminder.CreatePaymentReminderCommand;
+import com.project.manager.finance.management.application.dtos.paymentreminder.GetPaymentReminderQuery;
 import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 @RestController
-@RequestMapping("/reminders/payments")
+@RequestMapping("/payments/reminders")
 public class PaymentReminderController {
 
     @Autowired
@@ -27,6 +27,7 @@ public class PaymentReminderController {
 
     @Autowired
     private GetPaymentReminderUseCase getByIdUseCase;
+
 
     @PostMapping
     public ResponseEntity<Void> create(

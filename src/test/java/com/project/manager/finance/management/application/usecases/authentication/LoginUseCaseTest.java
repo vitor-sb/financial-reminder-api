@@ -1,7 +1,7 @@
 package com.project.manager.finance.management.application.usecases.authentication;
 
-import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
-import com.project.manager.finance.management.application.dtos.AuthenticationResult;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationResult;
 import com.project.manager.finance.management.application.usecases.authentication.impl.LoginUseCaseImpl;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.application.exceptions.InvalidCredentialsException;

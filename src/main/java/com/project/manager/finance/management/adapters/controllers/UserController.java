@@ -4,8 +4,8 @@ import com.project.manager.finance.management.adapters.dtos.user.CreateUserReque
 import com.project.manager.finance.management.adapters.dtos.user.ListUsersFilterRequest;
 import com.project.manager.finance.management.adapters.dtos.user.ListUsersSingleResponse;
 import com.project.manager.finance.management.adapters.mappers.UserMapper;
-import com.project.manager.finance.management.application.dtos.CreateUserCommand;
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import jakarta.validation.Valid;

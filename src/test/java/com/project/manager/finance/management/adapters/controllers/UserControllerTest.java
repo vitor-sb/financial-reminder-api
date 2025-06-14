@@ -2,9 +2,9 @@ package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
-import com.project.manager.finance.management.application.dtos.CreateUserCommand;
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
-import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
+import com.project.manager.finance.management.application.dtos.user.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersSingleResult;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;

@@ -3,9 +3,9 @@ package com.project.manager.finance.management.adapters.mappers;
 import com.project.manager.finance.management.adapters.dtos.user.CreateUserRequest;
 import com.project.manager.finance.management.adapters.dtos.user.ListUsersFilterRequest;
 import com.project.manager.finance.management.adapters.dtos.user.ListUsersSingleResponse;
-import com.project.manager.finance.management.application.dtos.CreateUserCommand;
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
-import com.project.manager.finance.management.application.dtos.ListUsersSingleResult;
+import com.project.manager.finance.management.application.dtos.user.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersSingleResult;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 

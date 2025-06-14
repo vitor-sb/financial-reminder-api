@@ -2,8 +2,8 @@ package com.project.manager.finance.management.adapters.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationRequest;
-import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
-import com.project.manager.finance.management.application.dtos.AuthenticationResult;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationResult;
 import com.project.manager.finance.management.application.usecases.authentication.LoginUseCase;
 import com.project.manager.finance.management.application.exceptions.InvalidCredentialsException;
 import com.project.manager.finance.management.application.exceptions.TooManyLoginAttemptsException;

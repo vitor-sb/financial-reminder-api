@@ -1,6 +1,6 @@
 package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
-import com.project.manager.finance.management.application.dtos.CreatePaymentReminderCommand;
+import com.project.manager.finance.management.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.models.user.User;

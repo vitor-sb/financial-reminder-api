@@ -1,9 +1,9 @@
 package com.project.manager.finance.management.domains.services;
 
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.repositories.jpa.UserRepository;
-import com.project.manager.finance.management.infrastructure.persistence.SpecificationFactory;
+import com.project.manager.finance.management.infrastructure.utils.SpecificationFactory;
 import com.project.manager.finance.management.application.exceptions.ConflictException;
 import com.project.manager.finance.management.application.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

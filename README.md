@@ -27,9 +27,8 @@ API RESTful para gestão de finanças pessoais, construída com Spring Boot e se
 
    2. **Opção 2: Via IntelliJ IDEA (Qualquer SO)**
       1.  Abra o projeto na IDE IntelliJ.
-      2.  No canto superior direito, clique em **"Edit Configurations..."**.
-      6.  Encontre o campo **"Environment variables"** e clique no primeiro ícone ao final da linha para abrir a janela de seleção de arquivo.
-      7.  Selecione o arquivo `.env` configurado anteriormente.
-      8.  Clique em **OK** e depois em **Apply** e **OK** para salvar a configuração.
-      9.  Agora você pode executar ou depurar a aplicação usando os botões de Play/Debug no topo da IDE.
-
+      2.  No canto superior direito, clique em **"Edit Configurations..."**. 
+      3. Encontre o campo **"Environment variables"** e clique no primeiro ícone ao final da linha para abrir a janela de seleção de arquivo. 
+      4. Selecione o arquivo `.env` configurado anteriormente. 
+      5. Clique em **OK** e depois em **Apply** e **OK** para salvar a configuração. 
+      6. Agora você pode executar ou depurar a aplicação usando os botões de Play/Debug no topo da IDE.

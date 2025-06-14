@@ -2,10 +2,8 @@ package com.project.manager.finance.management.adapters.mappers;
 
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationRequest;
 import com.project.manager.finance.management.adapters.dtos.authentication.AuthenticationResponse;
-import com.project.manager.finance.management.adapters.dtos.paymentremider.GetPaymentReminderResponse;
-import com.project.manager.finance.management.application.dtos.AuthenticationCommand;
-import com.project.manager.finance.management.application.dtos.AuthenticationResult;
-import com.project.manager.finance.management.application.dtos.PaymentReminderResult;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationCommand;
+import com.project.manager.finance.management.application.dtos.authentication.AuthenticationResult;
 import org.springframework.stereotype.Component;
 
 @Component

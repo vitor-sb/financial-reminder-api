@@ -1,6 +1,6 @@
 package com.project.manager.finance.management.application.usecases.user.impl;
 
-import com.project.manager.finance.management.application.dtos.CreateUserCommand;
+import com.project.manager.finance.management.application.dtos.user.CreateUserCommand;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.services.UserService;

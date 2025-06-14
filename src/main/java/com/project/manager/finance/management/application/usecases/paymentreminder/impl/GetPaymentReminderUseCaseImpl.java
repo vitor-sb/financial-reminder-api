@@ -1,7 +1,7 @@
 package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
-import com.project.manager.finance.management.application.dtos.GetPaymentReminderQuery;
-import com.project.manager.finance.management.application.dtos.PaymentReminderResult;
+import com.project.manager.finance.management.application.dtos.paymentreminder.GetPaymentReminderQuery;
+import com.project.manager.finance.management.application.dtos.paymentreminder.PaymentReminderResult;
 import com.project.manager.finance.management.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
@@ -14,6 +14,7 @@ import java.util.Objects;
 
 @Component
 public class GetPaymentReminderUseCaseImpl implements GetPaymentReminderUseCase {
+
     @Autowired
     PaymentReminderService paymentReminderService;
 

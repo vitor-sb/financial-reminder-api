@@ -1,6 +1,6 @@
 package com.project.manager.finance.management.domains.services;
 
-import com.project.manager.finance.management.application.dtos.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
 import com.project.manager.finance.management.domains.models.user.enums.RoleEnum;
 import com.project.manager.finance.management.domains.models.user.User;
 import com.project.manager.finance.management.domains.repositories.jpa.UserRepository;

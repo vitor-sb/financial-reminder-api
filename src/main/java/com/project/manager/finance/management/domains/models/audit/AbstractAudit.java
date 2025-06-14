@@ -1,5 +1,7 @@
 package com.project.manager.finance.management.domains.models.audit;
 
+import com.project.manager.finance.management.application.exceptions.ResourceDeletedException;
+import com.project.manager.finance.management.application.exceptions.ResourceDisabledException;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -57,4 +59,12 @@ public abstract class AbstractAudit implements Serializable {
 
     @Column(name = "deleted_by", length = 36)
     private String deletedBy;
+
+    public void validateIsActive(String resourceName) {
+        if (Boolean.TRUE.equals(this.deleted))
+            throw new ResourceDeletedException(resourceName, this.getDeletedBy());
+
+        if (Boolean.FALSE.equals(this.enabled))
+            throw new ResourceDisabledException(resourceName, this.getEnabledBy());
+    }
 }
