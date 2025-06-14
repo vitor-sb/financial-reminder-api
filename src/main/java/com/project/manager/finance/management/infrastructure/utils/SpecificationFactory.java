@@ -1,4 +1,4 @@
-package com.project.manager.finance.management.infrastructure.persistence;
+package com.project.manager.finance.management.infrastructure.utils;
 
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,7 +16,7 @@ public final class SpecificationFactory {
     public static <T> Specification<T> like(String attribute, String value) {
         return (root, query, builder) -> {
             if (!StringUtils.hasText(value)) {
-                return builder.conjunction(); // Retorna uma cláusula vazia (sempre true)
+                return builder.conjunction();
             }
             return builder.like(builder.lower(root.get(attribute)), "%" + value.toLowerCase() + "%");
         };
