@@ -4,11 +4,6 @@ infrastructure:
       token:
         secret-key: ${JWT_SECRET}
         expiration-minutes: 30
-  redis:
-    login-attempt:
-      max-attempts: 5
-      block-time-minutes: 5
-      block-time-multiplier: 2
 
 spring:
   application:

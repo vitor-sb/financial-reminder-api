@@ -3,11 +3,7 @@ infrastructure:
     authentication:
       token:
         secret-key: testSecret
-  redis:
-    login-attempt:
-      max-attempts: 5
-      block-time-minutes: 5
-      block-time-multiplier: 2
+
 spring:
   application:
     name: finance-management-test

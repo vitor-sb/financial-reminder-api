@@ -21,6 +21,8 @@ public class LoginAttempt {
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long blockUntil;
 
+    private Long lastAttemptTimestamp;
+
     public LoginAttempt(String email) {
         this.email = email;
         this.attempts = 0;

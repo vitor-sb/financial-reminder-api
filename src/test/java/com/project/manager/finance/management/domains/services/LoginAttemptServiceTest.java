@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
+import static com.project.manager.finance.management.domains.services.LoginAttemptService.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -70,13 +71,15 @@ class LoginAttemptServiceTest {
     @DisplayName("Should block user when max attempts reached")
     void incrementAttempts_shouldBlockUser() {
         LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setAttempts(TestUtils.maxAttempts - 1);
+        attempt.setAttempts(MAX_ATTEMPTS - 1);
         when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
         when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
 
         loginAttemptService.incrementAttempts(TEST_EMAIL);
 
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(attempt.getAttempts());
+        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
+                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
+        );
         assertNotNull(attempt.getBlockUntil());
         TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should be calculated correctly");
         verify(loginAttemptRepository).save(attempt);
@@ -118,7 +121,9 @@ class LoginAttemptServiceTest {
 
         loginAttemptService.blockUntil(TEST_EMAIL);
 
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(attempt.getAttempts());
+        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
+                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
+        );
 
         assertNotNull(attempt.getBlockUntil());
         TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should be calculated and set");
@@ -168,13 +173,15 @@ class LoginAttemptServiceTest {
     @DisplayName("Should calculate block time correctly")
     void calculateBlockTime_shouldCalculateCorrectly() {
         LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setAttempts(TestUtils.maxAttempts);
+        attempt.setAttempts(MAX_ATTEMPTS);
         when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
         when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
 
         loginAttemptService.incrementAttempts(TEST_EMAIL);
 
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(attempt.getAttempts());
+        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
+                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
+        );
 
         assertNotNull(attempt.getBlockUntil());
         TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should match calculated time");

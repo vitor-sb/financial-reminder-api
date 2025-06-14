@@ -1,9 +1,9 @@
 package com.project.manager.finance.management.domains.services;
 
+import com.project.manager.finance.management.application.exceptions.TooManyLoginAttemptsException;
 import com.project.manager.finance.management.domains.models.authentication.LoginAttempt;
 import com.project.manager.finance.management.domains.repositories.redis.LoginAttemptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -14,21 +14,38 @@ public class LoginAttemptService {
     @Autowired
     private LoginAttemptRepository loginAttemptRepository;
 
-    @Value("${infrastructure.redis.login-attempt.max-attempts}")
-    private int maxAttempts;
+    public static final int MAX_ATTEMPTS = 5;
 
-    @Value("${infrastructure.redis.login-attempt.block-time-minutes}")
-    private long blockTimeMinutes;
+    public static final long BLOCK_TIME_MINUTES = 5;
 
-    @Value("${infrastructure.redis.login-attempt.block-time-multiplier}")
-    private long blockTimeMultiplier;
+    public static final long BLOCK_TIME_MULTIPLIER = 2;
 
+    public static final long THROTTLE_TIME_SECONDS = 15;
+
+
+    public void checkAndRecordRequestRate(String email) {
+        long currentTime = System.currentTimeMillis();
+        LoginAttempt attempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
+
+        if (attempt.getLastAttemptTimestamp() != null) {
+            long timeSinceLastAttempt = currentTime - attempt.getLastAttemptTimestamp();
+            long throttleTimeMillis = TimeUnit.SECONDS.toMillis(THROTTLE_TIME_SECONDS);
+
+            if (timeSinceLastAttempt < throttleTimeMillis) {
+                long waitTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(throttleTimeMillis - timeSinceLastAttempt);
+                throw new TooManyLoginAttemptsException("Muitas tentativas em um curto período. Por favor, aguarde " + waitTimeSeconds + " segundos.");
+            }
+        }
+
+        attempt.setLastAttemptTimestamp(currentTime);
+        loginAttemptRepository.save(attempt);
+    }
 
     public void incrementAttempts(String email) {
         LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
         loginAttempt.setAttempts(loginAttempt.getAttempts() + 1);
 
-        if (loginAttempt.getAttempts() >= maxAttempts) {
+        if (loginAttempt.getAttempts() >= MAX_ATTEMPTS) {
             blockUntil(loginAttempt);
         }
 
@@ -72,6 +89,6 @@ public class LoginAttemptService {
     }
 
     private long calculateBlockTime(long attempts) {
-        return blockTimeMinutes * (attempts - maxAttempts + 1) * blockTimeMultiplier;
+        return BLOCK_TIME_MINUTES * (attempts - MAX_ATTEMPTS + 1) * BLOCK_TIME_MULTIPLIER;
     }
 }

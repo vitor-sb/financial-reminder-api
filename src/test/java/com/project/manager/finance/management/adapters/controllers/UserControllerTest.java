@@ -71,7 +71,7 @@ public class UserControllerTest {
         Mockito.doNothing().when(createUserUseCase).execute(Mockito.any(CreateUserCommand.class));
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCreateUserDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -84,7 +84,7 @@ public class UserControllerTest {
         CreateUserRequest invalidDTO = new CreateUserRequest(null, null, null, null);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.post("/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -101,7 +101,7 @@ public class UserControllerTest {
         when(listUsersUseCase.execute(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(resultPage);
 
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/list")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -110,8 +110,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].name").value("Test User"))
                 .andExpect(jsonPath("$.content[0].email").value("test@example.com"))
-                .andExpect(jsonPath("$.totalPages").value(1))
-                .andExpect(jsonPath("$.totalElements").value(1));
+                .andExpect(jsonPath("$.page.totalPages").value(1))
+                .andExpect(jsonPath("$.page.totalElements").value(1));
     }
 
 
@@ -120,7 +120,7 @@ public class UserControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     public void testListUsersForbidden() throws Exception {
         // Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/list")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
