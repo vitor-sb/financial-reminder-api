@@ -1,7 +1,8 @@
 package com.project.manager.finance.management.adapters.mappers;
 
 import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
-import com.project.manager.finance.management.adapters.dtos.paymentremider.GetPaymentReminderResponse;
+import com.project.manager.finance.management.adapters.dtos.paymentremider.PaymentReminderResponse;
+import com.project.manager.finance.management.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
 import com.project.manager.finance.management.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
@@ -9,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentReminderMapper {
 
-    public GetPaymentReminderResponse toResponse(PaymentReminderResult result) {
-        return new GetPaymentReminderResponse(
+    public PaymentReminderResponse toResponse(PaymentReminderResult result) {
+        return new PaymentReminderResponse(
                 result.title(),
                 result.description(),
                 result.date(),
@@ -30,6 +31,18 @@ public class PaymentReminderMapper {
                 dto.method(),
                 dto.value(),
                 dto.installmentsNumber(),
+                loggedUser
+        );
+    }
+
+    public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest dto, String reminderId, String loggedUser) {
+        return new UpdatePaymentReminderCommand(
+                reminderId,
+                dto.updatePendingTransaction(),
+                dto.title(),
+                dto.description(),
+                dto.method(),
+                dto.value(),
                 loggedUser
         );
     }

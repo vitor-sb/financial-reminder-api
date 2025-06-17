@@ -2,9 +2,11 @@ package com.project.manager.finance.management.adapters.mappers;
 
 import com.project.manager.finance.management.adapters.dtos.paymenttransaction.ListTransactionsResponse;
 import com.project.manager.finance.management.adapters.dtos.paymenttransaction.PayTransactionRequest;
+import com.project.manager.finance.management.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.project.manager.finance.management.application.dtos.paymenttransaction.ListTransactionsResult;
 import com.project.manager.finance.management.application.dtos.paymenttransaction.PayTransactionCommand;
 import com.project.manager.finance.management.application.dtos.paymenttransaction.PaymentExecutionDetails;
+import com.project.manager.finance.management.application.dtos.paymenttransaction.UpdatePaymentTransactionCommand;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
@@ -34,5 +36,18 @@ public class PaymentTransactionMapper {
                 result.paymentValue(),
                 result.method(),
                 result.status());
+    }
+
+    public UpdatePaymentTransactionCommand toCommand(
+            String loggedUser,
+            String transactionId,
+            @Valid UpdatePaymentTransactionRequest dto
+    ) {
+        return new UpdatePaymentTransactionCommand(
+                loggedUser,
+                transactionId,
+                dto.paymentValue(),
+                dto.method()
+        );
     }
 }

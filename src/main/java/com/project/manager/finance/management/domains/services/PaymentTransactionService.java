@@ -28,6 +28,10 @@ public class PaymentTransactionService {
     @Autowired
     private PaymentReminderService paymentReminderService;
 
+    public PaymentTransaction save(PaymentTransaction transaction) {
+        return transactionRepository.save(transaction);
+    }
+
     public void createPaymentTransactionByReminder(PaymentReminder reminder) {
         PaymentTransaction transaction = new PaymentTransaction(
                 reminder,
@@ -43,6 +47,10 @@ public class PaymentTransactionService {
 
     public Optional<PaymentTransaction> getTransactionById(String id) {
         return transactionRepository.findById(id);
+    }
+
+    public Optional<PaymentTransaction> findPendingTransactionByReminderId(String reminderId) {
+        return transactionRepository.findFirstByReminderIdAndStatusAndAuditDeletedFalse(reminderId, TransactionStatusEnum.PENDENTE);
     }
 
     public Page<PaymentTransaction> listTransactionsByReminder(String reminderId, Pageable pageable) {

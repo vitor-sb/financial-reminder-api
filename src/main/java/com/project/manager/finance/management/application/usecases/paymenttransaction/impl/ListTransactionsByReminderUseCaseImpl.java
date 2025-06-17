@@ -25,6 +25,7 @@ public class ListTransactionsByReminderUseCaseImpl implements ListTransactionsBy
     public Page<ListTransactionsResult> execute(String loggedUserEmail, String reminderId, Pageable pageable) {
         PaymentReminder reminder = paymentReminderService.getPaymentReminderById(reminderId)
                 .orElseThrow(() -> new NotFoundException("Payment Reminder not found"));
+        reminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!reminder.getUser().getEmail().equals(loggedUserEmail))
             throw new UnauthorizedException("You do not have permission to view transactions for this reminder.");

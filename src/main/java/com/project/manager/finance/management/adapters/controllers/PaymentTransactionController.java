@@ -2,9 +2,12 @@ package com.project.manager.finance.management.adapters.controllers;
 
 import com.project.manager.finance.management.adapters.dtos.paymenttransaction.ListTransactionsResponse;
 import com.project.manager.finance.management.adapters.dtos.paymenttransaction.PayTransactionRequest;
+import com.project.manager.finance.management.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.project.manager.finance.management.adapters.mappers.PaymentTransactionMapper;
 import com.project.manager.finance.management.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
 import com.project.manager.finance.management.application.usecases.paymenttransaction.PayTransactionUseCase;
+import com.project.manager.finance.management.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +30,9 @@ public class PaymentTransactionController {
 
     @Autowired
     ListTransactionsByReminderUseCase listTransactionsByReminderUseCase;
+
+    @Autowired
+    private UpdatePaymentTransactionUseCase updateTransactionUseCase;
 
 
     @PostMapping("/{transactionId}/pay")
@@ -61,5 +67,22 @@ public class PaymentTransactionController {
 
         Page<ListTransactionsResponse> response = result.map(paymentTransactionMapper::toListTransactionsResponse);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateTransaction(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @PathVariable String id,
+            @RequestBody @Valid UpdatePaymentTransactionRequest request
+    ) {
+        var command = paymentTransactionMapper.toCommand(
+                loggedUserEmail,
+                id,
+                request
+        );
+
+        updateTransactionUseCase.execute(command);
+
+        return ResponseEntity.noContent().build();
     }
 }

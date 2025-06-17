@@ -1,12 +1,15 @@
 package com.project.manager.finance.management.adapters.controllers;
 
 import com.project.manager.finance.management.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
-import com.project.manager.finance.management.adapters.dtos.paymentremider.GetPaymentReminderResponse;
+import com.project.manager.finance.management.adapters.dtos.paymentremider.PaymentReminderResponse;
+import com.project.manager.finance.management.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
 import com.project.manager.finance.management.adapters.mappers.PaymentReminderMapper;
 import com.project.manager.finance.management.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.project.manager.finance.management.application.dtos.paymentreminder.GetPaymentReminderQuery;
+import com.project.manager.finance.management.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
 import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.application.usecases.paymentreminder.GetPaymentReminderUseCase;
+import com.project.manager.finance.management.application.usecases.paymentreminder.UpdatePaymentReminderUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,9 @@ public class PaymentReminderController {
     @Autowired
     private GetPaymentReminderUseCase getByIdUseCase;
 
+    @Autowired
+    private UpdatePaymentReminderUseCase updateUseCase;
+
 
     @PostMapping
     public ResponseEntity<Void> create(
@@ -43,14 +49,26 @@ public class PaymentReminderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetPaymentReminderResponse> getById(
+    public ResponseEntity<PaymentReminderResponse> getById(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id
     ) {
         GetPaymentReminderQuery query = paymentReminderMapper.toQuery(id, loggedUserEmail);
         var result = getByIdUseCase.execute(query);
 
-        GetPaymentReminderResponse response = paymentReminderMapper.toResponse(result);
+        PaymentReminderResponse response = paymentReminderMapper.toResponse(result);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> update(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @PathVariable String id,
+            @RequestBody @Valid UpdatePaymentReminderRequest dto
+    ) {
+        UpdatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, id, loggedUserEmail);
+        updateUseCase.execute(command);
+
+        return ResponseEntity.noContent().build();
     }
 }
