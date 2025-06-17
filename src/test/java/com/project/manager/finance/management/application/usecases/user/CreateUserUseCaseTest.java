@@ -49,7 +49,7 @@ class CreateUserUseCaseTest {
 
         createUserUseCase.execute(createUserDTO);
 
-        verify(userService, times(1)).createUser(userCaptor.capture());
+        verify(userService, times(1)).save(userCaptor.capture());
 
         User capturedUser = userCaptor.getValue();
         assertEquals("John Doe", capturedUser.getName());

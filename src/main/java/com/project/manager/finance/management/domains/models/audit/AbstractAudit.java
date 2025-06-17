@@ -60,11 +60,18 @@ public abstract class AbstractAudit implements Serializable {
     @Column(name = "deleted_by", length = 36)
     private String deletedBy;
 
-    public void validateIsActive(String resourceName) {
+    public void validateIsDeleted(String resourceName) {
         if (Boolean.TRUE.equals(this.deleted))
             throw new ResourceDeletedException(resourceName, this.getDeletedBy());
+    }
 
+    public void validateIsEnabled(String resourceName) {
         if (Boolean.FALSE.equals(this.enabled))
             throw new ResourceDisabledException(resourceName, this.getEnabledBy());
+    }
+
+    public void validateIsActive(String resourceName) {
+        this.validateIsDeleted(resourceName);
+        this.validateIsEnabled(resourceName);
     }
 }

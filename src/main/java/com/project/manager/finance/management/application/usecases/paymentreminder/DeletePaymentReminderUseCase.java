@@ -1,5 +1,5 @@
 package com.project.manager.finance.management.application.usecases.paymentreminder;
 
-public interface DeleteReminderUseCase {
+public interface DeletePaymentReminderUseCase {
     void execute(String reminderId, String userEmail);
 }

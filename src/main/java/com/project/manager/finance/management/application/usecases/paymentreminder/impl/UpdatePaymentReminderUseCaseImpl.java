@@ -23,8 +23,7 @@ public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUs
     PaymentTransactionService paymentTransactionService;
 
     public PaymentReminder execute(UpdatePaymentReminderCommand command) {
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderById(command.reminderId())
-                .orElseThrow(() -> new NotFoundException("Payment Reminder not found."));
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(command.reminderId());
         reminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!reminder.getUser().getEmail().equals(command.email())) {

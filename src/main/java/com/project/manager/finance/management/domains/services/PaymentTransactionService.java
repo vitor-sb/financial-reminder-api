@@ -96,7 +96,6 @@ public class PaymentTransactionService {
         }
     }
 
-    @Transactional
     public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
         findPendingTransactionByReminderId(reminderId)
                 .ifPresent(transaction -> {
@@ -109,7 +108,6 @@ public class PaymentTransactionService {
                 });
     }
 
-    @Transactional
     public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
         findPendingTransactionByReminderId(reminderId)
                 .ifPresent(transaction -> {

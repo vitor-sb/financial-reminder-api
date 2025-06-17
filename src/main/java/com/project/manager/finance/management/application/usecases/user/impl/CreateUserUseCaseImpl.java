@@ -23,6 +23,6 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
         String encryptedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.name(), dto.email(), encryptedPassword, dto.role());
 
-        userService.createUser(user);
+        userService.save(user);
     }
 }

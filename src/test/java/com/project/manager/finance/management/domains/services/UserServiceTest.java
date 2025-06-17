@@ -49,12 +49,12 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should create user if it does not exist")
-    void createUser() {
+    void save() {
         User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
         when(repository.findUserByEmail("johndoe@example.com")).thenReturn(Optional.empty());
         when(repository.save(user)).thenReturn(user);
 
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.save(user);
 
         assertEquals("John Doe", createdUser.getName());
         assertEquals("johndoe@example.com", createdUser.getEmail());

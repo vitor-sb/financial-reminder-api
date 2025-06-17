@@ -23,8 +23,7 @@ public class ListTransactionsByReminderUseCaseImpl implements ListTransactionsBy
 
     @Override
     public Page<ListTransactionsResult> execute(String loggedUserEmail, String reminderId, Pageable pageable) {
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderById(reminderId)
-                .orElseThrow(() -> new NotFoundException("Payment Reminder not found"));
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);
         reminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!reminder.getUser().getEmail().equals(loggedUserEmail))

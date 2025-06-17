@@ -19,9 +19,7 @@ public class GetPaymentReminderUseCaseImpl implements GetPaymentReminderUseCase 
     PaymentReminderService paymentReminderService;
 
     public PaymentReminderResult execute(GetPaymentReminderQuery dto) {
-        PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderById(dto.id()).orElseThrow(
-                () -> new NotFoundException("Payment reminder not found")
-        );
+        PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderByIdOrThrow(dto.id());
         paymentReminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!Objects.equals(paymentReminder.getUser().getEmail(), dto.email()))

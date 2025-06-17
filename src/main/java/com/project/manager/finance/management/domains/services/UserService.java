@@ -11,9 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -22,8 +20,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) {
+    public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public User findUserByEmailOrThrow(String email) {
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found."));
     }
 
     public Optional<User> getActiveUserByEmail(String email) {
@@ -53,29 +56,5 @@ public class UserService {
     public void checkEmailAvailability(String email) {
         if (userRepository.findUserByEmail(email).isPresent())
             throw new ConflictException("Email already in use.");
-    }
-
-    public void toggleUserAccountStatus(String userEmail, boolean enable) {
-        User user = userRepository.findUserByEmail(userEmail)
-                .orElseThrow(() -> new NotFoundException("User not found."));
-
-        user.getAudit().setEnabled(enable);
-        if (Boolean.TRUE.equals(enable)) {
-            user.getAudit().setEnabledAt(Instant.now());
-            user.getAudit().setEnabledBy(userEmail);
-        }
-
-        userRepository.save(user);
-    }
-
-    public void softDeleteUserAccount(String userEmail) {
-        User user = userRepository.findUserByEmail(userEmail)
-                .orElseThrow(() -> new NotFoundException("User not found."));
-
-        user.getAudit().setDeleted(true);
-        user.getAudit().setDeletedAt(Instant.now());
-        user.getAudit().setDeletedBy(userEmail);
-
-        userRepository.save(user);
     }
 }
