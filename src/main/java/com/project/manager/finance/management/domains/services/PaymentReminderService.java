@@ -38,6 +38,11 @@ public class PaymentReminderService {
         return paymentReminderRepository.findByUserEmailAndAuditDeletedFalse(email);
     }
 
+    public void validateReminderTitleConflict(String title, String email) {
+        if (getPaymentReminderByTitleAndEmail(title, email).isPresent())
+            throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
+    }
+
     @Transactional
     public void toggleReminderStatus(String reminderId, boolean enable, String userEmail) {
         PaymentReminder reminder = paymentReminderRepository.findById(reminderId)
@@ -74,10 +79,5 @@ public class PaymentReminderService {
         paymentTransactionService.cancelAndSoftDeletePendingTransaction(reminderId, userEmail);
 
         paymentReminderRepository.save(reminder);
-    }
-
-    public void validateReminderTitleConflict(String title, String email) {
-        if (getPaymentReminderByTitleAndEmail(title, email).isPresent())
-            throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
     }
 }

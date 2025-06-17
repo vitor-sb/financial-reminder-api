@@ -59,32 +59,6 @@ public class PaymentTransactionService {
     }
 
     @Transactional
-    public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
-        findPendingTransactionByReminderId(reminderId)
-                .ifPresent(transaction -> {
-                    transaction.getAudit().setEnabled(enable);
-                    if (Boolean.TRUE.equals(enable)) {
-                        transaction.getAudit().setEnabledAt(Instant.now());
-                        transaction.getAudit().setEnabledBy(userEmail);
-                    }
-                    save(transaction);
-                });
-    }
-
-    @Transactional
-    public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
-        findPendingTransactionByReminderId(reminderId)
-                .ifPresent(transaction -> {
-                    transaction.setStatus(TransactionStatusEnum.CANCELADO);
-                    transaction.getAudit().setDeleted(true);
-                    transaction.getAudit().setDeletedBy(userEmail);
-                    transaction.getAudit().setDeletedAt(Instant.now());
-                    save(transaction);
-                });
-    }
-
-
-    @Transactional
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
         transaction.setStatus(TransactionStatusEnum.PAGO);
         transaction.setPaymentDate(LocalDate.now());
@@ -124,5 +98,30 @@ public class PaymentTransactionService {
 
             transactionRepository.save(nextTransaction);
         }
+    }
+
+    @Transactional
+    public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
+        findPendingTransactionByReminderId(reminderId)
+                .ifPresent(transaction -> {
+                    transaction.getAudit().setEnabled(enable);
+                    if (Boolean.TRUE.equals(enable)) {
+                        transaction.getAudit().setEnabledAt(Instant.now());
+                        transaction.getAudit().setEnabledBy(userEmail);
+                    }
+                    save(transaction);
+                });
+    }
+
+    @Transactional
+    public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
+        findPendingTransactionByReminderId(reminderId)
+                .ifPresent(transaction -> {
+                    transaction.setStatus(TransactionStatusEnum.CANCELADO);
+                    transaction.getAudit().setDeleted(true);
+                    transaction.getAudit().setDeletedBy(userEmail);
+                    transaction.getAudit().setDeletedAt(Instant.now());
+                    save(transaction);
+                });
     }
 }
