@@ -19,8 +19,6 @@ public class PaymentReminderService {
     @Autowired
     private PaymentReminderRepository paymentReminderRepository;
 
-    @Autowired
-    private PaymentTransactionService paymentTransactionService;
 
     public PaymentReminder  savePaymentReminder(PaymentReminder reminder) {
         return paymentReminderRepository.save(reminder);
@@ -43,7 +41,6 @@ public class PaymentReminderService {
             throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
     }
 
-    @Transactional
     public void toggleReminderStatus(String reminderId, boolean enable, String userEmail) {
         PaymentReminder reminder = paymentReminderRepository.findById(reminderId)
                 .orElseThrow(() -> new NotFoundException("Payment Reminder not found."));
@@ -58,12 +55,9 @@ public class PaymentReminderService {
            reminder.getAudit().setEnabledBy(userEmail);
         }
 
-        paymentTransactionService.togglePendingTransactionStatus(reminderId, enable, userEmail);
-
         paymentReminderRepository.save(reminder);
     }
 
-    @Transactional
     public void softDeleteReminder(String reminderId, String userEmail) {
         PaymentReminder reminder = paymentReminderRepository.findById(reminderId)
                 .orElseThrow(() -> new NotFoundException("Payment Reminder not found."));
@@ -75,8 +69,6 @@ public class PaymentReminderService {
         reminder.getAudit().setDeleted(true);
         reminder.getAudit().setDeletedBy(userEmail);
         reminder.getAudit().setDeletedAt(Instant.now());
-
-        paymentTransactionService.cancelAndSoftDeletePendingTransaction(reminderId, userEmail);
 
         paymentReminderRepository.save(reminder);
     }

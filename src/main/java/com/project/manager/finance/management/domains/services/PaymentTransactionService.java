@@ -26,9 +26,6 @@ public class PaymentTransactionService {
     @Autowired
     private PaymentTransactionRepository transactionRepository;
 
-    @Autowired
-    private PaymentReminderService paymentReminderService;
-
     public PaymentTransaction save(PaymentTransaction transaction) {
         return transactionRepository.save(transaction);
     }
@@ -58,7 +55,6 @@ public class PaymentTransactionService {
         return transactionRepository.findByReminderIdAndAuditDeletedFalse(reminderId, pageable);
     }
 
-    @Transactional
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
         transaction.setStatus(TransactionStatusEnum.PAGO);
         transaction.setPaymentDate(LocalDate.now());

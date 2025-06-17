@@ -22,9 +22,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PaymentReminderService paymentReminderService;
-
     public User createUser(User user) {
         return userRepository.save(user);
     }
@@ -58,7 +55,6 @@ public class UserService {
             throw new ConflictException("Email already in use.");
     }
 
-    @Transactional
     public void toggleUserAccountStatus(String userEmail, boolean enable) {
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User not found."));
@@ -69,24 +65,16 @@ public class UserService {
             user.getAudit().setEnabledBy(userEmail);
         }
 
-        paymentReminderService.listPaymentRemindersByEmail(userEmail)
-                .forEach(reminder -> paymentReminderService.toggleReminderStatus(reminder.getId(), enable, userEmail));
-
         userRepository.save(user);
     }
 
-    @Transactional
     public void softDeleteUserAccount(String userEmail) {
         User user = userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
-        paymentReminderService.listPaymentRemindersByEmail(userEmail)
-                .forEach(reminder -> paymentReminderService.softDeleteReminder(reminder.getId(), userEmail));
-
         user.getAudit().setDeleted(true);
         user.getAudit().setDeletedAt(Instant.now());
         user.getAudit().setDeletedBy(userEmail);
-
 
         userRepository.save(user);
     }

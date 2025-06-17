@@ -13,6 +13,7 @@ import com.project.manager.finance.management.domains.services.PaymentReminderSe
 import com.project.manager.finance.management.domains.services.PaymentTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
@@ -24,6 +25,7 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
     private PaymentReminderService paymentReminderService;
 
     @Override
+    @Transactional
     public void execute(PayTransactionCommand command) {
         PaymentTransaction transaction = paymentTransactionService.getTransactionById(command.transactionId())
                 .orElseThrow(() -> new NotFoundException("PaymentTransaction not found"));
