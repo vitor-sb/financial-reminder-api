@@ -35,6 +35,12 @@ public class SecurityConfiguration {
             "/auth/login"
     };
 
+    private static final String[] PUBLIC_SWAGGER_ENDPOINTS = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -42,6 +48,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers(PUBLIC_SWAGGER_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(this::configureHttpHeaders)
@@ -61,7 +68,8 @@ public class SecurityConfiguration {
         headers.xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK));
 
         String cspPolicy = "default-src 'self'; " +
-                "script-src 'none'; " +
+                "style-src 'self' 'unsafe-inline'; " +
+                "script-src 'self' 'unsafe-inline'; " +
                 "object-src 'none'; " +
                 "frame-ancestors 'none'; " +
                 "form-action 'self'; " +

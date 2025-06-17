@@ -7,6 +7,8 @@ import com.project.manager.finance.management.adapters.mappers.PaymentTransactio
 import com.project.manager.finance.management.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
 import com.project.manager.finance.management.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.project.manager.finance.management.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments/transactions")
+@Tag(name = "Transações de Pagamento", description = "Endpoints para listar, pagar e atualizar transações individuais.")
 public class PaymentTransactionController {
 
     @Autowired
@@ -36,6 +39,7 @@ public class PaymentTransactionController {
 
 
     @PostMapping("/{transactionId}/pay")
+    @Operation(summary = "Efetua o pagamento de uma transação pendente")
     public ResponseEntity<Void> payTransaction(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String transactionId,
@@ -53,6 +57,7 @@ public class PaymentTransactionController {
     }
 
     @GetMapping("/list")
+    @Operation(summary = "Lista as transações de um lembrete específico", description = "Retorna uma lista paginada de todas as transações associadas a um ID de lembrete.")
     public ResponseEntity<Page<ListTransactionsResponse>> listByReminder(
             @PageableDefault(
                     size = 10,
@@ -70,6 +75,7 @@ public class PaymentTransactionController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "Atualiza os detalhes de uma transação", description = "Permite alterar o valor ou o método de pagamento de uma transação que ainda não foi paga.")
     public ResponseEntity<Void> updateTransaction(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id,

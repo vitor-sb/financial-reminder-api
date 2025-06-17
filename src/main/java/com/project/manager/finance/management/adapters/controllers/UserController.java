@@ -10,6 +10,8 @@ import com.project.manager.finance.management.application.usecases.user.DeleteSe
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
 import com.project.manager.finance.management.application.usecases.user.ToggleSelfUserAccountUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
+@Tag(name = "Usuários", description = "Funcionalidades relacionadas a usuários do sistema, como criação, listagem e gerenciamento de contas.")
 public class UserController {
 
     @Autowired
@@ -42,6 +45,7 @@ public class UserController {
     private DeleteSelfUserAccountUseCase deleteSelfUserAccountUseCase;
 
     @PostMapping
+    @Operation(summary = "Cria um novo usuário", description = "Endpoint público para registrar um novo usuário no sistema.")
     public ResponseEntity<Void> create(@RequestBody @Valid CreateUserRequest dto) {
         CreateUserCommand command = userMapper.toCommand(dto);
 
@@ -52,6 +56,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN_PERMISSION')")
     @GetMapping("/list")
+    @Operation(summary = "Lista e filtra usuários (Admin)", description = "Endpoint para administradores listarem, paginarem e filtrarem todos os usuários do sistema.")
     public ResponseEntity<Page<ListUsersSingleResponse>> listAll(
             @PageableDefault(
                     size = 10,
@@ -68,19 +73,22 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/account/disable")
+    @PostMapping("/me/disable")
+    @Operation(summary = "Desativa a conta do usuário logado", description = "Desativa a própria conta, impedindo o login. A conta pode ser reativada posteriormente.")
     public ResponseEntity<Void> disableSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleSelfUserAccountUseCase.execute(userEmail, false);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/account/enable")
+    @PostMapping("/me/enable")
+    @Operation(summary = "Reativa a conta do usuário logado", description = "Reativa a própria conta, caso ela tenha sido desativada.")
     public ResponseEntity<Void> enableSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleSelfUserAccountUseCase.execute(userEmail, true);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/account")
+    @DeleteMapping("/me")
+    @Operation(summary = "Exclui a conta do usuário logado", description = "Realiza a exclusão lógica (soft delete) da própria conta. Esta ação não pode ser desfeita.")
     public ResponseEntity<Void> deleteSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
         deleteSelfUserAccountUseCase.execute(userEmail);
         return ResponseEntity.noContent().build();

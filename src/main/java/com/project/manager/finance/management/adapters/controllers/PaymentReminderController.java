@@ -8,6 +8,8 @@ import com.project.manager.finance.management.application.dtos.paymentreminder.C
 import com.project.manager.finance.management.application.dtos.paymentreminder.GetPaymentReminderQuery;
 import com.project.manager.finance.management.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
 import com.project.manager.finance.management.application.usecases.paymentreminder.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/payments/reminders")
+@Tag(name = "Lembretes de Pagamento", description = "Gerenciamento de lembretes de pagamento recorrentes ou únicos.")
 public class PaymentReminderController {
 
     @Autowired
@@ -36,10 +39,11 @@ public class PaymentReminderController {
     private ToggleReminderStatusUseCase toggleReminderStatusUseCase;
 
     @Autowired
-    private DeleteReminderUseCase deleteReminderUseCase;
+    private DeletePaymentReminderUseCase deletePaymentReminderUseCase;
 
 
     @PostMapping
+    @Operation(summary = "Cria um novo lembrete de pagamento")
     public ResponseEntity<Void> create(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @RequestBody @Valid CreatePaymentReminderRequest dto,
@@ -53,6 +57,7 @@ public class PaymentReminderController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca um lembrete de pagamento pelo ID")
     public ResponseEntity<PaymentReminderResponse> getById(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id
@@ -65,6 +70,7 @@ public class PaymentReminderController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "Atualiza um lembrete de pagamento")
     public ResponseEntity<Void> update(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id,
@@ -77,20 +83,23 @@ public class PaymentReminderController {
     }
 
     @PostMapping("/{id}/disable")
+    @Operation(summary = "Desativa um lembrete de pagamento")
     public ResponseEntity<Void> disable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleReminderStatusUseCase.execute(id, false, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/enable")
+    @Operation(summary = "Reativa um lembrete de pagamento")
     public ResponseEntity<Void> enable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleReminderStatusUseCase.execute(id, true, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Exclui um lembrete de pagamento")
     public ResponseEntity<Void> delete(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
-        deleteReminderUseCase.execute(id, userEmail);
+        deletePaymentReminderUseCase.execute(id, userEmail);
         return ResponseEntity.noContent().build();
     }
 }
