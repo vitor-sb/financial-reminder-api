@@ -32,13 +32,10 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
 
-        // TODO: add TransactionStatusEnum.VENCIDO status
-        if (transaction.getStatus() != TransactionStatusEnum.PENDENTE)
-            throw new ConflictException("Only transactions with 'PENDENTE' status can be paid. Transaction status: " + transaction.getStatus());
+        if (transaction.getStatus() != TransactionStatusEnum.PENDENTE && transaction.getStatus() != TransactionStatusEnum.VENCIDO)
+            throw new ConflictException("Only transactions with 'PENDENTE' or 'VENCIDO' status can be paid. Transaction status: " + transaction.getStatus());
 
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderById(transaction.getReminder().getId())
-                .orElseThrow(() -> new NotFoundException("Associated PaymentReminder not found"));
-
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(transaction.getReminder().getId());
         reminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!reminder.getUser().getEmail().equals(command.loggedUserEmail()))
