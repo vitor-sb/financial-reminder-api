@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>com.project.manager</groupId>
+	<groupId>com.reminder.financial</groupId>
 	<artifactId>financial-reminder-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>reminder-api</name>

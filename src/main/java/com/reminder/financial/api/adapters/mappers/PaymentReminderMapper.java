@@ -3,7 +3,6 @@ package com.reminder.financial.api.adapters.mappers;
 import com.reminder.financial.api.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
 import com.reminder.financial.api.adapters.dtos.paymentremider.PaymentReminderResponse;
 import com.reminder.financial.api.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
-import com.project.manager.finance.management.application.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.reminder.financial.api.application.dtos.paymentreminder.GetPaymentReminderQuery;
 import com.reminder.financial.api.application.dtos.paymentreminder.PaymentReminderResult;

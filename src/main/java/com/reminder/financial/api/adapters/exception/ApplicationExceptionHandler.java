@@ -1,6 +1,5 @@
 package com.reminder.financial.api.adapters.exception;
 
-import com.project.manager.finance.management.application.exceptions.*;
 import com.reminder.financial.api.application.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
