@@ -6,8 +6,10 @@ import com.project.manager.finance.management.adapters.dtos.user.ListUsersSingle
 import com.project.manager.finance.management.adapters.mappers.UserMapper;
 import com.project.manager.finance.management.application.dtos.user.CreateUserCommand;
 import com.project.manager.finance.management.application.dtos.user.ListUsersFilterQuery;
+import com.project.manager.finance.management.application.usecases.user.DeleteSelfUserAccountUseCase;
 import com.project.manager.finance.management.application.usecases.user.ListUsersUseCase;
 import com.project.manager.finance.management.application.usecases.user.CreateUserUseCase;
+import com.project.manager.finance.management.application.usecases.user.ToggleSelfUserAccountUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -31,6 +34,12 @@ public class UserController {
 
     @Autowired
     private ListUsersUseCase listUsersUseCase;
+
+    @Autowired
+    private ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
+
+    @Autowired
+    private DeleteSelfUserAccountUseCase deleteSelfUserAccountUseCase;
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody @Valid CreateUserRequest dto) {
@@ -57,5 +66,23 @@ public class UserController {
 
         Page<ListUsersSingleResponse> response = result.map(userMapper::toListUsersSingleResponse);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/account/disable")
+    public ResponseEntity<Void> disableSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
+        toggleSelfUserAccountUseCase.execute(userEmail, false);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/account/enable")
+    public ResponseEntity<Void> enableSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
+        toggleSelfUserAccountUseCase.execute(userEmail, true);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/account")
+    public ResponseEntity<Void> deleteSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
+        deleteSelfUserAccountUseCase.execute(userEmail);
+        return ResponseEntity.noContent().build();
     }
 }

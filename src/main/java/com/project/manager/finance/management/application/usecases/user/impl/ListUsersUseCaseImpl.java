@@ -15,6 +15,7 @@ public class ListUsersUseCaseImpl implements ListUsersUseCase {
     @Autowired
     private UserService userService;
 
+    @Override
     public Page<ListUsersSingleResult> execute(ListUsersFilterQuery query, Pageable pageable) {
         var usersPage = userService.listUsers(query, pageable);
 
