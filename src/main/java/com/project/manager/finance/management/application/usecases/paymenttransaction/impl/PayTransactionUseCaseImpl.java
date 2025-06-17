@@ -30,6 +30,7 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
 
+        // TODO: add TransactionStatusEnum.VENCIDO status
         if (transaction.getStatus() != TransactionStatusEnum.PENDENTE)
             throw new ConflictException("Only transactions with 'PENDENTE' status can be paid. Transaction status: " + transaction.getStatus());
 

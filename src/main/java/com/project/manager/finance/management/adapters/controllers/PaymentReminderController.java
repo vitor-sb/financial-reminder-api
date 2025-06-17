@@ -7,9 +7,7 @@ import com.project.manager.finance.management.adapters.mappers.PaymentReminderMa
 import com.project.manager.finance.management.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.project.manager.finance.management.application.dtos.paymentreminder.GetPaymentReminderQuery;
 import com.project.manager.finance.management.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
-import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
-import com.project.manager.finance.management.application.usecases.paymentreminder.GetPaymentReminderUseCase;
-import com.project.manager.finance.management.application.usecases.paymentreminder.UpdatePaymentReminderUseCase;
+import com.project.manager.finance.management.application.usecases.paymentreminder.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +31,12 @@ public class PaymentReminderController {
 
     @Autowired
     private UpdatePaymentReminderUseCase updateUseCase;
+
+    @Autowired
+    private ToggleReminderStatusUseCase toggleReminderStatusUseCase;
+
+    @Autowired
+    private DeleteReminderUseCase deleteReminderUseCase;
 
 
     @PostMapping
@@ -69,6 +73,24 @@ public class PaymentReminderController {
         UpdatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, id, loggedUserEmail);
         updateUseCase.execute(command);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/disable")
+    public ResponseEntity<Void> disable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
+        toggleReminderStatusUseCase.execute(id, false, userEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/enable")
+    public ResponseEntity<Void> enable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
+        toggleReminderStatusUseCase.execute(id, true, userEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
+        deleteReminderUseCase.execute(id, userEmail);
         return ResponseEntity.noContent().build();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -56,6 +57,32 @@ public class PaymentTransactionService {
     public Page<PaymentTransaction> listTransactionsByReminder(String reminderId, Pageable pageable) {
         return transactionRepository.findByReminderIdAndAuditDeletedFalse(reminderId, pageable);
     }
+
+    @Transactional
+    public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
+        findPendingTransactionByReminderId(reminderId)
+                .ifPresent(transaction -> {
+                    transaction.getAudit().setEnabled(enable);
+                    if (Boolean.TRUE.equals(enable)) {
+                        transaction.getAudit().setEnabledAt(Instant.now());
+                        transaction.getAudit().setEnabledBy(userEmail);
+                    }
+                    save(transaction);
+                });
+    }
+
+    @Transactional
+    public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
+        findPendingTransactionByReminderId(reminderId)
+                .ifPresent(transaction -> {
+                    transaction.setStatus(TransactionStatusEnum.CANCELADO);
+                    transaction.getAudit().setDeleted(true);
+                    transaction.getAudit().setDeletedBy(userEmail);
+                    transaction.getAudit().setDeletedAt(Instant.now());
+                    save(transaction);
+                });
+    }
+
 
     @Transactional
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
