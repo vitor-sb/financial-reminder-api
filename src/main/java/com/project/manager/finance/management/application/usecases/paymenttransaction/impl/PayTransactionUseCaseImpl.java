@@ -1,6 +1,7 @@
 package com.project.manager.finance.management.application.usecases.paymenttransaction.impl;
 
 import com.project.manager.finance.management.application.dtos.paymenttransaction.PayTransactionCommand;
+import com.project.manager.finance.management.application.dtos.paymenttransaction.PaymentExecutionDetails;
 import com.project.manager.finance.management.application.exceptions.ConflictException;
 import com.project.manager.finance.management.application.exceptions.NotFoundException;
 import com.project.manager.finance.management.application.exceptions.UnauthorizedException;
@@ -10,7 +11,6 @@ import com.project.manager.finance.management.domains.models.reminder.PaymentTra
 import com.project.manager.finance.management.domains.models.reminder.enums.TransactionStatusEnum;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
 import com.project.manager.finance.management.domains.services.PaymentTransactionService;
-import com.project.manager.finance.management.infrastructure.utils.ObjectPropertyCopier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +41,17 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
         if (!reminder.getUser().getEmail().equals(command.loggedUserEmail()))
             throw new UnauthorizedException("You do not have permission to update this transaction.");
 
-        ObjectPropertyCopier.copyNonNullProperties(command.transactionDetails(), transaction);
+        this.updateTransactionFromPaymentDetails(command.transactionDetails(), transaction);
 
         paymentTransactionService.processSuccessfulPayment(transaction);
+    }
+
+    private void updateTransactionFromPaymentDetails(PaymentExecutionDetails details, PaymentTransaction transaction) {
+        if (details.method() != null) {
+            transaction.setMethod(details.method());
+        }
+        if (details.paymentValue() != null) {
+            transaction.setPaymentValue(details.paymentValue());
+        }
     }
 }

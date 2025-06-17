@@ -5,11 +5,12 @@ import com.project.manager.finance.management.application.exceptions.NotFoundExc
 import com.project.manager.finance.management.application.exceptions.UnauthorizedException;
 import com.project.manager.finance.management.application.usecases.paymentreminder.UpdatePaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
+import com.project.manager.finance.management.domains.models.reminder.PaymentTransaction;
 import com.project.manager.finance.management.domains.services.PaymentReminderService;
 import com.project.manager.finance.management.domains.services.PaymentTransactionService;
-import com.project.manager.finance.management.infrastructure.utils.ObjectPropertyCopier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 
 @Component
@@ -21,29 +22,52 @@ public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUs
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
-    public PaymentReminder execute(UpdatePaymentReminderCommand dto) {
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderById(dto.reminderId())
+    public PaymentReminder execute(UpdatePaymentReminderCommand command) {
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderById(command.reminderId())
                 .orElseThrow(() -> new NotFoundException("Payment Reminder not found."));
         reminder.getAudit().validateIsActive("PaymentReminder");
 
-        if (!reminder.getUser().getEmail().equals(dto.email())) {
+        if (!reminder.getUser().getEmail().equals(command.email())) {
             throw new UnauthorizedException("This reminder does not belong to the logged in user.");
         }
 
-        ObjectPropertyCopier.copyNonNullProperties(dto, reminder);
+        this.updateReminderFields(command, reminder);
 
         PaymentReminder updatedReminder = paymentReminderService.savePaymentReminder(reminder);
 
-        if (Boolean.TRUE.equals(dto.updatePendingTransaction())) {
+        if (Boolean.TRUE.equals(command.updatePendingTransaction())) {
             paymentTransactionService
                     .findPendingTransactionByReminderId(reminder.getId())
-                    .ifPresent(transaction -> {
-                        ObjectPropertyCopier.copyNonNullProperties(reminder, transaction);
-                        transaction.setPaymentValue(reminder.getBaseValue());
-                        paymentTransactionService.save(transaction);
-                    });
+                    .ifPresent(transaction -> this.updatePendingTransactionDetails(command, transaction));
         }
 
         return updatedReminder;
+    }
+
+    private void updateReminderFields(UpdatePaymentReminderCommand command, PaymentReminder reminder) {
+        if (StringUtils.hasText(command.title())) {
+            reminder.setTitle(command.title());
+        }
+        if (StringUtils.hasText(command.description())) {
+            reminder.setDescription(command.description());
+        }
+        if (command.method() != null) {
+            reminder.setMethod(command.method());
+        }
+        if (command.value() != null) {
+            reminder.setBaseValue(command.value());
+        }
+    }
+
+    private void updatePendingTransactionDetails(UpdatePaymentReminderCommand command, PaymentTransaction transaction) {
+        if (command.method() != null) {
+            transaction.setMethod(command.method());
+        }
+
+        if (command.value() != null) {
+            transaction.setPaymentValue(command.value());
+        }
+
+        paymentTransactionService.save(transaction);
     }
 }
