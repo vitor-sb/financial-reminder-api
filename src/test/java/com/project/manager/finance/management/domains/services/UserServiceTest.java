@@ -67,7 +67,7 @@ class UserServiceTest {
         User user = new User("John Doe", "johndoe@example.com", passwordEncoder.encode("password"), RoleEnum.USER);
         when(repository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse("johndoe@example.com")).thenReturn(Optional.of(user));
 
-        User foundUser = userService.getUserByEmail("johndoe@example.com").orElseThrow(
+        User foundUser = userService.getActiveUserByEmail("johndoe@example.com").orElseThrow(
                 () -> new NotFoundException("User not found")
         );
 
@@ -80,7 +80,7 @@ class UserServiceTest {
     void getUserByEmailThrowsNotFoundException() {
         when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
-        Optional<User> foundUser = userService.getUserByEmail("nonexistent@example.com");
+        Optional<User> foundUser = userService.getActiveUserByEmail("nonexistent@example.com");
         assertTrue(foundUser.isEmpty());
     }
 

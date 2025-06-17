@@ -15,7 +15,7 @@ public class PaymentReminderService {
     @Autowired
     private PaymentReminderRepository paymentReminderRepository;
 
-    public PaymentReminder createPaymentReminder(PaymentReminder reminder) {
+    public PaymentReminder savePaymentReminder(PaymentReminder reminder) {
         return paymentReminderRepository.save(reminder);
     }
 

@@ -1,6 +1,7 @@
 package com.project.manager.finance.management.application.usecases.paymentreminder.impl;
 
 import com.project.manager.finance.management.application.dtos.paymentreminder.CreatePaymentReminderCommand;
+import com.project.manager.finance.management.application.exceptions.ConflictException;
 import com.project.manager.finance.management.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.project.manager.finance.management.domains.models.reminder.PaymentReminder;
 import com.project.manager.finance.management.domains.models.user.User;
@@ -18,7 +19,7 @@ import java.time.format.DateTimeParseException;
 public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUseCase {
 
     @Autowired
-    PaymentReminderService reminderService;
+    PaymentReminderService paymentReminderService;
 
     @Autowired
     UserService userService;
@@ -27,13 +28,14 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
     PaymentTransactionService transactionService;
 
     public PaymentReminder execute(CreatePaymentReminderCommand dto) {
-        reminderService.validateReminderTitleConflict(dto.title(), dto.email());
+        paymentReminderService.validateReminderTitleConflict(dto.title(), dto.email());
 
-        User user = userService.getUserByEmail(dto.email()).orElseThrow(
+        User user = userService.getActiveUserByEmail(dto.email()).orElseThrow(
                 () -> new NotFoundException("Authenticated user not found")
         );
 
-        LocalDate reminderDate = parseReminderDate(dto.date());
+        LocalDate reminderDate = parseAndValidateReminderDate(dto.date());
+
         PaymentReminder reminder = new PaymentReminder(
                 user,
                 dto.title(),
@@ -45,16 +47,23 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
                 dto.installmentsNumber()
         );
 
-        var persistedReminder = reminderService.createPaymentReminder(reminder);
+        var persistedReminder = paymentReminderService.savePaymentReminder(reminder);
 
         transactionService.createPaymentTransactionByReminder(reminder);
 
         return persistedReminder;
     }
 
-    private LocalDate parseReminderDate(String dateString) {
+    private LocalDate parseAndValidateReminderDate(String dateString) {
         try {
-            return LocalDate.parse(dateString);
+            LocalDate parsedDate = LocalDate.parse(dateString);
+
+            if (parsedDate.isBefore(LocalDate.now())) {
+                throw new ConflictException("Reminder date cannot be in the past.");
+            }
+
+            return parsedDate;
+
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date format for reminder. Expected 'YYYY-MM-DD'");
         }

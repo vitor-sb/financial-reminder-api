@@ -24,7 +24,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> getActiveUserByEmail(String email) {
         return userRepository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse(email);
     }
 
