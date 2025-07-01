@@ -1,34 +1,49 @@
-# API de Gestão Financeira
+# Financial Management API
 
-API RESTful para gestão de finanças pessoais, construída com Spring Boot e seguindo os princípios da Arquitetura Hexagonal.
+A RESTful API for managing payment reminders and transactions. Built with Spring Boot and following the principles of Hexagonal Architecture.
 
-* **Tecnologias**: Java 17, Spring Boot, Spring Security, JWT, JPA/Hibernate, PostgreSQL, Redis, Docker.
-* **Pré-requisitos**: JDK 17, Maven 3.x e Docker.
+## Tech Stack
 
-## Como Executar
+-   **Java 17**
+-   **Spring Boot**
+    -   **Spring Web**
+    -   **Spring Data JPA** & **Hibernate**
+    -   **Spring Security**
+-   **PostgreSQL**
+-   **Redis**
+-   **Docker**
+-   **JWT (Java Web Token)**
 
-1.  Clone o repositório.
-2.  Crie e configure o arquivo `.env` a partir do `.env.example` na raiz do projeto.
-3.  Inicie a infraestrutura com Docker:
+## Prerequisites
+
+-   **JDK 17**
+-   **Maven 3.x**
+-   **Docker** & **Docker Compose**
+
+## How to Run
+
+1.  Clone the repository.
+2.  Create and configure the `.env` file from `.env.example` in the project root.
+3.  Start the infrastructure with Docker:
     ```bash
     docker-compose up -d
     ```
-4. Execute a aplicação:
-   1. **Opção 1: Via Terminal (Linux & macOS)**
-      1. No terminal, navegue até a raiz do projeto. 
-      2. Carregue as variáveis de ambiente do arquivo `.env`: 
-      ```bash
-      export $(grep -v '^#' .env | xargs)
-      ```
-      3. Execute a aplicação:
-        ```bash
-        ./mvnw spring-boot:run
-        ```
+4. Run the application:
+   1. **Option 1: Via Terminal (Linux & macOS)**
+      1.  In the terminal, navigate to the project root.
+      2.  Load the environment variables from the `.env` file:
+          ```bash
+          export $(grep -v '^#' .env | xargs)
+          ```
+      3.  Run the application:
+          ```bash
+          ./mvnw spring-boot:run
+          ```
 
-   2. **Opção 2: Via IntelliJ IDEA (Qualquer SO)**
-      1.  Abra o projeto na IDE IntelliJ.
-      2.  No canto superior direito, clique em **"Edit Configurations..."**. 
-      3. Encontre o campo **"Environment variables"** e clique no primeiro ícone ao final da linha para abrir a janela de seleção de arquivo. 
-      4. Selecione o arquivo `.env` configurado anteriormente. 
-      5. Clique em **OK** e depois em **Apply** e **OK** para salvar a configuração. 
-      6. Agora você pode executar ou depurar a aplicação usando os botões de Play/Debug no topo da IDE.
+   2. **Option 2: Via IntelliJ IDEA (Any OS)**
+      1.  Open the project in the IntelliJ IDE.
+      2.  In the upper right corner, click on **"Edit Configurations..."**.
+      3.  Find the **"Environment variables"** field and click the icon at the end of the line to open the file selection window.
+      4.  Select the previously configured `.env` file.
+      5.  Click **OK**, then **Apply** and **OK** to save the configuration.
+      6.  You can now run or debug the application using the Play/Debug buttons at the top of the IDE.
