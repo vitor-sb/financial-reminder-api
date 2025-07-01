@@ -1,11 +1,13 @@
 package com.reminder.financial.api.adapters.controllers;
 
 import com.reminder.financial.api.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
+import com.reminder.financial.api.adapters.dtos.paymentremider.MonthlyBillResponse;
 import com.reminder.financial.api.adapters.dtos.paymentremider.PaymentReminderResponse;
 import com.reminder.financial.api.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
 import com.reminder.financial.api.adapters.mappers.PaymentReminderMapper;
 import com.reminder.financial.api.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.reminder.financial.api.application.dtos.paymentreminder.GetPaymentReminderQuery;
+import com.reminder.financial.api.application.dtos.paymentreminder.ListMonthlyBillsResult;
 import com.reminder.financial.api.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
 import com.reminder.financial.api.application.usecases.paymentreminder.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +19,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/payments/reminders")
 @Tag(name = "Lembretes de Pagamento", description = "Gerenciamento de lembretes de pagamento recorrentes ou únicos.")
 public class PaymentReminderController {
+
+    private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
 
     @Autowired
     private PaymentReminderMapper paymentReminderMapper;
@@ -40,6 +48,9 @@ public class PaymentReminderController {
 
     @Autowired
     private DeletePaymentReminderUseCase deletePaymentReminderUseCase;
+
+    @Autowired
+    private ListMonthlyBillsUseCase listMonthlyBillsUseCase;
 
 
     @PostMapping
@@ -101,5 +112,34 @@ public class PaymentReminderController {
     public ResponseEntity<Void> delete(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         deletePaymentReminderUseCase.execute(id, userEmail);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/monthly-bills")
+    @Operation(summary = "Lista contas a pagar reais e esperadas para um mês específico",
+            description = "Retorna uma lista combinada de transações existentes e contas futuras simuladas com base nos lembretes. Se o mês e o ano não forem fornecidos, retorna as contas para o mês atual.")
+    public ResponseEntity<List<MonthlyBillResponse>> getMonthlyBills(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
+        YearMonth now = YearMonth.now();
+        YearMonth queryYearMonth = YearMonth.of(
+                year != null ? year : now.getYear(),
+                month != null ? month : now.getMonthValue()
+        );
+
+        YearMonth limitDate = now.plusYears(MAX_YEARS_IN_FUTURE_ALLOWED);
+        if (queryYearMonth.isAfter(limitDate)) {
+            throw new IllegalArgumentException(
+                    "Date exceeds the allowed limit. You can only query up to " + MAX_YEARS_IN_FUTURE_ALLOWED + " years in the future."
+            );
+        }
+
+        List<ListMonthlyBillsResult> results = listMonthlyBillsUseCase.execute(loggedUserEmail, queryYearMonth);
+
+        List<MonthlyBillResponse> response = results.stream()
+                .map(paymentReminderMapper::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 }

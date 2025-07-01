@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -116,5 +118,11 @@ public class PaymentTransactionService {
                     transaction.getAudit().setDeletedAt(Instant.now());
                     save(transaction);
                 });
+    }
+
+    public List<PaymentTransaction> findTransactionsForMonth(String userEmail, YearMonth yearMonth) {
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        return transactionRepository.findAllByReminderUserEmailAndPaymentDateBetween(userEmail, startDate, endDate);
     }
 }

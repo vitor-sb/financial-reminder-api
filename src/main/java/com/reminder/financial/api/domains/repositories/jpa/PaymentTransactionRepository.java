@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,4 +17,6 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
     Page<PaymentTransaction> findByReminderIdAndAuditDeletedFalse(String reminderId, Pageable pageable);
 
     Optional<PaymentTransaction> findFirstByReminderIdAndStatusAndAuditDeletedFalse(String reminderId, TransactionStatusEnum status);
+
+    List<PaymentTransaction> findAllByReminderUserEmailAndPaymentDateBetween(String email, LocalDate startDate, LocalDate endDate);
 }

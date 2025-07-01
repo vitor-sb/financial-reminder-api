@@ -116,4 +116,15 @@ public class ApplicationExceptionHandler {
                 request.getServletPath()
         );
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgument(IllegalArgumentException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
 }
