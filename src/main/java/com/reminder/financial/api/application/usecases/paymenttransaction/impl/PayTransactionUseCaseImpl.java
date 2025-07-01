@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 @Component
 public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
 
@@ -24,6 +26,11 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
     @Autowired
     private PaymentReminderService paymentReminderService;
 
+    private static final Set<TransactionStatusEnum> VALID_PAY_STATUSES = Set.of(
+            TransactionStatusEnum.PENDENTE,
+            TransactionStatusEnum.VENCIDO
+    );
+
     @Override
     @Transactional
     public void execute(PayTransactionCommand command) {
@@ -32,8 +39,8 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
 
-        if (transaction.getStatus() != TransactionStatusEnum.PENDENTE && transaction.getStatus() != TransactionStatusEnum.VENCIDO)
-            throw new ConflictException("Only transactions with 'PENDENTE' or 'VENCIDO' status can be paid. Transaction status: " + transaction.getStatus());
+        if (!VALID_PAY_STATUSES.contains(transaction.getStatus()))
+            throw new ConflictException("This transaction cannot be paid. Transaction status: " + transaction.getStatus());
 
         PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(transaction.getReminder().getId());
         reminder.getAudit().validateIsActive("PaymentReminder");
