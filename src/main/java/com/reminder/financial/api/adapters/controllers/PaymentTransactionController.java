@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments/transactions")
-@Tag(name = "Transações de Pagamento", description = "Endpoints para listar, pagar e atualizar transações individuais.")
+@Tag(name = "Payment Transactions", description = "Payment transactions management.")
 public class PaymentTransactionController {
 
     @Autowired
@@ -39,7 +39,7 @@ public class PaymentTransactionController {
 
 
     @PostMapping("/{transactionId}/pay")
-    @Operation(summary = "Efetua o pagamento de uma transação pendente")
+    @Operation(summary = "Make a payment for a pending transaction")
     public ResponseEntity<Void> payTransaction(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String transactionId,
@@ -57,7 +57,10 @@ public class PaymentTransactionController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "Lista as transações de um lembrete específico", description = "Retorna uma lista paginada de todas as transações associadas a um ID de lembrete.")
+    @Operation(
+            summary = "List transactions for a specific reminder",
+            description = "Returns a paginated list of all transactions associated with a reminder ID."
+    )
     public ResponseEntity<Page<ListTransactionsResponse>> listByReminder(
             @PageableDefault(
                     size = 10,
@@ -75,7 +78,10 @@ public class PaymentTransactionController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Atualiza os detalhes de uma transação", description = "Permite alterar o valor ou o método de pagamento de uma transação que ainda não foi paga.")
+    @Operation(
+            summary = "Updates the details of a transaction",
+            description = "Allows you to change the amount or payment method of a transaction that has not yet been paid."
+    )
     public ResponseEntity<Void> updateTransaction(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id,

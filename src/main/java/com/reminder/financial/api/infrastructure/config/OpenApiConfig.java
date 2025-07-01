@@ -18,9 +18,9 @@ public class OpenApiConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Gerenciamento Financeiro")
+                        .title("Financial Reminder Management API")
                         .version("v1")
-                        .description("API para gerenciamento de lembretes e transações de pagamento.")
+                        .description("API for managing reminders and financial transactions.")
                         .termsOfService("http://swagger.io/terms/")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                         .contact(new Contact().name("vitor-sb").url("https://www.linkedin.com/in/vitor-sb/"))

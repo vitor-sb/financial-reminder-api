@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/payments/reminders")
-@Tag(name = "Lembretes de Pagamento", description = "Gerenciamento de lembretes de pagamento recorrentes ou únicos.")
+@Tag(name = "Payment Reminders", description = "Payment reminder management.")
 public class PaymentReminderController {
 
     private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
@@ -54,7 +54,7 @@ public class PaymentReminderController {
 
 
     @PostMapping
-    @Operation(summary = "Cria um novo lembrete de pagamento")
+    @Operation(summary = "Create a new payment reminder")
     public ResponseEntity<Void> create(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @RequestBody @Valid CreatePaymentReminderRequest dto,
@@ -68,7 +68,7 @@ public class PaymentReminderController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca um lembrete de pagamento pelo ID")
+    @Operation(summary = "Search for a payment reminder by ID")
     public ResponseEntity<PaymentReminderResponse> getById(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id
@@ -81,7 +81,7 @@ public class PaymentReminderController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Atualiza um lembrete de pagamento")
+    @Operation(summary = "Update a payment reminder")
     public ResponseEntity<Void> update(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id,
@@ -94,29 +94,31 @@ public class PaymentReminderController {
     }
 
     @PostMapping("/{id}/disable")
-    @Operation(summary = "Desativa um lembrete de pagamento")
+    @Operation(summary = "Disable a payment reminder")
     public ResponseEntity<Void> disable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleReminderStatusUseCase.execute(id, false, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/enable")
-    @Operation(summary = "Reativa um lembrete de pagamento")
+    @Operation(summary = "Reactivate a payment reminder")
     public ResponseEntity<Void> enable(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         toggleReminderStatusUseCase.execute(id, true, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Exclui um lembrete de pagamento")
+    @Operation(summary = "Delete a payment reminder")
     public ResponseEntity<Void> delete(@PathVariable String id, @AuthenticationPrincipal(expression = "username") String userEmail) {
         deletePaymentReminderUseCase.execute(id, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/monthly-bills")
-    @Operation(summary = "Lista contas a pagar reais e esperadas para um mês específico",
-            description = "Retorna uma lista combinada de transações existentes e contas futuras simuladas com base nos lembretes. Se o mês e o ano não forem fornecidos, retorna as contas para o mês atual.")
+    @Operation(
+            summary = "Lists the month's bills (actual and expected)",
+            description = "Returns existing transactions and simulated future accounts. Defaults to the current month."
+    )
     public ResponseEntity<List<MonthlyBillResponse>> getMonthlyBills(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @RequestParam(required = false) Integer year,

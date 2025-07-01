@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
-@Tag(name = "Autenticação", description = "Endpoint para login e geração de token de acesso.")
+@Tag(name = "Authentication", description = "Responsible for managing authentication and API access.")
 public class AuthenticationController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class AuthenticationController {
     private LoginUseCase loginUseCase;
 
     @PostMapping("/login")
-    @Operation(summary = "Realiza o login do usuário", description = "Autentica um usuário com e-mail e senha e retorna um token JWT em caso de sucesso.")
+    @Operation(summary = "Validates user credentials and returns an access token")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest dto) {
         AuthenticationCommand command = authenticationMapper.toCommand(dto);
         var result = loginUseCase.execute(command);
