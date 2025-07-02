@@ -1,4 +1,4 @@
-# --- Estágio 1: Build ---
+# --- Stage 1: Build ---
 FROM maven:3.9.6-eclipse-temurin-17-focal AS build
 
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 
-# --- Estágio 2: Runtime ---
+# --- Stage 2: Runtime ---
 FROM eclipse-temurin:17-jre-focal
 
 WORKDIR /app
