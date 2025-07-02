@@ -8,7 +8,6 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
-import com.reminder.financial.api.application.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +29,8 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
     public PaymentReminder execute(CreatePaymentReminderCommand dto) {
         paymentReminderService.validateReminderTitleConflict(dto.title(), dto.email());
 
-        User user = userService.getActiveUserByEmail(dto.email()).orElseThrow(
-                () -> new NotFoundException("Authenticated user not found")
-        );
+        User user = userService.findUserByEmailOrThrow(dto.email());
+        user.getAudit().validateIsActive("Authenticated user");
 
         LocalDate reminderDate = parseAndValidateReminderDate(dto.date());
 
