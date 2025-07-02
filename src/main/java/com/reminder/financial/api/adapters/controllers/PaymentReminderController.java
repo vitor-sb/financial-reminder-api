@@ -1,9 +1,6 @@
 package com.reminder.financial.api.adapters.controllers;
 
-import com.reminder.financial.api.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
-import com.reminder.financial.api.adapters.dtos.paymentremider.MonthlyBillResponse;
-import com.reminder.financial.api.adapters.dtos.paymentremider.PaymentReminderResponse;
-import com.reminder.financial.api.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
+import com.reminder.financial.api.adapters.dtos.paymentremider.*;
 import com.reminder.financial.api.adapters.mappers.PaymentReminderMapper;
 import com.reminder.financial.api.application.dtos.paymentreminder.CreatePaymentReminderCommand;
 import com.reminder.financial.api.application.dtos.paymentreminder.GetPaymentReminderQuery;
@@ -14,6 +11,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,9 @@ public class PaymentReminderController {
 
     @Autowired
     private ListMonthlyBillsUseCase listMonthlyBillsUseCase;
+
+    @Autowired
+    private ListPaymentRemindersByUserUseCase listPaymentRemindersByUserUseCase;
 
 
     @PostMapping
@@ -142,6 +146,26 @@ public class PaymentReminderController {
         List<MonthlyBillResponse> response = results.stream()
                 .map(paymentReminderMapper::toResponse)
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/list")
+    @Operation(
+            summary = "List Payment Reminders for a logged user",
+            description = "Returns a paginated list of all payment reminders associated with the logged in user."
+    )
+    public ResponseEntity<Page<ListPaymentRemindersResponse>> listByReminder(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @PageableDefault(
+                    size = 10,
+                    page = 0,
+                    sort = {"baseDate", "recurrence"},
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, pageable);
+
+        Page<ListPaymentRemindersResponse> response = result.map(paymentReminderMapper::toListPaymentRemindersResponse);
         return ResponseEntity.ok(response);
     }
 }

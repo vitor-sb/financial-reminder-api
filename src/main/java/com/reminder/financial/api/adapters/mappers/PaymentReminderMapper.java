@@ -1,9 +1,6 @@
 package com.reminder.financial.api.adapters.mappers;
 
-import com.reminder.financial.api.adapters.dtos.paymentremider.CreatePaymentReminderRequest;
-import com.reminder.financial.api.adapters.dtos.paymentremider.MonthlyBillResponse;
-import com.reminder.financial.api.adapters.dtos.paymentremider.PaymentReminderResponse;
-import com.reminder.financial.api.adapters.dtos.paymentremider.UpdatePaymentReminderRequest;
+import com.reminder.financial.api.adapters.dtos.paymentremider.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
@@ -67,4 +64,16 @@ public class PaymentReminderMapper {
         );
     }
 
+    public ListPaymentRemindersResponse toListPaymentRemindersResponse(ListPaymentRemindersResult result) {
+        return new ListPaymentRemindersResponse(
+                result.id(),
+                result.title(),
+                result.description(),
+                result.baseDate(),
+                result.recurrence(),
+                result.method(),
+                result.baseValue(),
+                result.installmentsNumber()
+        );
+    }
 }

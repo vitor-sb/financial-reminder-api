@@ -5,6 +5,8 @@ import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
 import com.reminder.financial.api.application.exceptions.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,5 +39,9 @@ public class PaymentReminderService {
     public void validateReminderTitleConflict(String title, String email) {
         if (getPaymentReminderByTitleAndEmail(title, email).isPresent())
             throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
+    }
+
+    public Page<PaymentReminder> listPaymentRemindersByUser(String userId, Pageable pageable) {
+        return paymentReminderRepository.findByUserIdAndAuditDeletedFalse(userId, pageable);
     }
 }
