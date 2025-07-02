@@ -5,7 +5,7 @@ This project is fully containerized using Docker. The only prerequisites are **D
 ## Running the Application
 
 1.  **Clone the repository.**
-2.  **Create the `.env` file**: Copy the content from `.env.example` to a new file named `.env` and fill in the required values (passwords, etc.).
+2.  **Create the `.env` file**: Copy the content from `.env.example` to a new file named `.env` and fill in the required values. Ensure all variables, including `ROOT_DB_USER` and `APPLICATION_OWNER_EMAIL`, are set.
 3.  **Start all services**: Navigate to the project's root directory in your terminal and run the following command:
 
     ```bash
@@ -14,7 +14,9 @@ This project is fully containerized using Docker. The only prerequisites are **D
     * `--build`: This flag ensures that Docker rebuilds your application's image if you have made any code changes.
     * `-d`: This flag runs the containers in "detached" mode (in the background).
 
-The command will start the API, the PostgreSQL database, and the Redis instance, all connected and ready to go. The API will be available at `http://localhost:8080`.
+That's it! The command will start all services. On the very first run, it will automatically initialize the database by executing the scripts located in `docker/scripts/db`.
+
+---
 
 ## Accessing the Services
 
