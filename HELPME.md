@@ -1,44 +1,85 @@
 # How to Run the Project
 
-This project is fully containerized using Docker. The only prerequisites are **Docker** and **Docker Compose**.
+This project is fully containerized using Docker, providing a consistent and easy-to-manage development environment. The only prerequisites are **Docker** and **Docker Compose**.
 
-## Running the Application
+## ⚠️ Environment Notice
+
+The configuration provided in the `docker-compose.yaml` file is intended for **local development and testing purposes only**. It is not configured for a production environment.
+
+---
+
+## 🚀 Running the Application
 
 1.  **Clone the repository.**
-2.  **Create the `.env` file**: Copy the content from `.env.example` to a new file named `.env` and fill in the required values. Ensure all variables, including `ROOT_DB_USER` and `APPLICATION_OWNER_EMAIL`, are set.
-3.  **Start all services**: Navigate to the project's root directory in your terminal and run the following command:
 
+2.  **Setup Environment Variables**: Copy the `env.example` file to a new file named `.env` and fill in the required values.
+
+3.  **Start All Services**:
     ```bash
-    docker-compose up --build -d
+    docker compose up --build -d
     ```
-    * `--build`: This flag ensures that Docker rebuilds your application's image if you have made any code changes.
-    * `-d`: This flag runs the containers in "detached" mode (in the background).
-
-That's it! The command will start all services. On the very first run, it will automatically initialize the database by executing the scripts located in `docker/scripts/db`.
+    This command starts the API, PostgreSQL, and Redis containers. On the first run, it will automatically create the necessary database user for the API.
 
 ---
 
-## Accessing the Services
+## ⚙️ First-Time Setup: Create the Owner User
 
-* **API**: The API will be available at `http://localhost:8080`.
-* **Database (PostgreSQL)**: Can be accessed on `localhost:5432`.
-* **Redis**: Can be accessed on `localhost:6379`.
+After the application has started for the first time and the database tables have been created by Liquibase, you need to manually create the system's `OWNER` user. This step only needs to be performed once.
+
+1.  **Wait for Migrations**: Ensure the API has started and Liquibase has created the database tables. You can check the logs:
+    ```bash
+    docker compose logs -f financial_reminder_api
+    ```
+    *(Press `Ctrl + C` to exit)*
+
+2.  **Prepare the SQL**:
+    * Open the file: `docker/scripts/db/create-owner-user.sql`.
+    * Replace the placeholder values (e.g., `'APPLICATION_OWNER_EMAIL_VALUE'`) with the actual details.
+    * **Important**: You must use a **Bcrypt hash** for the password, not plain text.
+
+3.  **Execute the SQL**:
+    * Connect to the database at `localhost:5432` using a client like DBeaver or DataGrip. Use the `API_DB_USER` credentials from your `.env` file.
+    * Run the edited SQL script in your client.
 
 ---
 
-## Accessing the API Documentation (Swagger UI)
 
-Once the application is running, you can access the interactive API documentation (Swagger UI) in your browser at the following URL:
+## 🛠️ Managing Services
 
-[**http://localhost:8080/swagger-ui.html**](http://localhost:8080/swagger-ui.html)
-
-On this page, you can view all available endpoints, see their request/response models, and execute requests directly from the browser, which is excellent for testing.
+* **Accessing Services:**
+  * **API:** `http://localhost:8080`
+  * **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+  * **Database:** `localhost:5432`
+* **Starting Services Individually:**
+  * **Infrastructure only:** 
+    ```bash
+    docker compose up -d financial_management_db financial_management_redis
+    ```
+  * **Application only:**
+    ```bash
+    docker compose up -d --build financial_reminder_api
+    ```
+* **Stopping All Services:**
+    ```bash
+    docker compose down
+    ```
+* **Stopping and Deleting All Data (Hard Reset):**
+    ```bash
+    docker compose down -v
+    ```
 
 ---
 
-## Troubleshooting Common Issues
+## 🔎 Troubleshooting Common Issues
 
 Encountered a problem while trying to run the project? Here are some of the most common causes and their solutions.
+
+### Problem: `FATAL: password authentication failed`  for a user
+
+* **Cause:** You are trying to connect with a database client (like DBeaver), but the connection fails, even though you are sure the password in your `.env` file is correct. This is often caused by special characters (like `$` `&` `?` `@` `#`) in your password that are being misinterpreted by the database client or its JDBC driver.
+* **Solution:**
+    1.  **The simplest fix:** Change the problematic password in your `.env` file to a new, strong password that avoids these specific special characters.
+    2.  **Crucial Step:** After changing the password, you must do a hard reset of your environment so the database user is recreated with the new, correct password. Run `docker compose down -v` and then `docker compose up --build -d`.
 
 ### Problem: "Port is already allocated" Error
 
@@ -74,19 +115,3 @@ Encountered a problem while trying to run the project? Here are some of the most
     docker-compose down -v
     ```
   After running this command, you can start everything again with `docker-compose up --build -d`.
-
----
-
-## Using Profiles
-
-This `docker-compose` setup uses profiles to allow you to start services independently.
-
-* **To start ONLY the infrastructure (Database and Redis):**
-    ```bash
-    docker-compose up -d --profile infra
-    ```
-
-* **To start ONLY the application (assuming the infrastructure is already running):**
-    ```bash
-    docker-compose up -d --profile app
-    ```
