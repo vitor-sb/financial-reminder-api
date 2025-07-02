@@ -48,6 +48,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN_PERMISSION")
                         .requestMatchers(PUBLIC_SWAGGER_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )

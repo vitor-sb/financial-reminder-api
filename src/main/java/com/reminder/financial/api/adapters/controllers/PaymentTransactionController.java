@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments/transactions")
-@Tag(name = "Payment Transactions", description = "Payment transactions management.")
+@Tag(name = "Payment Transactions", description = "Handles individual payment transactions, including processing payments and listing transactions for a specific reminder.")
 public class PaymentTransactionController {
 
     @Autowired

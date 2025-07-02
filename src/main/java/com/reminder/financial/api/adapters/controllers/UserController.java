@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
-@Tag(name = "Users", description = "Users management.")
+@Tag(name = "Users", description = "Handles user self-service actions, such as registration and personal account management (disable, enable, delete).")
 public class UserController {
 
     @Autowired
@@ -52,25 +52,6 @@ public class UserController {
         createUserUseCase.execute(command);
 
         return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN_PERMISSION')")
-    @GetMapping("/list")
-    @Operation(summary = "List and filter users (Admin)")
-    public ResponseEntity<Page<ListUsersSingleResponse>> listAll(
-            @PageableDefault(
-                    size = 10,
-                    page = 0,
-                    sort = {"audit.createdAt", "name"},
-                    direction = Sort.Direction.DESC
-            ) Pageable pageable,
-            ListUsersFilterRequest filter
-    ) {
-        ListUsersFilterQuery query = userMapper.toListUsersFilterQuery(filter);
-        var result = listUsersUseCase.execute(query, pageable);
-
-        Page<ListUsersSingleResponse> response = result.map(userMapper::toListUsersSingleResponse);
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/me/disable")

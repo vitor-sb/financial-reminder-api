@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/payments/reminders")
-@Tag(name = "Payment Reminders", description = "Payment reminder management.")
+@Tag(name = "Payment Reminders", description = "Manages all aspects of payment reminders, from creation and updates to fetching monthly bill forecasts.")
 public class PaymentReminderController {
 
     private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
