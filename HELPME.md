@@ -22,28 +22,6 @@ The configuration provided in the `docker-compose.yaml` file is intended for **l
 
 ---
 
-## ⚙️ First-Time Setup: Create the Owner User
-
-After the application has started for the first time and the database tables have been created by Liquibase, you need to manually create the system's `OWNER` user. This step only needs to be performed once.
-
-1.  **Wait for Migrations**: Ensure the API has started and Liquibase has created the database tables. You can check the logs:
-    ```bash
-    docker compose logs -f financial_reminder_api
-    ```
-    *(Press `Ctrl + C` to exit)*
-
-2.  **Prepare the SQL**:
-    * Open the file: `docker/scripts/db/create-owner-user.sql`.
-    * Replace the placeholder values (e.g., `'APPLICATION_OWNER_EMAIL_VALUE'`) with the actual details.
-    * **Important**: You must use a **Bcrypt hash** for the password, not plain text.
-
-3.  **Execute the SQL**:
-    * Connect to the database at `localhost:5432` using a client like DBeaver or DataGrip. Use the `API_DB_USER` credentials from your `.env` file.
-    * Run the edited SQL script in your client.
-
----
-
-
 ## 🛠️ Managing Services
 
 * **Accessing Services:**
@@ -67,6 +45,27 @@ After the application has started for the first time and the database tables hav
     ```bash
     docker compose down -v
     ```
+
+---
+
+## ⚙️ First-Time Setup: Create the Owner User
+
+After the application has started for the first time and the database tables have been created by Liquibase, you need to manually create the system's `OWNER` user. This step only needs to be performed once.
+
+1.  **Wait for Migrations**: Ensure the API has started and Liquibase has created the database tables. You can check the logs:
+    ```bash
+    docker compose logs -f financial_reminder_api
+    ```
+    *(Press `Ctrl + C` to exit)*
+
+2.  **Prepare the SQL**:
+    * Open the file: `docker/scripts/db/create-owner-user.sql`.
+    * Replace the placeholder values (e.g., `'APPLICATION_OWNER_EMAIL_VALUE'`) with the actual details.
+    * **Important**: You must use a **Bcrypt hash** for the password, not plain text.
+
+3.  **Execute the SQL**:
+    * Connect to the database at `localhost:5432` using a client like DBeaver or DataGrip. Use the `API_DB_USER` credentials from your `.env` file.
+    * Run the edited SQL script in your client.
 
 ---
 
