@@ -38,7 +38,10 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         return mergeAndSortBills(realBills, simulatedBills);
     }
 
-    private List<ListMonthlyBillsResult> mergeAndSortBills(List<ListMonthlyBillsResult> real, List<ListMonthlyBillsResult> simulated) {
+    private List<ListMonthlyBillsResult> mergeAndSortBills(
+            List<ListMonthlyBillsResult> real,
+            List<ListMonthlyBillsResult> simulated
+    ) {
         Map<String, ListMonthlyBillsResult> billMap = new LinkedHashMap<>();
 
         real.forEach(bill -> billMap.put(generateBillKey(bill), bill));
@@ -67,7 +70,10 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
                 .collect(Collectors.toList());
     }
 
-    private List<ListMonthlyBillsResult> generateSimulatedBillsForReminder(PaymentReminder reminder, YearMonth targetMonth) {
+    private List<ListMonthlyBillsResult> generateSimulatedBillsForReminder(
+            PaymentReminder reminder,
+            YearMonth targetMonth
+    ) {
         List<ListMonthlyBillsResult> bills = new ArrayList<>();
 
         LocalDate startDate = calculateAdjustedStartDate(reminder, targetMonth);
@@ -79,12 +85,12 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         LocalDate nextDate = startDate;
 
         while (nextDate != null && YearMonth.from(nextDate).isBefore(targetMonth.plusMonths(1))) {
-            if (YearMonth.from(nextDate).equals(targetMonth)) {
-                bills.add(mapReminderToSimulatedResult(reminder, nextDate));
+            if (reminder.getInstallmentsNumber() > 0 && installment > reminder.getInstallmentsNumber()) {
+                break;
             }
 
-            if (reminder.getInstallmentsNumber() > 0 && installment >= reminder.getInstallmentsNumber()) {
-                break;
+            if (YearMonth.from(nextDate).equals(targetMonth)) {
+                bills.add(mapReminderToSimulatedResult(reminder, nextDate, installment));
             }
 
             nextDate = reminder.getRecurrence().getNextDate(nextDate);
@@ -93,7 +99,10 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         return bills;
     }
 
-    private LocalDate calculateAdjustedStartDate(PaymentReminder reminder, YearMonth targetMonth) {
+    private LocalDate calculateAdjustedStartDate(
+            PaymentReminder reminder,
+            YearMonth targetMonth
+    ) {
         LocalDate baseDate = reminder.getBaseDate();
         if (YearMonth.from(baseDate).isAfter(targetMonth)) {
             return baseDate;
@@ -133,7 +142,11 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         };
     }
 
-    private int calculateCurrentInstallment(LocalDate baseDate, LocalDate startDate, RecurrenceEnum recurrence) {
+    private int calculateCurrentInstallment(
+            LocalDate baseDate,
+            LocalDate startDate,
+            RecurrenceEnum recurrence
+    ) {
         if (!startDate.isAfter(baseDate)) {
             return 1;
         }
@@ -155,14 +168,19 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
                 transaction.getId(),
                 transaction.getReminder().getId(),
                 transaction.getReminder().getTitle(),
-                transaction.getPaymentDate(),
+                transaction.getDueDate(),
                 transaction.getPaymentValue(),
                 transaction.getMethod(),
-                transaction.getStatus()
+                transaction.getStatus(),
+                transaction.getInstallmentNumber()
         );
     }
 
-    private ListMonthlyBillsResult mapReminderToSimulatedResult(PaymentReminder reminder, LocalDate dueDate) {
+    private ListMonthlyBillsResult mapReminderToSimulatedResult(
+            PaymentReminder reminder,
+            LocalDate dueDate,
+            int installmentNumber
+    ) {
         return new ListMonthlyBillsResult(
                 null,
                 reminder.getId(),
@@ -170,7 +188,8 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
                 dueDate,
                 reminder.getBaseValue(),
                 reminder.getMethod(),
-                TransactionStatusEnum.PENDENTE
+                TransactionStatusEnum.PENDENTE,
+                installmentNumber
         );
     }
 }

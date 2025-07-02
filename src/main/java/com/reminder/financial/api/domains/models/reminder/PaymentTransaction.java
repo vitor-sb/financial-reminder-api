@@ -32,7 +32,10 @@ public class PaymentTransaction implements Serializable {
     @JoinColumn(name = "reminder_id", referencedColumnName = "id", nullable = false)
     private PaymentReminder reminder;
 
-    @Column(name="payment_date", nullable = false)
+    @Column(name="due_date", nullable = false)
+    private LocalDate dueDate;
+
+    @Column(name="payment_date")
     private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
@@ -55,17 +58,18 @@ public class PaymentTransaction implements Serializable {
 
     public PaymentTransaction(
             PaymentReminder reminder,
-            LocalDate paymentDate,
+            LocalDate dueDate,
             TransactionMethodEnum method,
             Integer installmentNumber,
             BigDecimal paymentValue,
             TransactionStatusEnum status
     ) {
         this.reminder = reminder;
-        this.paymentDate = paymentDate;
+        this.dueDate = dueDate;
         this.method = method;
         this.installmentNumber = installmentNumber;
         this.paymentValue = paymentValue;
         this.status = status;
+        this.paymentDate = null;
     }
 }

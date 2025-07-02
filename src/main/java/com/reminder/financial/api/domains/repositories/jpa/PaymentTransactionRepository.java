@@ -18,5 +18,5 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
 
     Optional<PaymentTransaction> findFirstByReminderIdAndStatusAndAuditDeletedFalse(String reminderId, TransactionStatusEnum status);
 
-    List<PaymentTransaction> findAllByReminderUserEmailAndPaymentDateBetween(String email, LocalDate startDate, LocalDate endDate);
+    List<PaymentTransaction> findAllByReminderUserEmailAndDueDateBetween(String email, LocalDate startDate, LocalDate endDate);
 }

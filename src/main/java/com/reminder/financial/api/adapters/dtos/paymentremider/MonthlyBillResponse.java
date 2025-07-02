@@ -13,5 +13,6 @@ public record MonthlyBillResponse(
         LocalDate dueDate,
         BigDecimal value,
         TransactionMethodEnum method,
-        TransactionStatusEnum status
+        TransactionStatusEnum status,
+        Integer installmentNumber
 ) {}

@@ -168,6 +168,9 @@ databaseChangeLog:
               - column:
                   name: payment_date
                   type: DATE
+              - column:
+                  name: due_date
+                  type: DATE
                   constraints:
                     nullable: false
               - column:

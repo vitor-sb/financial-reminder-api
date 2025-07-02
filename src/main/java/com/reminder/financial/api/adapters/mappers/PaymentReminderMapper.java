@@ -62,7 +62,8 @@ public class PaymentReminderMapper {
                 result.dueDate(),
                 result.value(),
                 result.method(),
-                result.status()
+                result.status(),
+                result.installmentNumber()
         );
     }
 
