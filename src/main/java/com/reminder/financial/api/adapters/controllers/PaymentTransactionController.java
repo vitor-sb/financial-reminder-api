@@ -62,14 +62,14 @@ public class PaymentTransactionController {
             description = "Returns a paginated list of all transactions associated with a reminder ID."
     )
     public ResponseEntity<Page<ListTransactionsResponse>> listByReminder(
+            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            @RequestParam String reminderId,
             @PageableDefault(
                     size = 10,
                     page = 0,
                     sort = {"status", "paymentDate"},
                     direction = Sort.Direction.DESC
-            ) Pageable pageable,
-            @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
-            @RequestParam String reminderId
+            ) Pageable pageable
     ) {
         var result = listTransactionsByReminderUseCase.execute(loggedUserEmail, reminderId, pageable);
 

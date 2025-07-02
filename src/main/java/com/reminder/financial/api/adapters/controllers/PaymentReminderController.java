@@ -63,7 +63,7 @@ public class PaymentReminderController {
         CreatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, loggedUserEmail);
         var result = createUseCase.execute(command);
 
-        var uri = uriBuilder.path("/{id}").buildAndExpand(result.getId()).toUri();
+        var uri = uriBuilder.path("/payments/reminders/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
