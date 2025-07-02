@@ -1,20 +1,18 @@
+# Arquivos e diretórios gerados pelo Build
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.log
 
-### STS ###
-.apt_generated
+# Arquivos de configuração de IDEs
+.idea/
+.vscode/
 .classpath
-.factorypath
 .project
 .settings
+.factorypath
+.apt_generated
 .springBeans
 .sts4-cache
 
-.idea
-.vscode/
-
-docker/
-
 .env
+
+!.mvn/wrapper/maven-wrapper.jar
