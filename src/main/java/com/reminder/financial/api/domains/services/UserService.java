@@ -50,10 +50,10 @@ public class UserService {
                 .where(SpecificationFactory.<User>like("name", query.name()))
                 .and(SpecificationFactory.like("email", query.email()))
                 .and(SpecificationFactory.equal("role", query.role()))
-                .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
-                .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()))
                 .and(SpecificationFactory.isGreaterThanOrEqualTo("audit.createdAt", startInstant))
-                .and(SpecificationFactory.isLessThan("audit.createdAt", endInstant));
+                .and(SpecificationFactory.isLessThan("audit.createdAt", endInstant))
+                .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
+                .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
 
         return userRepository.findAll(spec, pageable);
     }
