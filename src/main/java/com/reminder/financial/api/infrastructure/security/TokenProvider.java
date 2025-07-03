@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @Component
 public class TokenProvider {
@@ -50,6 +51,6 @@ public class TokenProvider {
     }
 
     private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plus(expirationMinutes, ChronoUnit.MINUTES);
     }
 }
