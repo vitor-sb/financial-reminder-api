@@ -6,7 +6,6 @@ import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactio
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.reminder.financial.api.adapters.mappers.PaymentTransactionMapper;
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
