@@ -1,11 +1,8 @@
 package com.reminder.financial.api.common;
 
-import org.springframework.stereotype.Component;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Component
-public class TestUtils {
+public final class TestUtils {
     public static long calculateExpectedBlockUntil(
             int maxAttempts, long blockTimeMinutes, long blockTimeMultiplier, long attempts
     ) {
