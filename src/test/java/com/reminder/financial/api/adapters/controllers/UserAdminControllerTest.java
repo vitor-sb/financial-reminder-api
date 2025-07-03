@@ -51,8 +51,12 @@ public class UserAdminControllerTest {
     @WithMockUser(username = "admin", authorities = {"ADMIN_PERMISSION"})
     void testListUsersSuccess() throws Exception {
         // Arrange
-        ListUsersSingleResult userResult = new ListUsersSingleResult("Test User", "test@example.com", RoleEnum.USER, true, false);
-        Page<ListUsersSingleResult> resultPage = new PageImpl<>(List.of(userResult), PageRequest.of(0, 10), 1);
+        ListUsersSingleResult userResult = new ListUsersSingleResult(
+                "Test User", "test@example.com", RoleEnum.USER, null, true, false
+        );
+        Page<ListUsersSingleResult> resultPage = new PageImpl<>(
+                List.of(userResult), PageRequest.of(0, 10), 1
+        );
 
         when(listUsersUseCase.execute(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(resultPage);
 

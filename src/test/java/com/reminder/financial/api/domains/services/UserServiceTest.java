@@ -88,7 +88,9 @@ class UserServiceTest {
     @DisplayName("Should return a page of users")
     void listUsersReturnsPageOfUsers() {
         // Arrange
-        ListUsersFilterQuery filter = new ListUsersFilterQuery(null, null, null, null, null);
+        ListUsersFilterQuery filter = new ListUsersFilterQuery(
+                null, null, null, null, null, null, null
+        );
         Pageable pageable = PageRequest.of(0, 10);
 
         User userOne = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);

@@ -41,7 +41,9 @@ class ListUsersUseCaseTest {
     @DisplayName("Should return page of ListUsersSingleResult")
     void execute_shouldReturnPageOfListUsersSingleResult() {
         // Arrange
-        ListUsersFilterQuery filter = new ListUsersFilterQuery(null, null, RoleEnum.USER, null, null);
+        ListUsersFilterQuery filter = new ListUsersFilterQuery(
+                null, null, RoleEnum.USER, null, null, null, null
+        );
         Pageable pageable = PageRequest.of(0, 10);
 
         User user1 = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
