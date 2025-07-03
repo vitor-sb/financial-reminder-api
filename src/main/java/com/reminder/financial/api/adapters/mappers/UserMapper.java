@@ -22,14 +22,25 @@ public class UserMapper {
     }
 
     public ListUsersSingleResponse toListUsersSingleResponse(ListUsersSingleResult result) {
-        return new ListUsersSingleResponse(result.name(), result.email(), result.role(), result.enabled(), result.deleted());
+        return new ListUsersSingleResponse(
+                result.name(),
+                result.email(),
+                result.role(),
+                result.create_at(),
+                result.enabled(),
+                result.deleted());
     }
 
     public ListUsersFilterQuery toListUsersFilterQuery(ListUsersFilterRequest filter) {
+        if (filter == null)
+            return new ListUsersFilterQuery(null, null, null, null, null, null, null);
+
         return new ListUsersFilterQuery(
                 filter.name(),
                 filter.email(),
                 filter.role(),
+                filter.startDate(),
+                filter.endDate(),
                 filter.enabled(),
                 filter.deleted()
         );

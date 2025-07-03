@@ -39,7 +39,7 @@ class AuthenticationServiceTest {
     @DisplayName("Should return UserDetails when user is found")
     void loadUserByUsername() {
         User user = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
-        when(userService.findValidUserByEmailForAuthentication("johndoe@example.com")).thenReturn(user);
+        when(userService.findValidUserByEmail("johndoe@example.com")).thenReturn(user);
 
         UserDetails userDetails = authenticationService.loadUserByUsername("johndoe@example.com");
 

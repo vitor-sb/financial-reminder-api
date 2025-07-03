@@ -23,6 +23,7 @@ public class ListUsersUseCaseImpl implements ListUsersUseCase {
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
+                user.getAudit().getCreatedAt(),
                 user.getAudit().getEnabled(),
                 user.getAudit().getDeleted()
         ));

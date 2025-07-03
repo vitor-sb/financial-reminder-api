@@ -29,15 +29,18 @@ public class UserAdminController {
     private ListUsersUseCase listUsersUseCase;
 
     @GetMapping("/list")
-    @Operation(summary = "List and filter all system users")
+    @Operation(
+            summary = "List and filter all system users",
+            description = "Returns a paginated list of users based on filters."
+    )
     public ResponseEntity<Page<ListUsersSingleResponse>> listAll(
+            ListUsersFilterRequest filter,
             @PageableDefault(
                     size = 10,
                     page = 0,
                     sort = {"audit.createdAt", "name"},
                     direction = Sort.Direction.DESC
-            ) Pageable pageable,
-            ListUsersFilterRequest filter
+            ) Pageable pageable
     ) {
         ListUsersFilterQuery query = userMapper.toListUsersFilterQuery(filter);
         var result = listUsersUseCase.execute(query, pageable);

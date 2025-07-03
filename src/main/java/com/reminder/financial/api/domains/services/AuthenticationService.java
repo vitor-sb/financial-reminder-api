@@ -13,6 +13,6 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return userService.findValidUserByEmailForAuthentication(username);
+        return userService.findValidUserByEmail(username);
     }
 }
