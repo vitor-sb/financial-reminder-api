@@ -1,12 +1,10 @@
 package com.reminder.financial.api.adapters.mappers;
 
+import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsFilterRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsResponse;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactionRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
-import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsResult;
-import com.reminder.financial.api.application.dtos.paymenttransaction.PayTransactionCommand;
-import com.reminder.financial.api.application.dtos.paymenttransaction.PaymentExecutionDetails;
-import com.reminder.financial.api.application.dtos.paymenttransaction.UpdatePaymentTransactionCommand;
+import com.reminder.financial.api.application.dtos.paymenttransaction.*;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
@@ -28,14 +26,35 @@ public class PaymentTransactionMapper {
         );
     }
 
+    public ListTransactionsFilterQuery toListTransactionsFilterQuery(ListTransactionsFilterRequest filter) {
+        if(filter == null)
+            return new ListTransactionsFilterQuery(null, null, null, null, null, null, null, null);
+
+        return new ListTransactionsFilterQuery(
+                filter.transactionId(),
+                filter.reminderId(),
+                filter.startDate(),
+                filter.endDate(),
+                filter.method(),
+                filter.status(),
+                filter.enabled(),
+                filter.deleted()
+        );
+    }
+
     public ListTransactionsResponse toListTransactionsResponse(ListTransactionsResult result) {
         return new ListTransactionsResponse(
                 result.id(),
+                result.reminderId(),
+                result.dueDate(),
                 result.paymentDate(),
                 result.installmentNumber(),
                 result.paymentValue(),
                 result.method(),
-                result.status());
+                result.status(),
+                result.enabled(),
+                result.deleted()
+        );
     }
 
     public UpdatePaymentTransactionCommand toCommand(

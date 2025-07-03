@@ -1,9 +1,12 @@
 package com.reminder.financial.api.adapters.controllers;
 
+import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsFilterRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsResponse;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactionRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.reminder.financial.api.adapters.mappers.PaymentTransactionMapper;
+import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
@@ -58,20 +61,21 @@ public class PaymentTransactionController {
 
     @GetMapping("/list")
     @Operation(
-            summary = "List transactions for a specific reminder",
-            description = "Returns a paginated list of all transactions associated with a reminder ID."
+            summary = "Lists and filters user transactions",
+            description = "Returns a paginated list of transactions based on filters."
     )
     public ResponseEntity<Page<ListTransactionsResponse>> listByReminder(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
-            @RequestParam String reminderId,
+            ListTransactionsFilterRequest filter,
             @PageableDefault(
                     size = 10,
                     page = 0,
-                    sort = {"status", "paymentDate"},
+                    sort = {"dueDate", "status"},
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        var result = listTransactionsByReminderUseCase.execute(loggedUserEmail, reminderId, pageable);
+        ListTransactionsFilterQuery query = paymentTransactionMapper.toListTransactionsFilterQuery(filter);
+        var result = listTransactionsByReminderUseCase.execute(loggedUserEmail, query, pageable);
 
         Page<ListTransactionsResponse> response = result.map(paymentTransactionMapper::toListTransactionsResponse);
         return ResponseEntity.ok(response);

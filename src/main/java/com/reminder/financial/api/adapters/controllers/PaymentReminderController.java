@@ -154,7 +154,7 @@ public class PaymentReminderController {
             summary = "List Payment Reminders for a logged user",
             description = "Returns a paginated list of all payment reminders associated with the logged in user."
     )
-    public ResponseEntity<Page<ListPaymentRemindersResponse>> listByReminder(
+    public ResponseEntity<Page<ListPaymentRemindersResponse>> listByUser(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PageableDefault(
                     size = 10,

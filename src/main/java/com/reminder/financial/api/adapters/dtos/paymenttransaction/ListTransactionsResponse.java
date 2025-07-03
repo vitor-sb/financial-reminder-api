@@ -8,9 +8,13 @@ import java.time.LocalDate;
 
 public record ListTransactionsResponse(
         String id,
+        String reminderId,
+        LocalDate dueDate,
         LocalDate paymentDate,
         Integer installmentNumber,
         BigDecimal paymentValue,
         TransactionMethodEnum method,
-        TransactionStatusEnum status
+        TransactionStatusEnum status,
+        Boolean enabled,
+        Boolean deleted
 ) {}

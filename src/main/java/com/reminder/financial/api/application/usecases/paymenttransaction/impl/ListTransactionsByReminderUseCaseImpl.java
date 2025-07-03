@@ -1,11 +1,11 @@
 package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
+import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsResult;
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
 import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
-import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
-import com.reminder.financial.api.domains.services.PaymentReminderService;
+import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import com.reminder.financial.api.domains.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,25 +18,25 @@ public class ListTransactionsByReminderUseCaseImpl implements ListTransactionsBy
     private PaymentTransactionService transactionService;
 
     @Autowired
-    private PaymentReminderService paymentReminderService;
+    private UserService userService;
 
     @Override
-    public Page<ListTransactionsResult> execute(String loggedUserEmail, String reminderId, Pageable pageable) {
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);
-        reminder.getAudit().validateIsActive("PaymentReminder");
+    public Page<ListTransactionsResult> execute(String loggedUserEmail, ListTransactionsFilterQuery query, Pageable pageable) {
+        User user = userService.findValidUserByEmail(loggedUserEmail);
 
-        if (!reminder.getUser().getEmail().equals(loggedUserEmail))
-            throw new UnauthorizedException("You do not have permission to view transactions for this reminder.");
-
-        var transactionPage = transactionService.listTransactionsByReminder(reminderId, pageable);
+        var transactionPage = transactionService.listTransactions(user, query, pageable);
 
         return transactionPage.map(transaction -> new ListTransactionsResult(
                 transaction.getId(),
+                transaction.getReminder().getId(),
+                transaction.getDueDate(),
                 transaction.getPaymentDate(),
                 transaction.getInstallmentNumber(),
                 transaction.getPaymentValue(),
                 transaction.getMethod(),
-                transaction.getStatus()
+                transaction.getStatus(),
+                transaction.getAudit().getEnabled(),
+                transaction.getAudit().getDeleted()
         ));
     }
 }

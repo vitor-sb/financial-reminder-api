@@ -1,15 +1,19 @@
 package com.reminder.financial.api.domains.services;
 
+import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
+import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRepository;
+import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -52,8 +56,19 @@ public class PaymentTransactionService {
         return transactionRepository.findFirstByReminderIdAndStatusAndAuditDeletedFalse(reminderId, TransactionStatusEnum.PENDENTE);
     }
 
-    public Page<PaymentTransaction> listTransactionsByReminder(String reminderId, Pageable pageable) {
-        return transactionRepository.findByReminderIdAndAuditDeletedFalse(reminderId, pageable);
+    public Page<PaymentTransaction> listTransactions(User user, ListTransactionsFilterQuery query, Pageable pageable) {
+        Specification<PaymentTransaction> spec = Specification
+                .where(SpecificationFactory.<PaymentTransaction>equalInJoin("reminder", "user", user))
+                .and(SpecificationFactory.equal("id", query.transactionId()))
+                .and(SpecificationFactory.equalInJoin("reminder", "id", query.reminderId()))
+                .and(SpecificationFactory.isGreaterThanOrEqualTo("dueDate", query.startDate()))
+                .and(SpecificationFactory.isLessThanOrEqualTo("dueDate", query.endDate()))
+                .and(SpecificationFactory.equal("method", query.method()))
+                .and(SpecificationFactory.equal("status", query.status()))
+                .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
+                .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
+
+        return transactionRepository.findAll(spec, pageable);
     }
 
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
