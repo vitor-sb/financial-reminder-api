@@ -8,8 +8,8 @@ public record ListUsersFilterRequest(
         String name,
         String email,
         RoleEnum role,
-        LocalDate startDate,
-        LocalDate endDate,
+        LocalDate createdFrom,
+        LocalDate createdUntil,
         Boolean enabled,
         Boolean deleted
 ) {

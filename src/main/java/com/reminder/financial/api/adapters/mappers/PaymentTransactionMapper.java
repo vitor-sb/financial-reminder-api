@@ -27,8 +27,8 @@ public class PaymentTransactionMapper {
         return new ListTransactionsFilterQuery(
                 filter.transactionId(),
                 filter.reminderId(),
-                filter.startDate(),
-                filter.endDate(),
+                filter.createdFrom(),
+                filter.createdUntil(),
                 filter.method(),
                 filter.status(),
                 filter.enabled(),

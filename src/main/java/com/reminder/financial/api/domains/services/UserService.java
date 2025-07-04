@@ -36,22 +36,22 @@ public class UserService {
     }
 
     public Page<User> listUsers(ListUsersFilterQuery query, Pageable pageable) {
-        Instant startInstant = null;
-        if (query.startDate() != null) {
-            startInstant = query.startDate().atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();
+        Instant fromInstant = null;
+        if (query.createdFrom() != null) {
+            fromInstant = query.createdFrom().atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();
         }
 
-        Instant endInstant = null;
-        if (query.endDate() != null) {
-            endInstant = query.endDate().plusDays(1).atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();
+        Instant untilInstant = null;
+        if (query.createdUntil() != null) {
+            untilInstant = query.createdUntil().plusDays(1).atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();
         }
 
         Specification<User> spec = Specification
                 .where(SpecificationFactory.<User>like("name", query.name()))
                 .and(SpecificationFactory.like("email", query.email()))
                 .and(SpecificationFactory.equal("role", query.role()))
-                .and(SpecificationFactory.isGreaterThanOrEqualTo("audit.createdAt", startInstant))
-                .and(SpecificationFactory.isLessThan("audit.createdAt", endInstant))
+                .and(SpecificationFactory.isGreaterThanOrEqualTo("audit.createdAt", fromInstant))
+                .and(SpecificationFactory.isLessThan("audit.createdAt", untilInstant))
                 .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
                 .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
 

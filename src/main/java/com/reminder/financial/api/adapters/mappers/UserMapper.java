@@ -39,8 +39,8 @@ public class UserMapper {
                 filter.name(),
                 filter.email(),
                 filter.role(),
-                filter.startDate(),
-                filter.endDate(),
+                filter.createdFrom(),
+                filter.createdUntil(),
                 filter.enabled(),
                 filter.deleted()
         );
