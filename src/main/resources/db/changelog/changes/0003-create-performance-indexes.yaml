@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003-create-users-indexes
+      author: vitor-sb
+      changes:
+        - createIndex:
+            indexName: users_email_idx
+            tableName: users
+            unique: true
+            columns:
+              - column:
+                  name: email
+        - createIndex:
+            indexName: users_audit_enabled_deleted_idx
+            tableName: users_audit
+            columns:
+              - column:
+                  name: enabled
+              - column:
+                  name: deleted
+
+  - changeSet:
+      id: 0003-create-payment-reminders-indexes
+      author: vitor-sb
+      changes:
+        - createIndex:
+            indexName: payment_reminders_user_id_idx
+            tableName: payment_reminders
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            indexName: payment_reminders_user_title_idx
+            tableName: payment_reminders
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: title
+        - createIndex:
+            indexName: payment_reminders_user_base_date_idx
+            tableName: payment_reminders
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: baseDate
+
+  - changeSet:
+      id: 0003-create-payment-transactions-indexes
+      author: vitor-sb
+      changes:
+        - createIndex:
+            indexName: payment_transactions_reminder_id_idx
+            tableName: payment_transactions
+            columns:
+              - column:
+                  name: reminder_id
+        - createIndex:
+            indexName: payment_transactions_reminder_status_idx
+            tableName: payment_transactions
+            columns:
+              - column:
+                  name: reminder_id
+              - column:
+                  name: status
+        - createIndex:
+            indexName: payment_transactions_due_date_idx
+            tableName: payment_transactions
+            columns:
+              - column:
+                  name: due_date
