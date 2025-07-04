@@ -28,7 +28,7 @@ public class PaymentTransactionMapper {
                 filter.transactionId(),
                 filter.reminderId(),
                 filter.createdFrom(),
-                filter.createdUntil(),
+                filter.dueDateUntil(),
                 filter.method(),
                 filter.status(),
                 filter.enabled(),

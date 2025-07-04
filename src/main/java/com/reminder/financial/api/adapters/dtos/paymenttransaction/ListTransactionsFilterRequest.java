@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public record ListTransactionsFilterRequest(
         String transactionId,
         String reminderId,
-        LocalDate createdFrom,
-        LocalDate createdUntil,
+        LocalDate dueDateFrom,
+        LocalDate dueDateUntil,
         TransactionMethodEnum method,
         TransactionStatusEnum status,
         Boolean enabled,
