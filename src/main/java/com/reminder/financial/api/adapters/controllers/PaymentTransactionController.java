@@ -6,7 +6,7 @@ import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactio
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.reminder.financial.api.adapters.mappers.PaymentTransactionMapper;
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
-import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
+import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,7 @@ public class PaymentTransactionController {
     PayTransactionUseCase payTransactionUseCase;
 
     @Autowired
-    ListTransactionsByReminderUseCase listTransactionsByReminderUseCase;
+    ListTransactionsUseCase listTransactionsUseCase;
 
     @Autowired
     private UpdatePaymentTransactionUseCase updateTransactionUseCase;
@@ -47,7 +47,7 @@ public class PaymentTransactionController {
             @PathVariable String transactionId,
             @RequestBody PayTransactionRequest request
     ) {
-        var command = paymentTransactionMapper.toCommand(
+        var command = paymentTransactionMapper.toPayTransactionDetailsCommand(
                 request
         );
 
@@ -72,7 +72,7 @@ public class PaymentTransactionController {
             ) Pageable pageable
     ) {
         ListTransactionsFilterQuery query = paymentTransactionMapper.toListTransactionsFilterQuery(filter);
-        var result = listTransactionsByReminderUseCase.execute(loggedUserEmail, query, pageable);
+        var result = listTransactionsUseCase.execute(loggedUserEmail, query, pageable);
 
         Page<ListTransactionsResponse> response = result.map(paymentTransactionMapper::toListTransactionsResponse);
         return ResponseEntity.ok(response);
@@ -88,7 +88,7 @@ public class PaymentTransactionController {
             @PathVariable String id,
             @RequestBody @Valid UpdatePaymentTransactionRequest request
     ) {
-        var command = paymentTransactionMapper.toCommand(
+        var command = paymentTransactionMapper.toPayTransactionDetailsCommand(
                 request
         );
 

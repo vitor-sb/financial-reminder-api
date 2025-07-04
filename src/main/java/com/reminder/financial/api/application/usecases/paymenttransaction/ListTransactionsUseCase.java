@@ -5,6 +5,6 @@ import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransa
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface ListTransactionsByReminderUseCase {
+public interface ListTransactionsUseCase {
     Page<ListTransactionsResult> execute(String loggedUserEmail, ListTransactionsFilterQuery query, Pageable pageable);
 }

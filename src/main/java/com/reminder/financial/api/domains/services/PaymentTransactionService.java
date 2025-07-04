@@ -56,7 +56,7 @@ public class PaymentTransactionService {
         return transactionRepository.findFirstByReminderIdAndStatusAndAuditDeletedFalse(reminderId, TransactionStatusEnum.PENDENTE);
     }
 
-    public Page<PaymentTransaction> listTransactions(User user, ListTransactionsFilterQuery query, Pageable pageable) {
+    public Page<PaymentTransaction> listTransactionsByUserAndFilters(User user, ListTransactionsFilterQuery query, Pageable pageable) {
         Specification<PaymentTransaction> spec = Specification
                 .where(SpecificationFactory.<PaymentTransaction>equalInJoin("reminder", "user", user))
                 .and(SpecificationFactory.equal("id", query.transactionId()))
@@ -66,7 +66,7 @@ public class PaymentTransactionService {
                 .and(SpecificationFactory.equal("method", query.method()))
                 .and(SpecificationFactory.equal("status", query.status()))
                 .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
-                .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
+                .and(SpecificationFactory.equalInJoin("audit", "deleted", false));
 
         return transactionRepository.findAll(spec, pageable);
     }

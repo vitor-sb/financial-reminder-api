@@ -2,7 +2,7 @@ package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsResult;
-import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsByReminderUseCase;
+import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsUseCase;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ListTransactionsByReminderUseCaseImpl implements ListTransactionsByReminderUseCase {
+public class ListTransactionsUseCaseImpl implements ListTransactionsUseCase {
 
     @Autowired
     private PaymentTransactionService transactionService;
@@ -24,7 +24,7 @@ public class ListTransactionsByReminderUseCaseImpl implements ListTransactionsBy
     public Page<ListTransactionsResult> execute(String loggedUserEmail, ListTransactionsFilterQuery query, Pageable pageable) {
         User user = userService.findValidUserByEmail(loggedUserEmail);
 
-        var transactionPage = transactionService.listTransactions(user, query, pageable);
+        var transactionPage = transactionService.listTransactionsByUserAndFilters(user, query, pageable);
 
         return transactionPage.map(transaction -> new ListTransactionsResult(
                 transaction.getId(),

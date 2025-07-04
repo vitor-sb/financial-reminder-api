@@ -12,7 +12,6 @@ public record ListTransactionsFilterQuery(
         LocalDate dueDateUntil,
         TransactionMethodEnum method,
         TransactionStatusEnum status,
-        Boolean enabled,
-        Boolean deleted
+        Boolean enabled
 ) {
 }

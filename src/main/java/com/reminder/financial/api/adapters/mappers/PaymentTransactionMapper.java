@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentTransactionMapper {
 
-    public PayTransactionDetailsCommand toCommand(
+    public PayTransactionDetailsCommand toPayTransactionDetailsCommand(
             @Valid PayTransactionRequest dto
     ) {
         return new PayTransactionDetailsCommand(
@@ -20,19 +20,18 @@ public class PaymentTransactionMapper {
         );
     }
 
-    public ListTransactionsFilterQuery toListTransactionsFilterQuery(ListTransactionsFilterRequest filter) {
-        if(filter == null)
-            return new ListTransactionsFilterQuery(null, null, null, null, null, null, null, null);
+    public ListTransactionsFilterQuery toListTransactionsFilterQuery(ListTransactionsFilterRequest request) {
+        if (request == null)
+            return new ListTransactionsFilterQuery( null, null, null, null, null, null, null);
 
         return new ListTransactionsFilterQuery(
-                filter.transactionId(),
-                filter.reminderId(),
-                filter.createdFrom(),
-                filter.dueDateUntil(),
-                filter.method(),
-                filter.status(),
-                filter.enabled(),
-                filter.deleted()
+                request.transactionId(),
+                request.reminderId(),
+                request.dueDateFrom(),
+                request.dueDateUntil(),
+                request.method(),
+                request.status(),
+                request.enabled()
         );
     }
 
@@ -51,7 +50,7 @@ public class PaymentTransactionMapper {
         );
     }
 
-    public UpdatePaymentTransactionCommand toCommand(
+    public UpdatePaymentTransactionCommand toPayTransactionDetailsCommand(
             @Valid UpdatePaymentTransactionRequest dto
     ) {
         return new UpdatePaymentTransactionCommand(
