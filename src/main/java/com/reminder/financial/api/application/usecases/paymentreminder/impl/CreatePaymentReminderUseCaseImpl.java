@@ -26,10 +26,10 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
     @Autowired
     PaymentTransactionService transactionService;
 
-    public PaymentReminder execute(CreatePaymentReminderCommand dto) {
-        paymentReminderService.validateReminderTitleConflict(dto.title(), dto.email());
+    public PaymentReminder execute(String userEmail, CreatePaymentReminderCommand dto) {
+        paymentReminderService.validateReminderTitleConflict(dto.title(), userEmail);
 
-        User user = userService.findUserByEmailOrThrow(dto.email());
+        User user = userService.findUserByEmailOrThrow(userEmail);
         user.getAudit().validateIsActive("Authenticated user");
 
         LocalDate reminderDate = parseAndValidateReminderDate(dto.date());

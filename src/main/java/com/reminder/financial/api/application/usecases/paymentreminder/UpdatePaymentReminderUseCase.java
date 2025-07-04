@@ -4,5 +4,5 @@ import com.reminder.financial.api.application.dtos.paymentreminder.UpdatePayment
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 
 public interface UpdatePaymentReminderUseCase {
-    PaymentReminder execute(UpdatePaymentReminderCommand dto);
+    PaymentReminder execute(String userEmail, String reminderId, UpdatePaymentReminderCommand command);
 }

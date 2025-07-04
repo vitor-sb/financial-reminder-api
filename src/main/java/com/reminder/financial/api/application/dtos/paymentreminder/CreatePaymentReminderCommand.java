@@ -22,8 +22,6 @@ public record CreatePaymentReminderCommand(
         TransactionMethodEnum method,
         @NotNull
         BigDecimal value,
-        Integer installmentsNumber,
-        @NotBlank
-        String email
+        Integer installmentsNumber
 ) {
 }

@@ -1,7 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
-import com.reminder.financial.api.application.dtos.paymenttransaction.PayTransactionCommand;
-import com.reminder.financial.api.application.dtos.paymenttransaction.PaymentExecutionDetails;
+import com.reminder.financial.api.application.dtos.paymenttransaction.PayTransactionDetailsCommand;
 import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.application.exceptions.UnauthorizedException;
@@ -33,8 +32,8 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
 
     @Override
     @Transactional
-    public void execute(PayTransactionCommand command) {
-        PaymentTransaction transaction = paymentTransactionService.getTransactionById(command.transactionId())
+    public void execute(String userEmail, String transactionId, PayTransactionDetailsCommand command) {
+        PaymentTransaction transaction = paymentTransactionService.getTransactionById(transactionId)
                 .orElseThrow(() -> new NotFoundException("PaymentTransaction not found"));
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
@@ -45,15 +44,15 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
         PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(transaction.getReminder().getId());
         reminder.getAudit().validateIsActive("PaymentReminder");
 
-        if (!reminder.getUser().getEmail().equals(command.loggedUserEmail()))
+        if (!reminder.getUser().getEmail().equals(userEmail))
             throw new UnauthorizedException("You do not have permission to update this transaction.");
 
-        this.updateTransactionFromPaymentDetails(command.transactionDetails(), transaction);
+        this.updateTransactionFromPaymentDetails(command, transaction);
 
         paymentTransactionService.processSuccessfulPayment(transaction);
     }
 
-    private void updateTransactionFromPaymentDetails(PaymentExecutionDetails details, PaymentTransaction transaction) {
+    private void updateTransactionFromPaymentDetails(PayTransactionDetailsCommand details, PaymentTransaction transaction) {
         if (details.method() != null) {
             transaction.setMethod(details.method());
         }

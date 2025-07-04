@@ -5,8 +5,6 @@ import com.reminder.financial.api.domains.models.reminder.enums.TransactionMetho
 import java.math.BigDecimal;
 
 public record UpdatePaymentTransactionCommand(
-        String loggedUserEmail,
-        String transactionId,
         BigDecimal paymentValue,
         TransactionMethodEnum method
 ) {

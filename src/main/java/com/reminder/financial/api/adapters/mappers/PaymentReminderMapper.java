@@ -20,28 +20,25 @@ public class PaymentReminderMapper {
         );
     }
 
-    public CreatePaymentReminderCommand toCommand(@Valid CreatePaymentReminderRequest dto, String loggedUser) {
+    public CreatePaymentReminderCommand toCommand(@Valid CreatePaymentReminderRequest request) {
         return new CreatePaymentReminderCommand(
-                dto.title(),
-                dto.description(),
-                dto.date(),
-                dto.recurrence(),
-                dto.method(),
-                dto.value(),
-                dto.installmentsNumber(),
-                loggedUser
+                request.title(),
+                request.description(),
+                request.date(),
+                request.recurrence(),
+                request.method(),
+                request.value(),
+                request.installmentsNumber()
         );
     }
 
-    public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest dto, String reminderId, String loggedUser) {
+    public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest request) {
         return new UpdatePaymentReminderCommand(
-                reminderId,
-                dto.updatePendingTransaction(),
-                dto.title(),
-                dto.description(),
-                dto.method(),
-                dto.value(),
-                loggedUser
+                request.updatePendingTransaction(),
+                request.title(),
+                request.description(),
+                request.method(),
+                request.value()
         );
     }
 

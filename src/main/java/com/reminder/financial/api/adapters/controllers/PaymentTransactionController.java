@@ -48,12 +48,10 @@ public class PaymentTransactionController {
             @RequestBody PayTransactionRequest request
     ) {
         var command = paymentTransactionMapper.toCommand(
-                loggedUserEmail,
-                transactionId,
                 request
         );
 
-        payTransactionUseCase.execute(command);
+        payTransactionUseCase.execute(loggedUserEmail, transactionId, command);
 
         return ResponseEntity.noContent().build();
     }
@@ -91,12 +89,10 @@ public class PaymentTransactionController {
             @RequestBody @Valid UpdatePaymentTransactionRequest request
     ) {
         var command = paymentTransactionMapper.toCommand(
-                loggedUserEmail,
-                id,
                 request
         );
 
-        updateTransactionUseCase.execute(command);
+        updateTransactionUseCase.execute(loggedUserEmail, id, command);
 
         return ResponseEntity.noContent().build();
     }

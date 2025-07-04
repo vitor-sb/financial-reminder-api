@@ -11,18 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentTransactionMapper {
 
-    public PayTransactionCommand toCommand(
-            String loggedUser,
-            String transactionId,
+    public PayTransactionDetailsCommand toCommand(
             @Valid PayTransactionRequest dto
     ) {
-        return new PayTransactionCommand(
-                loggedUser,
-                transactionId,
-                new PaymentExecutionDetails(
-                        dto.paymentValue(),
-                        dto.method()
-                )
+        return new PayTransactionDetailsCommand(
+                dto.paymentValue(),
+                dto.method()
         );
     }
 
@@ -58,13 +52,9 @@ public class PaymentTransactionMapper {
     }
 
     public UpdatePaymentTransactionCommand toCommand(
-            String loggedUser,
-            String transactionId,
             @Valid UpdatePaymentTransactionRequest dto
     ) {
         return new UpdatePaymentTransactionCommand(
-                loggedUser,
-                transactionId,
                 dto.paymentValue(),
                 dto.method()
         );

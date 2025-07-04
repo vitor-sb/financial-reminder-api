@@ -16,27 +16,27 @@ public class UpdatePaymentTransactionUseCaseImpl implements UpdatePaymentTransac
     private PaymentTransactionService paymentTransactionService;
 
     @Override
-    public void execute(UpdatePaymentTransactionCommand dto) {
-        PaymentTransaction transaction = paymentTransactionService.getTransactionById(dto.transactionId())
+    public void execute(String userEmail, String transactionId, UpdatePaymentTransactionCommand command) {
+        PaymentTransaction transaction = paymentTransactionService.getTransactionById(transactionId)
                 .orElseThrow(() -> new NotFoundException("Payment Transaction not found."));
 
-        if (!transaction.getReminder().getUser().getEmail().equals(dto.loggedUserEmail())) {
+        if (!transaction.getReminder().getUser().getEmail().equals(userEmail)) {
             throw new UnauthorizedException("You do not have permission to update this transaction.");
         }
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
 
-        this.updateTransactionFields(dto, transaction);
+        this.updateTransactionFields(command, transaction);
 
         paymentTransactionService.save(transaction);
     }
 
-    private void updateTransactionFields(UpdatePaymentTransactionCommand dto, PaymentTransaction transaction) {
-        if (dto.paymentValue() != null) {
-            transaction.setPaymentValue(dto.paymentValue());
+    private void updateTransactionFields(UpdatePaymentTransactionCommand command, PaymentTransaction transaction) {
+        if (command.paymentValue() != null) {
+            transaction.setPaymentValue(command.paymentValue());
         }
-        if (dto.method() != null) {
-            transaction.setMethod(dto.method());
+        if (command.method() != null) {
+            transaction.setMethod(command.method());
         }
     }
 }

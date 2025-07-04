@@ -21,11 +21,11 @@ public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUs
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
-    public PaymentReminder execute(UpdatePaymentReminderCommand command) {
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(command.reminderId());
+    public PaymentReminder execute(String userEmail, String reminderId, UpdatePaymentReminderCommand command) {
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);
         reminder.getAudit().validateIsActive("PaymentReminder");
 
-        if (!reminder.getUser().getEmail().equals(command.email())) {
+        if (!reminder.getUser().getEmail().equals(userEmail)) {
             throw new UnauthorizedException("This reminder does not belong to the logged in user.");
         }
 

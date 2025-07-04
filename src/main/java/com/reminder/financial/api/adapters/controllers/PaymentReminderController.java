@@ -61,11 +61,11 @@ public class PaymentReminderController {
     @Operation(summary = "Create a new payment reminder")
     public ResponseEntity<Void> create(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
-            @RequestBody @Valid CreatePaymentReminderRequest dto,
+            @RequestBody @Valid CreatePaymentReminderRequest request,
             UriComponentsBuilder uriBuilder
     ) {
-        CreatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, loggedUserEmail);
-        var result = createUseCase.execute(command);
+        CreatePaymentReminderCommand command = paymentReminderMapper.toCommand(request);
+        var result = createUseCase.execute(loggedUserEmail, command);
 
         var uri = uriBuilder.path("/payments/reminders/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -89,10 +89,10 @@ public class PaymentReminderController {
     public ResponseEntity<Void> update(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String id,
-            @RequestBody @Valid UpdatePaymentReminderRequest dto
+            @RequestBody @Valid UpdatePaymentReminderRequest request
     ) {
-        UpdatePaymentReminderCommand command = paymentReminderMapper.toCommand(dto, id, loggedUserEmail);
-        updateUseCase.execute(command);
+        UpdatePaymentReminderCommand command = paymentReminderMapper.toCommand(request);
+        updateUseCase.execute(loggedUserEmail, id, command);
 
         return ResponseEntity.noContent().build();
     }
