@@ -73,4 +73,19 @@ public class PaymentReminderMapper {
                 result.installmentsNumber()
         );
     }
+
+    public ListPaymentRemindersFilterQuery toListTransactionsFilterQuery(ListPaymentRemindersFilterRequest request) {
+        if (request == null)
+            return new ListPaymentRemindersFilterQuery(null, null, null, null, null, null, null);
+
+        return new ListPaymentRemindersFilterQuery(
+                request.reminderId(),
+                request.title(),
+                request.dueDateFrom(),
+                request.dueDateUntil(),
+                request.recurrence(),
+                request.method(),
+                request.enabled()
+        );
+    }
 }

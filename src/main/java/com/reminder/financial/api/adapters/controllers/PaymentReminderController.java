@@ -2,10 +2,7 @@ package com.reminder.financial.api.adapters.controllers;
 
 import com.reminder.financial.api.adapters.dtos.paymentremider.*;
 import com.reminder.financial.api.adapters.mappers.PaymentReminderMapper;
-import com.reminder.financial.api.application.dtos.paymentreminder.CreatePaymentReminderCommand;
-import com.reminder.financial.api.application.dtos.paymentreminder.GetPaymentReminderQuery;
-import com.reminder.financial.api.application.dtos.paymentreminder.ListMonthlyBillsResult;
-import com.reminder.financial.api.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
+import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.usecases.paymentreminder.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -156,6 +153,7 @@ public class PaymentReminderController {
     )
     public ResponseEntity<Page<ListPaymentRemindersResponse>> listByUser(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
+            ListPaymentRemindersFilterRequest filter,
             @PageableDefault(
                     size = 10,
                     page = 0,
@@ -163,7 +161,8 @@ public class PaymentReminderController {
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, pageable);
+        ListPaymentRemindersFilterQuery query = paymentReminderMapper.toListTransactionsFilterQuery(filter);
+        var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, query, pageable);
 
         Page<ListPaymentRemindersResponse> response = result.map(paymentReminderMapper::toListPaymentRemindersResponse);
         return ResponseEntity.ok(response);
