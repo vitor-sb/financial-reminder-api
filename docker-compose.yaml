@@ -3,18 +3,13 @@ services:
     image: postgres:17-alpine
     container_name: financial_management_postgres_container
     environment:
-      # PostgreSQL default variables
       POSTGRES_DB: finance-management
       POSTGRES_USER: ${ROOT_DB_USER}
       POSTGRES_PASSWORD: ${ROOT_DB_PASSWORD}
-      # Custom variables for our startup scripts
-      API_DB_USER: ${API_DB_USER}
-      API_DB_PASSWORD: ${API_DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - financial_management_postgres_data:/var/lib/postgresql/data
-      - ./docker/scripts/db/init.sh:/docker-entrypoint-initdb.d/init.sh
     networks:
       - financial_management_network
     restart: always
