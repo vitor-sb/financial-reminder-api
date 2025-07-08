@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -45,6 +44,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         Map<String, ListMonthlyBillsResult> billMap = new LinkedHashMap<>();
 
         real.forEach(bill -> billMap.put(generateBillKey(bill), bill));
+
         simulated.forEach(bill -> billMap.putIfAbsent(generateBillKey(bill), bill));
 
         return billMap.values().stream()
@@ -53,7 +53,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
     }
 
     private String generateBillKey(ListMonthlyBillsResult bill) {
-        return bill.dueDate().toString() + "-" + bill.reminderId();
+        return String.format("%s-%s", bill.dueDate(), bill.reminderId());
     }
 
     private List<ListMonthlyBillsResult> findRealBillsForMonth(String userEmail, YearMonth yearMonth) {
@@ -65,7 +65,6 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
     private List<ListMonthlyBillsResult> simulateFutureBillsForMonth(String userEmail, YearMonth yearMonth) {
         return reminderService.listPaymentRemindersByEmail(userEmail).stream()
                 .filter(reminder -> reminder.getRecurrence() != RecurrenceEnum.UNICA)
-                .filter(reminder -> Boolean.TRUE.equals(reminder.getAudit().getEnabled()))
                 .flatMap(reminder -> generateSimulatedBillsForReminder(reminder, yearMonth).stream())
                 .collect(Collectors.toList());
     }
@@ -75,92 +74,24 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
             YearMonth targetMonth
     ) {
         List<ListMonthlyBillsResult> bills = new ArrayList<>();
+        RecurrenceEnum recurrence = reminder.getRecurrence();
 
-        LocalDate startDate = calculateAdjustedStartDate(reminder, targetMonth);
-        if (YearMonth.from(startDate).isAfter(targetMonth)) {
-            return bills;
-        }
+        LocalDate nextDate = recurrence.calculateSimulationStartDate(reminder.getBaseDate(), targetMonth);
 
-        int installment = calculateCurrentInstallment(reminder.getBaseDate(), startDate, reminder.getRecurrence());
-        LocalDate nextDate = startDate;
+        while (YearMonth.from(nextDate).equals(targetMonth)) {
+            long installments = recurrence.calculateInstallmentsBetween(reminder.getBaseDate(), nextDate);
+            int currentInstallment = (int) installments + 1;
 
-        while (nextDate != null && YearMonth.from(nextDate).isBefore(targetMonth.plusMonths(1))) {
-            if (reminder.getInstallmentsNumber() > 0 && installment > reminder.getInstallmentsNumber()) {
+            if (reminder.getInstallmentsNumber() > 0 && currentInstallment > reminder.getInstallmentsNumber()) {
                 break;
             }
 
-            if (YearMonth.from(nextDate).equals(targetMonth)) {
-                bills.add(mapReminderToSimulatedResult(reminder, nextDate, installment));
-            }
+            bills.add(mapReminderToSimulatedResult(reminder, nextDate, currentInstallment));
 
-            nextDate = reminder.getRecurrence().getNextDate(nextDate);
-            installment++;
+            nextDate = recurrence.getNextDate(nextDate);
         }
+
         return bills;
-    }
-
-    private LocalDate calculateAdjustedStartDate(
-            PaymentReminder reminder,
-            YearMonth targetMonth
-    ) {
-        LocalDate baseDate = reminder.getBaseDate();
-        if (YearMonth.from(baseDate).isAfter(targetMonth)) {
-            return baseDate;
-        }
-
-        long diff;
-        return switch (reminder.getRecurrence()) {
-            case DIARIA -> {
-                diff = ChronoUnit.DAYS.between(baseDate, targetMonth.atDay(1));
-                yield baseDate.plusDays(diff);
-            }
-            case SEMANAL -> {
-                diff = ChronoUnit.WEEKS.between(baseDate, targetMonth.atDay(1));
-                yield baseDate.plusWeeks(diff);
-            }
-            case QUINZENAL -> {
-                diff = ChronoUnit.WEEKS.between(baseDate, targetMonth.atDay(1)) / 2;
-                yield baseDate.plusWeeks(diff * 2);
-            }
-            case MENSAL -> {
-                diff = ChronoUnit.MONTHS.between(YearMonth.from(baseDate), targetMonth);
-                yield baseDate.plusMonths(diff);
-            }
-            case TRIMESTRAL -> {
-                diff = ChronoUnit.MONTHS.between(YearMonth.from(baseDate), targetMonth) / 3;
-                yield baseDate.plusMonths(diff * 3);
-            }
-            case SEMESTRAL -> {
-                diff = ChronoUnit.MONTHS.between(YearMonth.from(baseDate), targetMonth) / 6;
-                yield baseDate.plusMonths(diff * 6);
-            }
-            case ANUAL -> {
-                diff = ChronoUnit.YEARS.between(YearMonth.from(baseDate), targetMonth);
-                yield baseDate.plusYears(diff);
-            }
-            default -> baseDate;
-        };
-    }
-
-    private int calculateCurrentInstallment(
-            LocalDate baseDate,
-            LocalDate startDate,
-            RecurrenceEnum recurrence
-    ) {
-        if (!startDate.isAfter(baseDate)) {
-            return 1;
-        }
-        long diff = switch (recurrence) {
-            case DIARIA -> ChronoUnit.DAYS.between(baseDate, startDate);
-            case SEMANAL -> ChronoUnit.WEEKS.between(baseDate, startDate);
-            case QUINZENAL -> ChronoUnit.WEEKS.between(baseDate, startDate) / 2;
-            case MENSAL -> ChronoUnit.MONTHS.between(baseDate, startDate);
-            case TRIMESTRAL -> ChronoUnit.MONTHS.between(baseDate, startDate) / 3;
-            case SEMESTRAL -> ChronoUnit.MONTHS.between(baseDate, startDate) / 6;
-            case ANUAL -> ChronoUnit.YEARS.between(baseDate, startDate);
-            default -> 0;
-        };
-        return (int) diff + 1;
     }
 
     private ListMonthlyBillsResult mapTransactionToResult(PaymentTransaction transaction) {

@@ -138,6 +138,12 @@ public class PaymentTransactionService {
     public List<PaymentTransaction> findTransactionsForMonth(String userEmail, YearMonth yearMonth) {
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
-        return transactionRepository.findAllByReminderUserEmailAndDueDateBetween(userEmail, startDate, endDate);
+        return transactionRepository.findAllByReminderUserEmailAndDueDateBetweenAndAuditEnabledAndAuditDeleted(
+                userEmail,
+                startDate,
+                endDate,
+                true,
+                false
+        );
     }
 }
