@@ -47,7 +47,7 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
 
         var persistedReminder = paymentReminderService.savePaymentReminder(reminder);
 
-        transactionService.createPaymentTransactionByReminder(reminder);
+        transactionService.createInitialTransactionForReminder(reminder);
 
         return persistedReminder;
     }

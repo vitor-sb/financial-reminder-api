@@ -42,7 +42,7 @@ public class PaymentTransaction implements Serializable {
     @Column(nullable = false)
     private TransactionMethodEnum method;
 
-    @Column(nullable = false)
+    @Column
     private Integer installmentNumber;
 
     @Column(nullable = false)

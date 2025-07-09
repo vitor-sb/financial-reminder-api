@@ -80,13 +80,15 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
         while (YearMonth.from(nextDate).equals(targetMonth)) {
             long installments = recurrence.calculateInstallmentsBetween(reminder.getBaseDate(), nextDate);
-            int currentInstallment = (int) installments + 1;
+            int internalCounter = (int) installments + 1;
 
-            if (reminder.getInstallmentsNumber() > 0 && currentInstallment > reminder.getInstallmentsNumber()) {
+            if (reminder.getInstallmentsNumber() != null && internalCounter > reminder.getInstallmentsNumber()) {
                 break;
             }
 
-            bills.add(mapReminderToSimulatedResult(reminder, nextDate, currentInstallment));
+            Integer finalInstallmentNumber = (reminder.getInstallmentsNumber() == null) ? null : internalCounter;
+
+            bills.add(mapReminderToSimulatedResult(reminder, nextDate, finalInstallmentNumber));
 
             nextDate = recurrence.getNextDate(nextDate);
         }
@@ -110,7 +112,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
     private ListMonthlyBillsResult mapReminderToSimulatedResult(
             PaymentReminder reminder,
             LocalDate dueDate,
-            int installmentNumber
+            Integer installmentNumber
     ) {
         return new ListMonthlyBillsResult(
                 null,

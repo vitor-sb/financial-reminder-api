@@ -35,12 +35,14 @@ public class PaymentTransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public void createPaymentTransactionByReminder(PaymentReminder reminder) {
+    public void createInitialTransactionForReminder(PaymentReminder reminder) {
+        Integer initialInstallment = (reminder.getInstallmentsNumber() == null) ? null : 1;
+
         PaymentTransaction transaction = new PaymentTransaction(
                 reminder,
                 reminder.getBaseDate(),
                 reminder.getMethod(),
-                1,
+                initialInstallment,
                 reminder.getBaseValue(),
                 TransactionStatusEnum.PENDENTE
         );
@@ -85,18 +87,17 @@ public class PaymentTransactionService {
 
     private void generateNextTransaction(PaymentTransaction currentTransaction) {
         PaymentReminder reminder = currentTransaction.getReminder();
+        Integer currentInstallment = currentTransaction.getInstallmentNumber();
 
         if (reminder.getRecurrence() == RecurrenceEnum.UNICA)
             throw new IllegalStateException("generateNextTransaction should not be called for UNICA recurrence. Reminder ID: " + reminder.getId());
 
-        if (reminder.getInstallmentsNumber() != 0) {
-            int currentInstallment = currentTransaction.getInstallmentNumber() != 0 ? currentTransaction.getInstallmentNumber() : 1;
-            if (currentInstallment >= reminder.getInstallmentsNumber()) {
-                return;
-            }
+        if (reminder.getInstallmentsNumber() != null && currentInstallment != null &&
+                currentInstallment >= reminder.getInstallmentsNumber()) {
+            return;
         }
 
-        LocalDate nextDueDate = reminder.getRecurrence().getNextDate(reminder.getBaseDate());
+        LocalDate nextDueDate = reminder.getRecurrence().getNextDate(currentTransaction.getDueDate());
 
         if (nextDueDate != null) {
             PaymentTransaction nextTransaction = new PaymentTransaction(

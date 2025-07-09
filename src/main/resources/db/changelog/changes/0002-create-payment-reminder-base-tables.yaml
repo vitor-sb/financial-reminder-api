@@ -116,8 +116,6 @@ databaseChangeLog:
               - column:
                   name: installments_number
                   type: INT
-                  constraints:
-                    nullable: false
               - column:
                   name: method
                   type: VARCHAR(30)
@@ -181,8 +179,6 @@ databaseChangeLog:
               - column:
                   name: installment_number
                   type: INT
-                  constraints:
-                    nullable: false
               - column:
                   name: payment_value
                   type: DECIMAL(10, 2)

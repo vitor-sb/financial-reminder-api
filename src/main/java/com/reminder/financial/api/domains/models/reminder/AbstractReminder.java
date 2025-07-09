@@ -49,7 +49,6 @@ public abstract class AbstractReminder implements Serializable {
     @Column(nullable = false)
     private BigDecimal baseValue;
 
-    @Column(nullable = false)
+    @Column
     private Integer installmentsNumber;
-
 }
