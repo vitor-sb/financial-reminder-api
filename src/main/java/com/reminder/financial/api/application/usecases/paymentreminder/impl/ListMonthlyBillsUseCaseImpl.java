@@ -80,8 +80,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
     }
 
     private List<ListMonthlyBillsResult> simulateFutureBillsForMonth(String userEmail, YearMonth yearMonth) {
-        return reminderService.listPaymentRemindersByEmail(userEmail).stream()
-                .filter(reminder -> reminder.getRecurrence() != RecurrenceEnum.UNICA)
+        return reminderService.getRelevantRemindersForSimulation(userEmail, yearMonth).stream()
                 .flatMap(reminder -> generateSimulatedBillsForReminder(reminder, yearMonth).stream())
                 .collect(Collectors.toList());
     }
