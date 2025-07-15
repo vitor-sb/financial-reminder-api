@@ -117,32 +117,25 @@ public class PaymentReminderController {
 
     @GetMapping("/monthly-bills")
     @Operation(
-            summary = "Lists the month's bills (actual and expected)",
-            description = "Returns existing transactions and simulated future accounts. Defaults to the current month."
+            summary = "Lists a paginated view of the month's bills (actual and expected) with totals",
+            description = "Returns existing transactions and simulated future accounts, including a summary of totals. Defaults to the current month."
     )
-    public ResponseEntity<List<MonthlyBillResponse>> getMonthlyBills(
+    public ResponseEntity<MonthlyBillsSummaryResponse> getMonthlyBills(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) Integer month
+            @RequestParam(required = false) Integer month,
+            @RequestParam(name = "withSimulatedBills", defaultValue = "false") boolean withSimulatedBills,
+            @PageableDefault(size = 15, page = 0, sort = "dueDate", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        YearMonth now = YearMonth.now();
-        YearMonth queryYearMonth = YearMonth.of(
-                year != null ? year : now.getYear(),
-                month != null ? month : now.getMonthValue()
+        MonthlyBillsSummaryResult result = listMonthlyBillsUseCase.execute(
+                loggedUserEmail,
+                year,
+                month,
+                withSimulatedBills,
+                pageable
         );
 
-        YearMonth limitDate = now.plusYears(MAX_YEARS_IN_FUTURE_ALLOWED);
-        if (queryYearMonth.isAfter(limitDate)) {
-            throw new IllegalArgumentException(
-                    "Date exceeds the allowed limit. You can only query up to " + MAX_YEARS_IN_FUTURE_ALLOWED + " years in the future."
-            );
-        }
-
-        List<ListMonthlyBillsResult> results = listMonthlyBillsUseCase.execute(loggedUserEmail, queryYearMonth);
-
-        List<MonthlyBillResponse> response = results.stream()
-                .map(paymentReminderMapper::toResponse)
-                .collect(Collectors.toList());
+        MonthlyBillsSummaryResponse response = paymentReminderMapper.toSummaryResponse(result);
         return ResponseEntity.ok(response);
     }
 

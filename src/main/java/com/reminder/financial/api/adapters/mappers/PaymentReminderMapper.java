@@ -3,6 +3,7 @@ package com.reminder.financial.api.adapters.mappers;
 import com.reminder.financial.api.adapters.dtos.paymentremider.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -59,6 +60,18 @@ public class PaymentReminderMapper {
                 result.status(),
                 result.installmentNumber()
         );
+    }
+
+    public MonthlyBillsSummaryResponse toSummaryResponse(MonthlyBillsSummaryResult result) {
+        Page<MonthlyBillResponse> billsResponsePage = result.bills().map(this::toResponse);
+
+        var totals = new MonthlyBillsSummaryResponse.Totals(
+                result.totalPaid(),
+                result.totalPending(),
+                result.totalOverdue()
+        );
+
+        return new MonthlyBillsSummaryResponse(billsResponsePage, totals);
     }
 
     public ListPaymentRemindersResponse toListPaymentRemindersResponse(ListPaymentRemindersResult result) {

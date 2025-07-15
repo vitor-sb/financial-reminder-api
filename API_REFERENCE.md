@@ -167,6 +167,7 @@ Manages all aspects of payment reminders.
 **⚙️ Query Parameters (optional):**
 - year (Integer): The year for which to retrieve bills. If omitted, defaults to the current year.
 - month (Integer): The month (1-12) for which to retrieve bills. If omitted, defaults to the current month.
+- withSimulatedBills (Boolean): If true, includes forecasted future bills. If false, returns only actual transactions. Defaults to true.
 
 ### 🔍 4.8. List User Reminders
 
