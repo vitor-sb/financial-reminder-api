@@ -157,7 +157,7 @@ Manages all aspects of payment reminders.
 ### 🔍 4.7. List Monthly Bills
 
 **Endpoint:** GET /payments/reminders/monthly-bills  
-**Description:** Returns existing transactions and simulates future bills for a given month.
+**Description:** Returns existing transactions and simulated future accounts, including a summary of totals.
 
 **Example request with query parameters:**
 ```
