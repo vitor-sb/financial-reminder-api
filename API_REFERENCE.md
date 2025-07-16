@@ -131,7 +131,6 @@ Manages all aspects of payment reminders.
 **Example request body (JSON):**
 ```json
 {
-  "updatePendingTransaction": true,
   "title": "Monthly Rent",
   "description": "Rent for apartment 123",
   "method": "PIX",

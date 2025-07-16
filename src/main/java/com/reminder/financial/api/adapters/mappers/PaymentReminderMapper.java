@@ -35,7 +35,6 @@ public class PaymentReminderMapper {
 
     public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest request) {
         return new UpdatePaymentReminderCommand(
-                request.updatePendingTransaction(),
                 request.title(),
                 request.description(),
                 request.method(),

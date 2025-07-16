@@ -33,11 +33,9 @@ public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUs
 
         PaymentReminder updatedReminder = paymentReminderService.savePaymentReminder(reminder);
 
-        if (Boolean.TRUE.equals(command.updatePendingTransaction())) {
-            paymentTransactionService
-                    .findPendingTransactionByReminderId(reminder.getId())
-                    .ifPresent(transaction -> this.updatePendingTransactionDetails(command, transaction));
-        }
+        paymentTransactionService
+                .findPendingTransactionByReminderId(reminder.getId())
+                .ifPresent(transaction -> this.updatePendingTransactionDetails(command, transaction));
 
         return updatedReminder;
     }
