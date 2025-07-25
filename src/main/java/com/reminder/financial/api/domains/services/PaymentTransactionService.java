@@ -100,11 +100,17 @@ public class PaymentTransactionService {
         LocalDate nextDueDate = reminder.getRecurrence().getNextDate(currentTransaction.getDueDate());
 
         if (nextDueDate != null) {
+            Integer nextInstallmentNumber = null;
+
+            if (currentInstallment != null && currentInstallment != 0) {
+                nextInstallmentNumber = currentInstallment + 1;
+            }
+
             PaymentTransaction nextTransaction = new PaymentTransaction(
                     reminder,
                     nextDueDate,
                     reminder.getMethod(),
-                    currentTransaction.getInstallmentNumber() != 0 ? currentTransaction.getInstallmentNumber() + 1 : null,
+                    nextInstallmentNumber,
                     reminder.getBaseValue(),
                     TransactionStatusEnum.PENDENTE
             );
