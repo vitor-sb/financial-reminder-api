@@ -36,6 +36,8 @@ public class PaymentTransactionService {
     }
 
     public void createInitialTransactionForReminder(PaymentReminder reminder) {
+        logger.info("Creating initial transaction for reminder: {}", reminder.getId());
+
         Integer initialInstallment = (reminder.getInstallmentsNumber() == null) ? null : 1;
 
         PaymentTransaction transaction = new PaymentTransaction(
@@ -74,12 +76,16 @@ public class PaymentTransactionService {
     }
 
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
+        logger.info("Processing successful payment for Transaction ID: {} | Reminder: {}",
+                transaction.getId(), transaction.getReminder().getTitle());
+
         transaction.setStatus(TransactionStatusEnum.PAGO);
         transaction.setPaymentDate(LocalDate.now());
         PaymentTransaction savedTransaction = transactionRepository.save(transaction);
 
         PaymentReminder reminder = savedTransaction.getReminder();
         if (reminder.getRecurrence() != RecurrenceEnum.UNICA) {
+            logger.info("Recurrence detected ({}). Generating next transaction.", reminder.getRecurrence());
             generateNextTransaction(savedTransaction);
         }
         return savedTransaction;
@@ -123,23 +129,26 @@ public class PaymentTransactionService {
         findPendingTransactionByReminderId(reminderId)
                 .ifPresent(transaction -> {
                     transaction.getAudit().setEnabled(enable);
-                    if (Boolean.TRUE.equals(enable)) {
+                    if (enable) {
                         transaction.getAudit().setEnabledAt(Instant.now());
-                        transaction.getAudit().setEnabledBy(userEmail);
+                        transaction.getAudit().setToggledBy(userEmail);
                     }
                     save(transaction);
                 });
     }
 
     public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
+        logger.info("Cancelling and soft-deleting pending transaction for reminder: {} by user: {}", reminderId, userEmail);
+
         findPendingTransactionByReminderId(reminderId)
-                .ifPresent(transaction -> {
+                .ifPresentOrElse(transaction -> {
                     transaction.setStatus(TransactionStatusEnum.CANCELADO);
                     transaction.getAudit().setDeleted(true);
                     transaction.getAudit().setDeletedBy(userEmail);
                     transaction.getAudit().setDeletedAt(Instant.now());
                     save(transaction);
-                });
+                    logger.info("Transaction {} cancelled successfully.", transaction.getId());
+                }, () -> logger.warn("No pending transaction found to cancel for reminder: {}", reminderId));
     }
 
     public List<PaymentTransaction> findTransactionsForMonth(String userEmail, YearMonth yearMonth) {

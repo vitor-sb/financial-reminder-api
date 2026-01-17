@@ -9,6 +9,8 @@ import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Component
 public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
+    private static final Logger logger = LoggerFactory.getLogger(ListMonthlyBillsUseCaseImpl.class);
     private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
 
     @Autowired
@@ -35,6 +38,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
     @Override
     public MonthlyBillsSummaryResult execute(String userEmail, Integer year, Integer month, boolean withSimulatedBills, Pageable pageable) {
+        logger.info("Executing ListMonthlyBills for user: {} | Period: {}/{} | Simulated: {}", userEmail, month, year, withSimulatedBills);
         YearMonth queryYearMonth = prepareAndValidateQueryDate(year, month);
 
         List<ListMonthlyBillsResult> allBills = fetchAndCombineBills(userEmail, queryYearMonth, withSimulatedBills);
@@ -42,6 +46,8 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
         Totals totals = calculateTotals(allBills);
 
         Page<ListMonthlyBillsResult> billsPage = paginateBills(allBills, pageable);
+
+        logger.info("Monthly bills summary generated. Total items: {}", allBills.size());
 
         return new MonthlyBillsSummaryResult(billsPage, totals.paid(), totals.pending(), totals.overdue());
     }
@@ -55,6 +61,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
         YearMonth limitDate = now.plusYears(MAX_YEARS_IN_FUTURE_ALLOWED);
         if (queryYearMonth.isAfter(limitDate)) {
+            logger.warn("Validation failed: Query date {} is beyond the limit of {} years", queryYearMonth, MAX_YEARS_IN_FUTURE_ALLOWED);
             throw new IllegalArgumentException(
                     "Date exceeds the allowed limit. You can only query up to " + MAX_YEARS_IN_FUTURE_ALLOWED + " years in the future."
             );
@@ -64,10 +71,12 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
     private List<ListMonthlyBillsResult> fetchAndCombineBills(String userEmail, YearMonth yearMonth, boolean withSimulatedBills) {
         List<ListMonthlyBillsResult> realBills = findRealBillsForMonth(userEmail, yearMonth);
+        logger.debug("Found {} real transactions for {}", realBills.size(), yearMonth);
 
         List<ListMonthlyBillsResult> simulatedBills = new ArrayList<>();
         if (withSimulatedBills) {
             simulatedBills = simulateFutureBillsForMonth(userEmail, yearMonth);
+            logger.debug("Generated {} simulated bills for {}", simulatedBills.size(), yearMonth);
         }
 
         return mergeAndSortBills(realBills, simulatedBills);

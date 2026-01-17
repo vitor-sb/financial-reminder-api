@@ -7,6 +7,8 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
 import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +23,14 @@ import java.util.Optional;
 @Service
 public class PaymentReminderService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentReminderService.class);
+
     @Autowired
     private PaymentReminderRepository paymentReminderRepository;
 
 
     public PaymentReminder savePaymentReminder(PaymentReminder reminder) {
+        logger.info("Saving payment reminder: {} for user email: {}", reminder.getTitle(), reminder.getUser().getEmail());
         return paymentReminderRepository.save(reminder);
     }
 
@@ -42,8 +47,10 @@ public class PaymentReminderService {
         Optional<PaymentReminder> paymentReminder =
                 paymentReminderRepository.findByTitleAndUserEmailAndAuditDeletedFalse(title, email);
 
-        if (paymentReminder.isPresent())
+        if (paymentReminder.isPresent()){
+            logger.warn("Title conflict detected: Title '{}' already exists for user {}", title, email);
             throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
+        }
     }
 
     public Page<PaymentReminder> listPaymentRemindersByUserAndFilters(
@@ -68,5 +75,4 @@ public class PaymentReminderService {
         LocalDate monthEndDate = yearMonth.atEndOfMonth();
         return paymentReminderRepository.findRelevantRemindersForSimulation(email, monthEndDate);
     }
-
 }

@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-public class HttpRequestLoggerFilter extends OncePerRequestFilter {
+public class HttpTracingFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestLoggerFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpTracingFilter.class);
 
     private static final String TRACE_ID_KEY = "traceId";
-    private static final String SESSION_ID_KEY = "sessionId";
+    private static final String HEADER_TRACE_ID = "X-Trace-Id";
 
     @Override
     protected void doFilterInternal(
@@ -27,14 +27,16 @@ public class HttpRequestLoggerFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        String traceId = UUID.randomUUID().toString();
 
-        setupMDC(request);
+        MDC.put(TRACE_ID_KEY, traceId);
+
+        response.setHeader(HEADER_TRACE_ID, traceId);
 
         long startTime = System.currentTimeMillis();
 
-        logIncomingRequest(request);
-
         try {
+            logIncomingRequest(request);
             filterChain.doFilter(request, response);
         } finally {
             long duration = System.currentTimeMillis() - startTime;
@@ -44,24 +46,12 @@ public class HttpRequestLoggerFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setupMDC(HttpServletRequest request) {
-        String traceId = UUID.randomUUID().toString();
-        MDC.put(TRACE_ID_KEY, traceId);
-
-        String sessionId = request.getSession(false) != null ? request.getSession(false).getId() : "anon";
-
-        if (sessionId != null) {
-            MDC.put(SESSION_ID_KEY, sessionId);
-        }
-    }
-
     private void logIncomingRequest(HttpServletRequest request) {
         String queryString = request.getQueryString() != null ? "?" + request.getQueryString() : "";
-        logger.info("Request received: {} {}{}",
+        logger.info("Request started: {} {}{}",
                 request.getMethod(),
                 request.getRequestURI(),
-                queryString
-        );
+                queryString);
     }
 
     private void logCompletedRequest(HttpServletRequest request, HttpServletResponse response, long duration) {
