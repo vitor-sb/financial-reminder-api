@@ -32,9 +32,7 @@ public class DeleteSelfUserAccountUseCaseImpl implements DeleteSelfUserAccountUs
         }
 
         paymentReminderService.listPaymentRemindersByEmail(userEmail)
-                .forEach(reminder -> {
-                    deleteReminderUseCase.execute(reminder.getId(), userEmail);
-                });
+                .forEach(reminder -> deleteReminderUseCase.execute(reminder.getId(), userEmail));
 
         user.getAudit().setDeleted(true);
         user.getAudit().setDeletedAt(Instant.now());

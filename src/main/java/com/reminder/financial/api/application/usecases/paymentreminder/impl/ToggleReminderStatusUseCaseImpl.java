@@ -31,9 +31,9 @@ public class ToggleReminderStatusUseCaseImpl implements ToggleReminderStatusUseC
         paymentTransactionService.togglePendingTransactionStatus(reminderId, enable, userEmail);
 
         reminder.getAudit().setEnabled(enable);
-        if (Boolean.TRUE.equals(enable)) {
+        if (enable) {
             reminder.getAudit().setEnabledAt(Instant.now());
-            reminder.getAudit().setEnabledBy(userEmail);
+            reminder.getAudit().setToggledBy(userEmail);
         }
 
         paymentReminderService.savePaymentReminder(reminder);

@@ -3,3 +3,7 @@ databaseChangeLog:
       - file: /db/changelog/changes/0001-create-table-users.yaml
   - include:
       - file: /db/changelog/changes/0002-create-payment-reminder-base-tables.yaml
+  - include:
+      - file: /db/changelog/changes/0003-create-performance-indexes.yaml
+  - include:
+      - file: /db/changelog/changes/0004-update-audit-columns.yaml

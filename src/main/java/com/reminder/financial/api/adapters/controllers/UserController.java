@@ -1,8 +1,10 @@
 package com.reminder.financial.api.adapters.controllers;
 
 import com.reminder.financial.api.adapters.dtos.user.CreateUserRequest;
+import com.reminder.financial.api.adapters.dtos.user.EnableUserRequest;
 import com.reminder.financial.api.adapters.mappers.UserMapper;
 import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
+import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
 import com.reminder.financial.api.application.usecases.user.DeleteSelfUserAccountUseCase;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.application.usecases.user.CreateUserUseCase;
@@ -54,9 +56,11 @@ public class UserController {
     }
 
     @PostMapping("/me/enable")
-    @Operation(summary = "Reactivates the logged in user's account")
-    public ResponseEntity<Void> enableSelf(@AuthenticationPrincipal(expression = "username") String userEmail) {
-        toggleSelfUserAccountUseCase.execute(userEmail, true);
+    @Operation(summary = "Reactivates the user's account")
+    public ResponseEntity<Void> enableSelf(@RequestBody @Valid EnableUserRequest dto) {
+        EnableUserCommand command = userMapper.toCommand(dto);
+
+        toggleSelfUserAccountUseCase.execute(command.email(), true);
         return ResponseEntity.noContent().build();
     }
 

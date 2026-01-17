@@ -32,6 +32,7 @@ public class SecurityConfiguration {
 
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/users",
+            "/users/me/enable",
             "/auth/login"
     };
 

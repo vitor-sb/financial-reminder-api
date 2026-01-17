@@ -1,9 +1,11 @@
 package com.reminder.financial.api.adapters.mappers;
 
 import com.reminder.financial.api.adapters.dtos.user.CreateUserRequest;
+import com.reminder.financial.api.adapters.dtos.user.EnableUserRequest;
 import com.reminder.financial.api.adapters.dtos.user.ListUsersFilterRequest;
 import com.reminder.financial.api.adapters.dtos.user.ListUsersSingleResponse;
 import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
+import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
 import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import jakarta.validation.Valid;
@@ -43,6 +45,12 @@ public class UserMapper {
                 filter.createdUntil(),
                 filter.enabled(),
                 filter.deleted()
+        );
+    }
+
+    public EnableUserCommand toCommand(@Valid EnableUserRequest dto) {
+        return new EnableUserCommand(
+                dto.email()
         );
     }
 }

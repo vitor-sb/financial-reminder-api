@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-add-disabled-at-to-audit-tables
+      author: vitor-sb
+      changes:
+        - addColumn:
+            tableName: users_audit
+            columns:
+              - column:
+                  name: disabled_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: true
+        - addColumn:
+            tableName: payment_reminders_audit
+            columns:
+              - column:
+                  name: disabled_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: true
+        - addColumn:
+            tableName: payment_transactions_audit
+            columns:
+              - column:
+                  name: disabled_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 0004-rename-enabled-by-to-toggled-by
+      author: vitor-sb
+      changes:
+        - renameColumn:
+            tableName: users_audit
+            oldColumnName: enabled_by
+            newColumnName: toggled_by
+            columnDataType: varchar(36)
+        - renameColumn:
+            tableName: payment_reminders_audit
+            oldColumnName: enabled_by
+            newColumnName: toggled_by
+            columnDataType: varchar(36)
+        - renameColumn:
+            tableName: payment_transactions_audit
+            oldColumnName: enabled_by
+            newColumnName: toggled_by
+            columnDataType: varchar(36)

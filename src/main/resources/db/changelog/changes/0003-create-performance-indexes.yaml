@@ -44,7 +44,7 @@ databaseChangeLog:
               - column:
                   name: user_id
               - column:
-                  name: baseDate
+                  name: base_date
 
   - changeSet:
       id: 0003-create-payment-transactions-indexes

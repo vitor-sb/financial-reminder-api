@@ -48,8 +48,11 @@ public abstract class AbstractAudit implements Serializable {
     @Column(name = "enabled_at")
     private Instant enabledAt;
 
-    @Column(name = "enabled_by", length = 36)
-    private String enabledBy;
+    @Column(name = "disabled_at")
+    private Instant disabledAt;
+
+    @Column(name = "toggled_by", length = 36)
+    private String toggledBy;
 
     @Column(nullable = false)
     private Boolean deleted = false;
@@ -67,7 +70,7 @@ public abstract class AbstractAudit implements Serializable {
 
     public void validateIsEnabled(String resourceName) {
         if (Boolean.FALSE.equals(this.enabled))
-            throw new ResourceDisabledException(resourceName, this.getEnabledBy());
+            throw new ResourceDisabledException(resourceName, this.getToggledBy());
     }
 
     public void validateIsActive(String resourceName) {
