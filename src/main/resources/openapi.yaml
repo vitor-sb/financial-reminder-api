@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: Financial Reminder Management API
+  version: v1
+  description: API for managing reminders and financial transactions.
+  termsOfService: https://github.com/vitor-sb/financial-reminder-api
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+
+externalDocs:
+  description: LinkedIn – Vitor Samuel
+  url: https://www.linkedin.com/in/vitor-sb/
+
+tags:
+  - name: Authentication
+    description: Responsible for managing authentication and API access.
+  - name: Admin
+    description: Endpoints for system user administration.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Validates user credentials and returns an access token.
+      security: []
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+#        '401':
+#          description: Invalid credentials
+  /admin/users/list:
+    get:
+      tags:
+        - Admin
+      summary: List and filter all system users
+      description: Returns a paginated list of users based on filters.
+      operationId: listAllUsersByFiltersToAdmin
+      parameters:
+        - $ref: '#/components/schemas/ListUsersFilterRequest'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number (0-based)
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    SizeParam:
+      name: size
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+    SortParam:
+      name: sort
+      in: query
+      description: Sorting criteria in the format `property,(asc|desc)`
+      schema:
+        type: string
+        example: dueDate,asc
+  schemas:
+    RoleEnum:
+      type: string
+      description: User role
+      enum:
+        - OWNER
+        - ADMIN
+        - MEMBER
+        - USER
+    RecurrenceEnum:
+      type: string
+      description: Reminder Recurrence
+      enum:
+        - UNICA
+        - DIARIA
+        - SEMANAL
+        - QUINZENAL
+        - MENSAL
+        - TRIMESTRAL
+        - SEMESTRAL
+        - ANUAL
+    TransactionMethodEnum:
+      type: string
+      description: Transaction Method
+      enum:
+        - DINHEIRO
+        - TRANSFERENCIA
+        - PIX
+        - DEBITO
+        - CREDITO
+        - BOLETO
+        - OUTRO
+    TransactionStatusEnum:
+      type: string
+      description: Transaction Status
+      enum:
+        - PENDENTE
+        - PAGO
+        - VENCIDO
+        - CANCELADO
+    AuthenticationRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'user@example.com'
+        password:
+          type: string
+          format: password
+          example: 'password123'
+    AuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ListUsersFilterRequest:
+      type: object
+      properties: 
+        name:
+          type: string
+          example: 'Fulano de Tal'
+        email:
+          type: string
+          format: email
+          example: 'user@example.com'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        createdFrom:
+          type: string
+          format: date
+        createdUntil:
+          type: string
+          format: date
+        enabled:
+          type: boolean
+        deleted:
+          type: boolean

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/users")
-@Tag(name = "Admin: Users", description = "Endpoints for system user administration.")
 @PreAuthorize("hasAuthority('ADMIN_PERMISSION')")
 public class UserAdminController {
 
@@ -29,10 +28,6 @@ public class UserAdminController {
     private ListUsersUseCase listUsersUseCase;
 
     @GetMapping("/list")
-    @Operation(
-            summary = "List and filter all system users",
-            description = "Returns a paginated list of users based on filters."
-    )
     public ResponseEntity<Page<ListUsersSingleResponse>> listAll(
             ListUsersFilterRequest filter,
             @PageableDefault(

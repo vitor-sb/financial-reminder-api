@@ -5,29 +5,9 @@ Below are example requests for each API endpoint.
 ---
 
 ## 📖 Endpoints
-- 🔐 [1. Authentication](#1-authentication)
 - 👤 [2. Users](#2-users)
-- 🛠️ [3. Admin: Users](#3-admin-users)
 - 📅 [4. Payment Reminders](#4-payment-reminders)
 - 💳 [5. Payment Transactions](#5-payment-transactions)
-
----
-
-## 1. Authentication
-
-### ➕ 1.1. User Login
-Authenticates a user and returns a JWT token.
-
-**Endpoint:** POST /auth/login  
-**Description:** Validates user credentials and returns an access token.
-
-**Example request body (JSON):**
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
 
 ---
 
@@ -65,32 +45,6 @@ Possible values for `role`: [**RoleEnum.java**](./src/main/java/com/reminder/fin
 
 **Endpoint:** DELETE /me  
 **Description:** Deletes the logged-in user's account. No request body required.
-
----
-
-## 3. Admin: Users
-
-Endpoints for managing system users (requires ADMIN permission).
-
-### 🔍 3.1. List and Filter Users
-
-**Endpoint:** GET /admin/users/list  
-**Description:** Returns a paginated list of users based on provided filters.
-
-**Example request with query parameters:**
-```
-/admin/users/list?name=Joao&role=USER&page=0&size=20
-```
-
-**⚙️ Filter Parameters (ListUsersFilterRequest):**
-
-- name (String)
-- email (String)
-- role (Enum): Filters by user role. Possible values in [**RoleEnum.java**](./src/main/java/com/reminder/financial/api/domains/models/user/enums/RoleEnum.java)
-- createdFrom (LocalDate): Filters from creation date (format YYYY-MM-DD)
-- createdUntil (LocalDate): Filters until creation date (format YYYY-MM-DD)
-- enabled (Boolean): Filters by active/inactive users
-- deleted (Boolean): Filters by deleted/non-deleted users
 
 ---
 
