@@ -2,12 +2,11 @@ openapi: 3.0.3
 info:
   title: Financial Reminder Management API
   version: v1
-  description: API for managing reminders and financial transactions.
+  description: API for managing financial reminders and transactions.
   termsOfService: https://github.com/vitor-sb/financial-reminder-api
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-
 
 externalDocs:
   description: LinkedIn – Vitor Samuel
@@ -15,21 +14,31 @@ externalDocs:
 
 tags:
   - name: Authentication
-    description: Responsible for managing authentication and API access.
+    description: Manages authentication and API access.
+  - name: Users
+    description: User self-service — registration, account enable/disable/delete.
   - name: Admin
-    description: Endpoints for system user administration.
+    description: System administration — requires ADMIN_PERMISSION.
+  - name: Payment Reminders
+    description: Manages payment reminders (recurring or one-time bills).
+  - name: Payment Transactions
+    description: Manages individual payment transactions tied to reminders.
 
 security:
   - bearerAuth: []
 
 paths:
+
+  # ── Authentication ──────────────────────────────────────────────────────────
+
   /auth/login:
     post:
       tags:
         - Authentication
-      summary: Validates user credentials and returns an access token.
-      security: []
+      summary: Authenticate and obtain a JWT token
+      description: Validates user credentials and returns a JWT access token. Rate-limited per IP.
       operationId: login
+      security: []
       requestBody:
         required: true
         content:
@@ -43,36 +52,528 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
-#        '401':
-#          description: Invalid credentials
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many failed login attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── Users ───────────────────────────────────────────────────────────────────
+
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Register a new user
+      description: Public endpoint to create a new user account.
+      operationId: createUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me/disable:
+    post:
+      tags:
+        - Users
+      summary: Disable own account
+      description: Disables the currently authenticated user's account.
+      operationId: disableSelf
+      responses:
+        '204':
+          description: Account disabled
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/me/enable:
+    post:
+      tags:
+        - Users
+      summary: Reactivate own account
+      description: Reactivates the user account identified by the provided email.
+      operationId: enableSelf
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnableUserRequest'
+      responses:
+        '204':
+          description: Account reactivated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/me:
+    delete:
+      tags:
+        - Users
+      summary: Delete own account
+      description: Permanently deletes the currently authenticated user's account.
+      operationId: deleteSelf
+      responses:
+        '204':
+          description: Account deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ── Admin ───────────────────────────────────────────────────────────────────
+
   /admin/users/list:
     get:
       tags:
         - Admin
-      summary: List and filter all system users
-      description: Returns a paginated list of users based on filters.
-      operationId: listAllUsersByFiltersToAdmin
+      summary: List and filter all users
+      description: Returns a paginated list of all users. Requires ADMIN_PERMISSION.
+      operationId: listAllUsers
       parameters:
-        - $ref: '#/components/schemas/ListUsersFilterRequest'
-        - $ref: '#/components/parameters/SizeParam'
+        - name: name
+          in: query
+          schema:
+            type: string
+            example: Fulano de Tal
+        - name: email
+          in: query
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/RoleEnum'
+        - name: createdFrom
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-01-01'
+        - name: createdUntil
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-12-31'
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - name: deleted
+          in: query
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - $ref: '#/components/parameters/SortParam'
       responses:
         '200':
-          description: Authentication successful
+          description: Paginated list of users
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthenticationResponse'
+                $ref: '#/components/schemas/PageOfListUsersSingleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
+  # ── Payment Reminders ───────────────────────────────────────────────────────
+
+  /payments/reminders:
+    post:
+      tags:
+        - Payment Reminders
+      summary: Create a payment reminder
+      operationId: createPaymentReminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentReminderRequest'
+      responses:
+        '201':
+          description: Reminder created. Location header contains the resource URI.
+          headers:
+            Location:
+              description: URI of the created reminder
+              schema:
+                type: string
+                format: uri
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /payments/reminders/list:
+    get:
+      tags:
+        - Payment Reminders
+      summary: List payment reminders for the logged user
+      description: Returns a paginated list of all payment reminders belonging to the authenticated user.
+      operationId: listPaymentReminders
+      parameters:
+        - name: reminderId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: title
+          in: query
+          schema:
+            type: string
+            example: Aluguel
+        - name: dueDateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-01-01'
+        - name: dueDateUntil
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-12-31'
+        - name: recurrence
+          in: query
+          schema:
+            $ref: '#/components/schemas/RecurrenceEnum'
+        - name: method
+          in: query
+          schema:
+            $ref: '#/components/schemas/TransactionMethodEnum'
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Paginated list of reminders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfListPaymentRemindersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /payments/reminders/monthly-bills:
+    get:
+      tags:
+        - Payment Reminders
+      summary: Monthly bills summary
+      description: >
+        Returns existing transactions and optionally simulated future bills for a given month,
+        along with a totals summary. Defaults to the current month.
+      operationId: getMonthlyBills
+      parameters:
+        - name: year
+          in: query
+          description: Target year. Defaults to current year.
+          schema:
+            type: integer
+            example: 2026
+        - name: month
+          in: query
+          description: Target month (1–12). Defaults to current month.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            example: 6
+        - name: withSimulatedBills
+          in: query
+          description: Include simulated future bills that have not yet been transacted.
+          schema:
+            type: boolean
+            default: false
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Monthly bills with totals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlyBillsSummaryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /payments/reminders/{id}:
+    get:
+      tags:
+        - Payment Reminders
+      summary: Get a payment reminder by ID
+      operationId: getPaymentReminderById
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Reminder found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReminderResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags:
+        - Payment Reminders
+      summary: Update a payment reminder
+      description: Partially updates mutable fields of a reminder (title, description, method, value).
+      operationId: updatePaymentReminder
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentReminderRequest'
+      responses:
+        '204':
+          description: Reminder updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Payment Reminders
+      summary: Delete a payment reminder
+      description: >
+        Soft-deletes the reminder. Pending and overdue transactions are set to CANCELADO.
+        Paid transactions are preserved for historical purposes.
+      operationId: deletePaymentReminder
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Reminder deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /payments/reminders/{id}/enable:
+    post:
+      tags:
+        - Payment Reminders
+      summary: Reactivate a payment reminder
+      operationId: enablePaymentReminder
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Reminder reactivated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /payments/reminders/{id}/disable:
+    post:
+      tags:
+        - Payment Reminders
+      summary: Disable a payment reminder
+      operationId: disablePaymentReminder
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Reminder disabled
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ── Payment Transactions ────────────────────────────────────────────────────
+
+  /payments/transactions/list:
+    get:
+      tags:
+        - Payment Transactions
+      summary: List and filter transactions
+      description: Returns a paginated list of transactions for the authenticated user.
+      operationId: listTransactions
+      parameters:
+        - name: transactionId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: reminderId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: dueDateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-01-01'
+        - name: dueDateUntil
+          in: query
+          schema:
+            type: string
+            format: date
+            example: '2026-12-31'
+        - name: method
+          in: query
+          schema:
+            $ref: '#/components/schemas/TransactionMethodEnum'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/TransactionStatusEnum'
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Paginated list of transactions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfListTransactionsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /payments/transactions/{transactionId}/pay:
+    post:
+      tags:
+        - Payment Transactions
+      summary: Pay a transaction
+      description: >
+        Records a payment for a pending transaction. Optionally overrides the payment
+        value (e.g. with a discount) and the payment method.
+      operationId: payTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayTransactionRequest'
+      responses:
+        '204':
+          description: Payment recorded
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /payments/transactions/{id}:
+    patch:
+      tags:
+        - Payment Transactions
+      summary: Update a transaction
+      description: Updates the payment value or method of a transaction that has not yet been paid.
+      operationId: updateTransaction
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentTransactionRequest'
+      responses:
+        '204':
+          description: Transaction updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+# ── Components ────────────────────────────────────────────────────────────────
 
 components:
+
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     PageParam:
       name: page
       in: query
@@ -92,11 +593,41 @@ components:
     SortParam:
       name: sort
       in: query
-      description: Sorting criteria in the format `property,(asc|desc)`
+      description: "Sorting criteria: `property,asc|desc`. Repeatable."
       schema:
         type: string
         example: dueDate,asc
+
+  responses:
+    BadRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid authentication token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
   schemas:
+
+    # ── Enums ────────────────────────────────────────────────────────────────
+
     RoleEnum:
       type: string
       description: User role
@@ -105,9 +636,10 @@ components:
         - ADMIN
         - MEMBER
         - USER
+
     RecurrenceEnum:
       type: string
-      description: Reminder Recurrence
+      description: Billing recurrence frequency
       enum:
         - UNICA
         - DIARIA
@@ -117,9 +649,10 @@ components:
         - TRIMESTRAL
         - SEMESTRAL
         - ANUAL
+
     TransactionMethodEnum:
       type: string
-      description: Transaction Method
+      description: Payment method
       enum:
         - DINHEIRO
         - TRANSFERENCIA
@@ -128,14 +661,19 @@ components:
         - CREDITO
         - BOLETO
         - OUTRO
+
     TransactionStatusEnum:
       type: string
-      description: Transaction Status
+      description: Transaction status
       enum:
         - PENDENTE
         - PAGO
         - VENCIDO
+        - ANTECIPADO
         - CANCELADO
+
+    # ── Requests ─────────────────────────────────────────────────────────────
+
     AuthenticationRequest:
       type: object
       required:
@@ -145,37 +683,397 @@ components:
         email:
           type: string
           format: email
-          example: 'user@example.com'
+          example: user@example.com
         password:
           type: string
           format: password
-          example: 'password123'
+          example: password123
+
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - role
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          example: Fulano de Tal
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: strongPassword123
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+
+    EnableUserRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          example: user@example.com
+
+    CreatePaymentReminderRequest:
+      type: object
+      required:
+        - title
+        - date
+        - recurrence
+        - method
+        - value
+      properties:
+        title:
+          type: string
+          maxLength: 30
+          example: Aluguel
+        description:
+          type: string
+          maxLength: 100
+          example: Apartamento centro
+        date:
+          type: string
+          format: date
+          description: Base date for the first occurrence
+          example: '2026-01-10'
+        recurrence:
+          $ref: '#/components/schemas/RecurrenceEnum'
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        value:
+          type: number
+          format: decimal
+          example: 1500.00
+        installmentsNumber:
+          type: integer
+          description: Number of installments. Null means indefinite recurrence.
+          example: 12
+          nullable: true
+
+    UpdatePaymentReminderRequest:
+      type: object
+      description: All fields are optional. Only provided fields are updated.
+      properties:
+        title:
+          type: string
+          maxLength: 30
+          example: Aluguel Novo
+        description:
+          type: string
+          maxLength: 100
+          example: Apartamento novo
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        value:
+          type: number
+          format: decimal
+          example: 1600.00
+
+    PayTransactionRequest:
+      type: object
+      description: >
+        Records a payment. If paymentValue is omitted, the reminder's base value is used.
+        If method is omitted, the reminder's default method is used.
+      properties:
+        paymentValue:
+          type: number
+          format: decimal
+          description: Actual amount paid. May differ from base value (e.g. with a discount).
+          example: 1450.00
+          nullable: true
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+
+    UpdatePaymentTransactionRequest:
+      type: object
+      description: Updates mutable fields of an unpaid transaction.
+      properties:
+        paymentValue:
+          type: number
+          format: decimal
+          example: 1400.00
+          nullable: true
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+
+    # ── Responses ─────────────────────────────────────────────────────────────
+
     AuthenticationResponse:
       type: object
       properties:
         token:
           type: string
           description: JWT access token
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-    ListUsersFilterRequest:
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    ListUsersSingleResponse:
       type: object
-      properties: 
+      properties:
         name:
           type: string
-          example: 'Fulano de Tal'
+          example: Fulano de Tal
         email:
           type: string
           format: email
-          example: 'user@example.com'
+          example: user@example.com
         role:
           $ref: '#/components/schemas/RoleEnum'
-        createdFrom:
+        created_at:
+          type: string
+          format: date-time
+          description: UTC timestamp
+          example: '2026-01-15T10:30:00Z'
+        enabled:
+          type: boolean
+          example: true
+        deleted:
+          type: boolean
+          example: false
+
+    PaymentReminderResponse:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Aluguel
+        description:
+          type: string
+          example: Apartamento centro
+          nullable: true
+        date:
           type: string
           format: date
-        createdUntil:
+          example: '2026-01-10'
+        recurrence:
+          $ref: '#/components/schemas/RecurrenceEnum'
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        value:
+          type: number
+          format: decimal
+          example: 1500.00
+        installmentsNumber:
+          type: integer
+          nullable: true
+          example: 12
+
+    ListPaymentRemindersResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Aluguel
+        description:
+          type: string
+          nullable: true
+          example: Apartamento centro
+        baseDate:
           type: string
           format: date
+          example: '2026-01-10'
+        recurrence:
+          $ref: '#/components/schemas/RecurrenceEnum'
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        baseValue:
+          type: number
+          format: decimal
+          example: 1500.00
+        installmentsNumber:
+          type: integer
+          nullable: true
+          example: 12
+
+    MonthlyBillResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+          description: Null for simulated (not yet persisted) bills
+          nullable: true
+        reminderId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Aluguel
+        dueDate:
+          type: string
+          format: date
+          example: '2026-06-10'
+        value:
+          type: number
+          format: decimal
+          example: 1500.00
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        status:
+          $ref: '#/components/schemas/TransactionStatusEnum'
+        installmentNumber:
+          type: integer
+          nullable: true
+          example: 6
+
+    MonthlyBillsTotals:
+      type: object
+      properties:
+        totalPaid:
+          type: number
+          format: decimal
+          example: 3200.00
+        totalPending:
+          type: number
+          format: decimal
+          example: 1500.00
+        totalOverdue:
+          type: number
+          format: decimal
+          example: 0.00
+
+    MonthlyBillsSummaryResponse:
+      type: object
+      properties:
+        bills:
+          $ref: '#/components/schemas/PageOfMonthlyBillResponse'
+        totals:
+          $ref: '#/components/schemas/MonthlyBillsTotals'
+
+    ListTransactionsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reminderId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date
+          example: '2026-06-10'
+        paymentDate:
+          type: string
+          format: date
+          nullable: true
+          example: '2026-06-08'
+        installmentNumber:
+          type: integer
+          nullable: true
+          example: 3
+        paymentValue:
+          type: number
+          format: decimal
+          example: 1450.00
+        method:
+          $ref: '#/components/schemas/TransactionMethodEnum'
+        status:
+          $ref: '#/components/schemas/TransactionStatusEnum'
         enabled:
           type: boolean
         deleted:
           type: boolean
+
+    # ── Pagination ────────────────────────────────────────────────────────────
+
+    PageMetadata:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+          example: 42
+        totalPages:
+          type: integer
+          example: 5
+        size:
+          type: integer
+          example: 10
+        number:
+          type: integer
+          description: Current page number (0-based)
+          example: 0
+        first:
+          type: boolean
+          example: true
+        last:
+          type: boolean
+          example: false
+        empty:
+          type: boolean
+          example: false
+
+    PageOfListUsersSingleResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/ListUsersSingleResponse'
+
+    PageOfListPaymentRemindersResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/ListPaymentRemindersResponse'
+
+    PageOfListTransactionsResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/ListTransactionsResponse'
+
+    PageOfMonthlyBillResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/MonthlyBillResponse'
+
+    # ── Error ─────────────────────────────────────────────────────────────────
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-06-05T14:32:00'
+        status:
+          type: integer
+          example: 404
+        error:
+          type: string
+          example: NOT_FOUND
+        message:
+          type: string
+          example: Resource not found
+        path:
+          type: string
+          example: /payments/reminders/abc-123
