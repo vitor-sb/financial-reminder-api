@@ -16,13 +16,16 @@ target/
 # Ambiente / segredos (use .env.example como modelo)
 .env
 
-# Ralph (estado local do loop)
-scripts/ralph/.last-branch
-scripts/ralph/archive/
-
 # Sistema operacional
 .DS_Store
 Thumbs.db
 
 # Maven wrapper
 !.mvn/wrapper/maven-wrapper.jar
+
+# IA / Ralph: estado local (ralph.sh, prompts e tasks/ são versionados)
+.claude/
+scripts/ralph/prd.json
+scripts/ralph/progress.txt
+scripts/ralph/.last-branch
+scripts/ralph/archive/
