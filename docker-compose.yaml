@@ -14,7 +14,7 @@ services:
       - financial_management_network
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${ROOT_DB_USER} -d finance-management" ]
+      test: ["CMD-SHELL", "pg_isready -U ${ROOT_DB_USER} -d finance-management"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,26 +33,10 @@ services:
       - financial_management_network
     restart: always
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  financial_reminder_api:
-    build: .
-    container_name: financial_reminder_api_container
-    ports:
-      - "8080:8080"
-    networks:
-      - financial_management_network
-    env_file:
-      - ./.env
-    depends_on:
-      financial_management_db:
-        condition: service_healthy
-      financial_management_redis:
-        condition: service_healthy
-    restart: always
 
 volumes:
   financial_management_postgres_data:
