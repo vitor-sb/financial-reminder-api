@@ -7,6 +7,7 @@ import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -72,8 +73,8 @@ public class PaymentReminderMapper {
         );
     }
 
-    public MonthlyBillsSummaryResponse toSummaryResponse(MonthlyBillsSummaryResult result) {
-        Page<MonthlyBillResponse> billsResponsePage = result.bills().map(this::toResponse);
+    public MonthlyBillsSummaryResponse toSummaryResponse(MonthlyBillsSummaryResult result, Pageable pageable) {
+        Page<MonthlyBillResponse> billsResponsePage = PageAdapter.toPage(result.bills().map(this::toResponse), pageable);
 
         var totals = new MonthlyBillsSummaryResponse.Totals(
                 result.totalPaid(),

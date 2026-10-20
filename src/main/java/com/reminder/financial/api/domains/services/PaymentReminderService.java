@@ -11,8 +11,8 @@ import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderReposi
 import com.reminder.financial.api.domains.exceptions.ConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,10 +55,10 @@ public class PaymentReminderService {
         }
     }
 
-    public Page<PaymentReminder> listPaymentRemindersByUserAndFilters(
+    public PageResult<PaymentReminder> listPaymentRemindersByUserAndFilters(
             User user,
             ReminderFilter query,
-            Pageable pageable
+            PageRequest pageable
     ) {
         return paymentReminderSearch.searchByUserAndFilters(user, query, pageable);
     }

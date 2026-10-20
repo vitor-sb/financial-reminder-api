@@ -102,13 +102,13 @@ class UserServiceTest {
         when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(userPage);
 
         // Act
-        Page<User> result = userService.listUsers(filter, pageable);
+        var result = userService.listUsers(filter, com.reminder.financial.api.domains.pagination.PageRequest.of(0, 10));
 
         // Assert
         assertNotNull(result);
-        assertEquals(2, result.getTotalElements());
-        assertEquals(1, result.getTotalPages());
-        assertEquals("John Doe", result.getContent().get(0).getName());
+        assertEquals(2, result.totalElements());
+        assertEquals(1, result.totalPages());
+        assertEquals("John Doe", result.content().get(0).getName());
 
         verify(repository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }

@@ -2,10 +2,10 @@ package com.reminder.financial.api.domains.repositories;
 
 import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.domains.models.user.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 
 public interface UserSearch {
 
-    Page<User> searchByFilters(UserFilter query, Pageable pageable);
+    PageResult<User> searchByFilters(UserFilter query, PageRequest pageable);
 }

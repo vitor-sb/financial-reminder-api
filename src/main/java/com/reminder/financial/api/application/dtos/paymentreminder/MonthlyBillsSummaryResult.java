@@ -1,11 +1,11 @@
 package com.reminder.financial.api.application.dtos.paymentreminder;
 
-import org.springframework.data.domain.Page;
+import com.reminder.financial.api.domains.pagination.PageResult;
 
 import java.math.BigDecimal;
 
 public record MonthlyBillsSummaryResult(
-        Page<ListMonthlyBillsResult> bills,
+        PageResult<ListMonthlyBillsResult> bills,
         BigDecimal totalPaid,
         BigDecimal totalPending,
         BigDecimal totalOverdue

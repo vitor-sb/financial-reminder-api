@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import com.reminder.financial.api.adapters.mappers.PageAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -121,10 +122,10 @@ public class PaymentReminderController {
                 year,
                 month,
                 withSimulatedBills,
-                pageable
+                PageAdapter.toRequest(pageable)
         );
 
-        MonthlyBillsSummaryResponse response = paymentReminderMapper.toSummaryResponse(result);
+        MonthlyBillsSummaryResponse response = paymentReminderMapper.toSummaryResponse(result, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -144,9 +145,9 @@ public class PaymentReminderController {
             ) Pageable pageable
     ) {
         ReminderFilter query = paymentReminderMapper.toListTransactionsFilterQuery(filter);
-        var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, query, pageable);
+        var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, query, PageAdapter.toRequest(pageable));
 
-        Page<ListPaymentRemindersResponse> response = result.map(paymentReminderMapper::toListPaymentRemindersResponse);
+        Page<ListPaymentRemindersResponse> response = PageAdapter.toPage(result.map(paymentReminderMapper::toListPaymentRemindersResponse), pageable);
         return ResponseEntity.ok(response);
     }
 }

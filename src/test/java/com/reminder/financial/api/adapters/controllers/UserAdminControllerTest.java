@@ -54,11 +54,11 @@ public class UserAdminControllerTest {
         ListUsersSingleResult userResult = new ListUsersSingleResult(
                 "Test User", "test@example.com", RoleEnum.USER, null, true, false
         );
-        Page<ListUsersSingleResult> resultPage = new PageImpl<>(
-                List.of(userResult), PageRequest.of(0, 10), 1
+        var resultPage = new com.reminder.financial.api.domains.pagination.PageResult<>(
+                List.of(userResult), com.reminder.financial.api.domains.pagination.PageRequest.of(0, 10), 1
         );
 
-        when(listUsersUseCase.execute(any(UserFilter.class), any(Pageable.class))).thenReturn(resultPage);
+        when(listUsersUseCase.execute(any(UserFilter.class), any(com.reminder.financial.api.domains.pagination.PageRequest.class))).thenReturn(resultPage);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/list")

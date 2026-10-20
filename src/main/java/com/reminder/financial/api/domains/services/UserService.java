@@ -8,8 +8,8 @@ import com.reminder.financial.api.domains.repositories.UserSearch;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
 import com.reminder.financial.api.domains.exceptions.ConflictException;
 import com.reminder.financial.api.domains.exceptions.NotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse(email);
     }
 
-    public Page<User> listUsers(UserFilter query, Pageable pageable) {
+    public PageResult<User> listUsers(UserFilter query, PageRequest pageable) {
         return userSearch.searchByFilters(query, pageable);
     }
 

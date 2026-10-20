@@ -7,8 +7,8 @@ import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
 import com.reminder.financial.api.infrastructure.utils.AppConstants;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class UserSpecificationSearch implements UserSearch {
     private final UserRepository userRepository;
 
     @Override
-    public Page<User> searchByFilters(UserFilter query, Pageable pageable) {
+    public PageResult<User> searchByFilters(UserFilter query, PageRequest pageable) {
         Instant fromInstant = null;
         if (query.createdFrom() != null) {
             fromInstant = query.createdFrom().atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();
@@ -41,6 +41,6 @@ public class UserSpecificationSearch implements UserSearch {
                 .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
                 .and(SpecificationFactory.equalInJoin("audit", "deleted", query.deleted()));
 
-        return userRepository.findAll(spec, pageable);
+        return PageConversion.toResult(userRepository.findAll(spec, PageConversion.toPageable(pageable)), pageable);
     }
 }

@@ -7,8 +7,8 @@ import com.reminder.financial.api.domains.repositories.PaymentTransactionSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRepository;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class PaymentTransactionSpecificationSearch implements PaymentTransaction
     private final PaymentTransactionRepository transactionRepository;
 
     @Override
-    public Page<PaymentTransaction> searchByUserAndFilters(User user, TransactionFilter query, Pageable pageable) {
+    public PageResult<PaymentTransaction> searchByUserAndFilters(User user, TransactionFilter query, PageRequest pageable) {
         var spec = Specification
                 .where(SpecificationFactory.<PaymentTransaction>equalInJoin("reminder", "user", user))
                 .and(SpecificationFactory.equal("id", query.transactionId()))
@@ -31,6 +31,6 @@ public class PaymentTransactionSpecificationSearch implements PaymentTransaction
                 .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
                 .and(SpecificationFactory.equalInJoin("audit", "deleted", false));
 
-        return transactionRepository.findAll(spec, pageable);
+        return PageConversion.toResult(transactionRepository.findAll(spec, PageConversion.toPageable(pageable)), pageable);
     }
 }

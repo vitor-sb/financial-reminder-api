@@ -7,8 +7,8 @@ import com.reminder.financial.api.domains.repositories.PaymentReminderSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,10 @@ public class PaymentReminderSpecificationSearch implements PaymentReminderSearch
     private final PaymentReminderRepository paymentReminderRepository;
 
     @Override
-    public Page<PaymentReminder> searchByUserAndFilters(
+    public PageResult<PaymentReminder> searchByUserAndFilters(
             User user,
             ReminderFilter query,
-            Pageable pageable
+            PageRequest pageable
     ) {
         Specification<PaymentReminder> spec = Specification
                 .where(SpecificationFactory.<PaymentReminder>equal("user", user))
@@ -34,6 +34,6 @@ public class PaymentReminderSpecificationSearch implements PaymentReminderSearch
                 .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
                 .and(SpecificationFactory.equalInJoin("audit", "deleted", false));
 
-        return paymentReminderRepository.findAll(spec, pageable);
+        return PageConversion.toResult(paymentReminderRepository.findAll(spec, PageConversion.toPageable(pageable)), pageable);
     }
 }

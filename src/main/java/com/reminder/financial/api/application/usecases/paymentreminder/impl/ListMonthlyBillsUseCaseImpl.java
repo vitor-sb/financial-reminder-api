@@ -12,8 +12,8 @@ import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.YearMonth;
@@ -33,7 +33,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
 
     @Override
-    public MonthlyBillsSummaryResult execute(String userEmail, Integer year, Integer month, boolean withSimulatedBills, Pageable pageable) {
+    public MonthlyBillsSummaryResult execute(String userEmail, Integer year, Integer month, boolean withSimulatedBills, PageRequest pageable) {
         logger.info("Executing ListMonthlyBills | Period: {}/{} | Simulated: {}", month, year, withSimulatedBills);
         YearMonth queryYearMonth = prepareAndValidateQueryDate(year, month);
 
@@ -41,7 +41,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
         MonthlyBillsTotals totals = MonthlyBillsTotals.of(allBills);
 
-        Page<ListMonthlyBillsResult> billsPage = MonthlyBillsPaginator.paginate(allBills, pageable);
+        PageResult<ListMonthlyBillsResult> billsPage = MonthlyBillsPaginator.paginate(allBills, pageable);
 
         logger.info("Monthly bills summary generated. Total items: {}", allBills.size());
 

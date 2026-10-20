@@ -3,7 +3,7 @@ package com.reminder.financial.api.application.usecases.paymentreminder.monthlyb
 import com.reminder.financial.api.application.dtos.paymentreminder.ListMonthlyBillsResult;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,14 +22,14 @@ class MonthlyBillsPaginatorTest {
     @Test
     void returnsRequestedSlice() {
         var page = MonthlyBillsPaginator.paginate(bills, PageRequest.of(1, 2));
-        assertEquals(2, page.getContent().size());
-        assertEquals(5, page.getTotalElements());
+        assertEquals(2, page.content().size());
+        assertEquals(5, page.totalElements());
     }
 
     @Test
     void pageBeyondEndIsEmpty() {
         var page = MonthlyBillsPaginator.paginate(bills, PageRequest.of(5, 2));
-        assertTrue(page.getContent().isEmpty());
-        assertEquals(5, page.getTotalElements());
+        assertTrue(page.content().isEmpty());
+        assertEquals(5, page.totalElements());
     }
 }

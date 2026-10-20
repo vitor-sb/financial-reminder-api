@@ -19,4 +19,9 @@ class ArchitectureTest {
     static final ArchRule domainsNaoDependemDeApplication = noClasses()
             .that().resideInAPackage("..domains..")
             .should().dependOnClassesThat().resideInAPackage("..application..");
+
+    @ArchTest
+    static final ArchRule applicationNaoDependeDeSpringData = noClasses()
+            .that().resideInAPackage("..application..")
+            .should().dependOnClassesThat().resideInAPackage("org.springframework.data..");
 }

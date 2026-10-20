@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import com.reminder.financial.api.adapters.mappers.PageAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +38,9 @@ public class UserAdminController {
             ) Pageable pageable
     ) {
         UserFilter query = userMapper.toListUsersFilterQuery(filter);
-        var result = listUsersUseCase.execute(query, pageable);
+        var result = listUsersUseCase.execute(query, PageAdapter.toRequest(pageable));
 
-        Page<ListUsersSingleResponse> response = result.map(userMapper::toListUsersSingleResponse);
+        Page<ListUsersSingleResponse> response = PageAdapter.toPage(result.map(userMapper::toListUsersSingleResponse), pageable);
         return ResponseEntity.ok(response);
     }
 }

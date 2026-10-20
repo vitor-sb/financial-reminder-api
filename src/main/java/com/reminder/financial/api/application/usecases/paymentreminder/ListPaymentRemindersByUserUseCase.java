@@ -2,13 +2,13 @@ package com.reminder.financial.api.application.usecases.paymentreminder;
 
 import com.reminder.financial.api.domains.filters.ReminderFilter;
 import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 
 public interface ListPaymentRemindersByUserUseCase {
-    Page<ListPaymentRemindersResult> execute(
+    PageResult<ListPaymentRemindersResult> execute(
             String loggedUserEmail,
             ReminderFilter query,
-            Pageable pageable
+            PageRequest pageable
     );
 }

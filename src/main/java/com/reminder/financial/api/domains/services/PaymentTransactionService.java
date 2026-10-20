@@ -10,8 +10,8 @@ import com.reminder.financial.api.domains.repositories.PaymentTransactionSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class PaymentTransactionService {
         return transactionRepository.findFirstByReminderIdAndStatusAndAuditDeletedFalse(reminderId, TransactionStatusEnum.PENDENTE);
     }
 
-    public Page<PaymentTransaction> listTransactionsByUserAndFilters(User user, TransactionFilter query, Pageable pageable) {
+    public PageResult<PaymentTransaction> listTransactionsByUserAndFilters(User user, TransactionFilter query, PageRequest pageable) {
         return transactionSearch.searchByUserAndFilters(user, query, pageable);
     }
 

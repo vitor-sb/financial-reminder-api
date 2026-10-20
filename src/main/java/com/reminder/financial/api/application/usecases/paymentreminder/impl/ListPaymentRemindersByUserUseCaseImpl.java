@@ -9,8 +9,8 @@ import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -24,13 +24,13 @@ public class ListPaymentRemindersByUserUseCaseImpl implements ListPaymentReminde
     private final PaymentReminderService paymentReminderService;
 
     @Override
-    public Page<ListPaymentRemindersResult> execute(
+    public PageResult<ListPaymentRemindersResult> execute(
             String loggedUserEmail,
             ReminderFilter query,
-            Pageable pageable) {
+            PageRequest pageable) {
         User user = userService.findValidUserByEmail(loggedUserEmail);
 
-        Page<PaymentReminder> reminderPage =
+        PageResult<PaymentReminder> reminderPage =
                 paymentReminderService.listPaymentRemindersByUserAndFilters(
                         user,
                         query,

@@ -3,9 +3,9 @@ package com.reminder.financial.api.application.usecases.user;
 
 import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 
 public interface ListUsersUseCase {
-    Page<ListUsersSingleResult> execute(UserFilter role, Pageable pageable);
+    PageResult<ListUsersSingleResult> execute(UserFilter role, PageRequest pageable);
 }

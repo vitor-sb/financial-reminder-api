@@ -7,8 +7,8 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.reminder.financial.api.domains.pagination.PageResult;
+import com.reminder.financial.api.domains.pagination.PageRequest;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class ListTransactionsUseCaseImpl implements ListTransactionsUseCase {
     private final UserService userService;
 
     @Override
-    public Page<ListTransactionsResult> execute(String loggedUserEmail, TransactionFilter query, Pageable pageable) {
+    public PageResult<ListTransactionsResult> execute(String loggedUserEmail, TransactionFilter query, PageRequest pageable) {
         User user = userService.findValidUserByEmail(loggedUserEmail);
 
         var transactionPage = transactionService.listTransactionsByUserAndFilters(user, query, pageable);
