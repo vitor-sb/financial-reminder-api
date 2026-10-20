@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.reminder.financial.api.domains.models.user.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -43,12 +44,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 var email = tokenProvider.validateToken(token);
-                UserDetails user = authenticationService.loadUserByUsername(email);
+                User user = (User) authenticationService.loadUserByUsername(email);
 
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                MDC.put("user", email);
+                MDC.put("user", user.getId());
 
             } catch (BadCredentialsException exception) {
                 handleInvalidToken(request, response, exception);

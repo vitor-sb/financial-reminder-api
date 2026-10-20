@@ -38,7 +38,7 @@ public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
     @Override
     public MonthlyBillsSummaryResult execute(String userEmail, Integer year, Integer month, boolean withSimulatedBills, Pageable pageable) {
-        logger.info("Executing ListMonthlyBills for user: {} | Period: {}/{} | Simulated: {}", userEmail, month, year, withSimulatedBills);
+        logger.info("Executing ListMonthlyBills | Period: {}/{} | Simulated: {}", month, year, withSimulatedBills);
         YearMonth queryYearMonth = prepareAndValidateQueryDate(year, month);
 
         List<ListMonthlyBillsResult> allBills = fetchAndCombineBills(userEmail, queryYearMonth, withSimulatedBills);

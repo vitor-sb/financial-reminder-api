@@ -30,8 +30,9 @@ public class PaymentReminderService {
 
 
     public PaymentReminder savePaymentReminder(PaymentReminder reminder) {
-        logger.info("Saving payment reminder: {} for user email: {}", reminder.getTitle(), reminder.getUser().getEmail());
-        return paymentReminderRepository.save(reminder);
+        PaymentReminder saved = paymentReminderRepository.save(reminder);
+        logger.info("Saved payment reminder {} for user {}", saved.getId(), saved.getUser().getId());
+        return saved;
     }
 
     public PaymentReminder getPaymentReminderByIdOrThrow(String id) {
@@ -48,7 +49,7 @@ public class PaymentReminderService {
                 paymentReminderRepository.findByTitleAndUserEmailAndAuditDeletedFalse(title, email);
 
         if (paymentReminder.isPresent()){
-            logger.warn("Title conflict detected: Title '{}' already exists for user {}", title, email);
+            logger.warn("Title conflict detected for reminder {}", paymentReminder.get().getId());
             throw new ConflictException("Reminder title already in use. Check if it is not disabled.");
         }
     }

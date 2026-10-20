@@ -138,7 +138,7 @@ public class PaymentTransactionService {
     }
 
     public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
-        logger.info("Cancelling and soft-deleting pending transaction for reminder: {} by user: {}", reminderId, userEmail);
+        logger.info("Cancelling and soft-deleting pending transaction for reminder: {}", reminderId);
 
         findPendingTransactionByReminderId(reminderId)
                 .ifPresentOrElse(transaction -> {

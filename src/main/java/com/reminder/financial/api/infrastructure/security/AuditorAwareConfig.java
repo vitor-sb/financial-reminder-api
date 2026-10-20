@@ -72,19 +72,19 @@ public class AuditorAwareConfig {
 
         if (principal instanceof User) {
             String userEmail = ((User) principal).getEmail();
-            logger.debug("AuditorAware: Principal is User. Auditor: {}", userEmail);
+            logger.debug("AuditorAware: Principal is User.");
             return Optional.of(userEmail);
         }
 
         if (principal instanceof UserDetails) {
             String username = ((UserDetails) principal).getUsername();
-            logger.debug("AuditorAware: Principal is UserDetails. Auditor: {}", username);
+            logger.debug("AuditorAware: Principal is UserDetails.");
             return Optional.of(username);
         }
 
         if (principal instanceof String) {
             String principalString = (String) principal;
-            logger.debug("AuditorAware: Principal is String (and not anonymous). Auditor: {}", principalString);
+            logger.debug("AuditorAware: Principal is String (and not anonymous).");
             return Optional.of(principalString);
         }
 
