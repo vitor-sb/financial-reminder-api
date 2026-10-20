@@ -37,7 +37,7 @@ class AuthenticationControllerTest {
     private LoginUseCase loginUseCase;
 
     @MockBean
-    private com.reminder.financial.api.domains.services.LoginAttemptService loginAttemptService;
+    private com.reminder.financial.api.application.security.LoginAttemptService loginAttemptService;
 
     private String validUserEmail = "test@example.com";
     private String validUserPassword = "password123";

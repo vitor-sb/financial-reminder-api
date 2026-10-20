@@ -6,7 +6,7 @@ import com.reminder.financial.api.application.usecases.authentication.impl.Login
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
 import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
-import com.reminder.financial.api.domains.services.LoginAttemptService;
+import com.reminder.financial.api.application.security.LoginAttemptService;
 import com.reminder.financial.api.application.security.CredentialsAuthenticator;
 import com.reminder.financial.api.application.security.TokenIssuer;
 import org.junit.jupiter.api.AfterEach;

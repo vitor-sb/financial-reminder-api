@@ -7,7 +7,7 @@ import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsExcepti
 import com.reminder.financial.api.application.usecases.user.EnableUserUseCase;
 import com.reminder.financial.api.application.usecases.user.ToggleSelfUserAccountUseCase;
 import com.reminder.financial.api.domains.models.user.User;
-import com.reminder.financial.api.domains.services.LoginAttemptService;
+import com.reminder.financial.api.application.security.LoginAttemptService;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

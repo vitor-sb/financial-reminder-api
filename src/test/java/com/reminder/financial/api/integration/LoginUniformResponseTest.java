@@ -1,7 +1,7 @@
 package com.reminder.financial.api.integration;
 
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
-import com.reminder.financial.api.domains.services.LoginAttemptService;
+import com.reminder.financial.api.application.security.LoginAttemptService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

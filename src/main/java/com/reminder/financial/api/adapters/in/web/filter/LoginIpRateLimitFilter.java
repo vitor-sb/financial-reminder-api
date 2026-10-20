@@ -2,7 +2,7 @@ package com.reminder.financial.api.adapters.in.web.filter;
 
 import lombok.RequiredArgsConstructor;
 
-import com.reminder.financial.api.domains.services.LoginAttemptService;
+import com.reminder.financial.api.application.security.LoginAttemptService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
