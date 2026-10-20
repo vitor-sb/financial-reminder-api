@@ -1,27 +1,27 @@
-date: 2026-10-20T20:23:49-03:00
-commit: 7178738+dirty
-measured in: /tmp/fra-loadtest-q2Peq7/src (git worktree, outside /workspace)
+date: 2026-10-20T20:31:24-03:00
+commit: 81caf67+dirty
+measured in: /tmp/fra-loadtest-fv5KE4/src (git worktree, outside /workspace)
 cpu:  AMD Ryzen 5 5600X 6-Core Processor x12
 mem_mb: 15956
 java: openjdk version "17.0.20.1" 2026-08-18 LTS
 postgres: 17.7 (docker, default config); hikari: defaults (pool 10)
 note: app, DB, Redis and driver share one machine
 setup: 64 users x 30 monthly reminders
-{"scenario": "A", "concurrency": 8, "duration_s": 30.0, "ok": 3780, "errors": {}, "throughput_per_s": 126.0, "p50_ms": 63.4, "p95_ms": 69.1, "p99_ms": 74.5, "max_ms": 98.0}
+{"scenario": "A", "concurrency": 8, "duration_s": 30.0, "ok": 3773, "errors": {}, "throughput_per_s": 125.8, "p50_ms": 63.5, "p95_ms": 68.9, "p99_ms": 74.4, "max_ms": 94.8}
   sampled (11 samples/2s): max active pg backends 0, max pg connections 10, pg cpu avg 4% max 7%
-{"scenario": "A", "concurrency": 32, "duration_s": 30.0, "ok": 5101, "errors": {}, "throughput_per_s": 170.0, "p50_ms": 187.5, "p95_ms": 273.1, "p99_ms": 317.7, "max_ms": 400.7}
-  sampled (11 samples/2s): max active pg backends 0, max pg connections 10, pg cpu avg 4% max 5%
-{"scenario": "A", "concurrency": 64, "duration_s": 30.0, "ok": 5157, "errors": {}, "throughput_per_s": 171.9, "p50_ms": 371.8, "p95_ms": 559.8, "p99_ms": 648.4, "max_ms": 816.2}
-  sampled (10 samples/2s): max active pg backends 1, max pg connections 10, pg cpu avg 4% max 9%
-{"scenario": "B", "concurrency": 8, "duration_s": 30.0, "ok": 13710, "errors": {}, "throughput_per_s": 457.0, "p50_ms": 17.0, "p95_ms": 20.9, "p99_ms": 26.1, "max_ms": 49.2}
-  sampled (11 samples/2s): max active pg backends 4, max pg connections 10, pg cpu avg 352% max 409%
-{"scenario": "B", "concurrency": 32, "duration_s": 30.0, "ok": 14905, "errors": {}, "throughput_per_s": 496.8, "p50_ms": 65.7, "p95_ms": 79.8, "p99_ms": 91.4, "max_ms": 127.8}
-  sampled (11 samples/2s): max active pg backends 4, max pg connections 10, pg cpu avg 400% max 456%
-{"scenario": "B", "concurrency": 64, "duration_s": 30.0, "ok": 14933, "errors": {}, "throughput_per_s": 497.8, "p50_ms": 134.1, "p95_ms": 159.2, "p99_ms": 183.4, "max_ms": 213.6}
-  sampled (11 samples/2s): max active pg backends 5, max pg connections 10, pg cpu avg 396% max 449%
-{"scenario": "C", "concurrency": 8, "duration_s": 30.0, "ok": 7103, "errors": {}, "throughput_per_s": 236.8, "p50_ms": 33.4, "p95_ms": 39.1, "p99_ms": 43.9, "max_ms": 65.4}
-  sampled (11 samples/2s): max active pg backends 3, max pg connections 10, pg cpu avg 78% max 89%
-{"scenario": "C", "concurrency": 32, "duration_s": 30.0, "ok": 7101, "errors": {}, "throughput_per_s": 236.7, "p50_ms": 135.7, "p95_ms": 153.2, "p99_ms": 163.9, "max_ms": 190.9}
-  sampled (11 samples/2s): max active pg backends 5, max pg connections 10, pg cpu avg 83% max 95%
-{"scenario": "C", "concurrency": 64, "duration_s": 30.0, "ok": 6954, "errors": {}, "throughput_per_s": 231.8, "p50_ms": 271.8, "p95_ms": 339.4, "p99_ms": 373.6, "max_ms": 434.9}
-  sampled (11 samples/2s): max active pg backends 8, max pg connections 10, pg cpu avg 88% max 102%
+{"scenario": "A", "concurrency": 32, "duration_s": 30.0, "ok": 5123, "errors": {}, "throughput_per_s": 170.8, "p50_ms": 186.9, "p95_ms": 273.1, "p99_ms": 317.4, "max_ms": 421.4}
+  sampled (11 samples/2s): max active pg backends 1, max pg connections 10, pg cpu avg 4% max 7%
+{"scenario": "A", "concurrency": 64, "duration_s": 30.0, "ok": 5175, "errors": {}, "throughput_per_s": 172.5, "p50_ms": 368.9, "p95_ms": 561.7, "p99_ms": 657.0, "max_ms": 810.3}
+  sampled (10 samples/2s): max active pg backends 0, max pg connections 10, pg cpu avg 4% max 6%
+{"scenario": "B", "concurrency": 8, "duration_s": 30.0, "ok": 13400, "errors": {}, "throughput_per_s": 446.7, "p50_ms": 17.4, "p95_ms": 21.3, "p99_ms": 25.8, "max_ms": 108.7}
+  sampled (11 samples/2s): max active pg backends 5, max pg connections 10, pg cpu avg 348% max 408%
+{"scenario": "B", "concurrency": 32, "duration_s": 30.0, "ok": 14905, "errors": {}, "throughput_per_s": 496.8, "p50_ms": 65.7, "p95_ms": 79.3, "p99_ms": 90.8, "max_ms": 202.3}
+  sampled (11 samples/2s): max active pg backends 6, max pg connections 10, pg cpu avg 395% max 446%
+{"scenario": "B", "concurrency": 64, "duration_s": 30.0, "ok": 14875, "errors": {}, "throughput_per_s": 495.8, "p50_ms": 134.3, "p95_ms": 162.2, "p99_ms": 180.3, "max_ms": 205.7}
+  sampled (11 samples/2s): max active pg backends 4, max pg connections 10, pg cpu avg 400% max 449%
+{"scenario": "C", "concurrency": 8, "duration_s": 30.0, "ok": 7111, "errors": {}, "throughput_per_s": 237.0, "p50_ms": 33.4, "p95_ms": 38.9, "p99_ms": 42.8, "max_ms": 61.0}
+  sampled (11 samples/2s): max active pg backends 8, max pg connections 10, pg cpu avg 78% max 87%
+{"scenario": "C", "concurrency": 32, "duration_s": 30.0, "ok": 7092, "errors": {}, "throughput_per_s": 236.4, "p50_ms": 135.8, "p95_ms": 153.7, "p99_ms": 164.5, "max_ms": 200.1}
+  sampled (11 samples/2s): max active pg backends 2, max pg connections 10, pg cpu avg 87% max 97%
+{"scenario": "C", "concurrency": 64, "duration_s": 30.0, "ok": 6934, "errors": {}, "throughput_per_s": 231.1, "p50_ms": 272.2, "p95_ms": 341.8, "p99_ms": 376.0, "max_ms": 441.7}
+  sampled (11 samples/2s): max active pg backends 3, max pg connections 10, pg cpu avg 92% max 107%
