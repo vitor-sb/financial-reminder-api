@@ -1,7 +1,7 @@
 package com.reminder.financial.api.application.usecases.paymentreminder.impl;
 
 import com.reminder.financial.api.application.dtos.paymentreminder.UpdatePaymentReminderCommand;
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
+import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.application.usecases.paymentreminder.UpdatePaymentReminderUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
@@ -23,11 +23,12 @@ public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUs
 
     public PaymentReminder execute(String userEmail, String reminderId, UpdatePaymentReminderCommand command) {
         PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);
-        reminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!reminder.getUser().getEmail().equals(userEmail)) {
-            throw new UnauthorizedException("This reminder does not belong to the logged in user.");
+            throw new NotFoundException("Payment Reminder not found.");
         }
+
+        reminder.getAudit().validateIsActive("PaymentReminder");
 
         this.updateReminderFields(command, reminder);
 

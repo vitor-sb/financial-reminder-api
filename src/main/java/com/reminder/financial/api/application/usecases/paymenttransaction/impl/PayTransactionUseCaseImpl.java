@@ -3,7 +3,6 @@ package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 import com.reminder.financial.api.application.dtos.paymenttransaction.PayTransactionDetailsCommand;
 import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
 import com.reminder.financial.api.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
@@ -34,18 +33,18 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
     @Transactional
     public void execute(String userEmail, String transactionId, PayTransactionDetailsCommand command) {
         PaymentTransaction transaction = paymentTransactionService.getTransactionById(transactionId)
-                .orElseThrow(() -> new NotFoundException("PaymentTransaction not found"));
+                .orElseThrow(() -> new NotFoundException("Payment Transaction not found."));
+
+        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(transaction.getReminder().getId());
+        if (!reminder.getUser().getEmail().equals(userEmail))
+            throw new NotFoundException("Payment Transaction not found.");
 
         transaction.getAudit().validateIsActive("PaymentTransaction");
 
         if (!VALID_PAY_STATUSES.contains(transaction.getStatus()))
             throw new ConflictException("This transaction cannot be paid. Transaction status: " + transaction.getStatus());
 
-        PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(transaction.getReminder().getId());
         reminder.getAudit().validateIsActive("PaymentReminder");
-
-        if (!reminder.getUser().getEmail().equals(userEmail))
-            throw new UnauthorizedException("You do not have permission to update this transaction.");
 
         this.updateTransactionFromPaymentDetails(command, transaction);
 

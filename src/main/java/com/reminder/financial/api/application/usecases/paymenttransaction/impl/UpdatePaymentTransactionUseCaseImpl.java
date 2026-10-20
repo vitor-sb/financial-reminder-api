@@ -2,7 +2,6 @@ package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
 import com.reminder.financial.api.application.dtos.paymenttransaction.UpdatePaymentTransactionCommand;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
@@ -21,7 +20,7 @@ public class UpdatePaymentTransactionUseCaseImpl implements UpdatePaymentTransac
                 .orElseThrow(() -> new NotFoundException("Payment Transaction not found."));
 
         if (!transaction.getReminder().getUser().getEmail().equals(userEmail)) {
-            throw new UnauthorizedException("You do not have permission to update this transaction.");
+            throw new NotFoundException("Payment Transaction not found.");
         }
 
         transaction.getAudit().validateIsActive("PaymentTransaction");

@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymentreminder.impl;
 
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
+import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.application.usecases.paymentreminder.ToggleReminderStatusUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
@@ -25,7 +25,7 @@ public class ToggleReminderStatusUseCaseImpl implements ToggleReminderStatusUseC
         PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);
 
         if (!reminder.getUser().getEmail().equals(userEmail)) {
-            throw new UnauthorizedException("User does not own this reminder.");
+            throw new NotFoundException("Payment Reminder not found.");
         }
 
         paymentTransactionService.togglePendingTransactionStatus(reminderId, enable, userEmail);

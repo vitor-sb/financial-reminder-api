@@ -5,7 +5,7 @@ import com.reminder.financial.api.application.dtos.paymentreminder.PaymentRemind
 import com.reminder.financial.api.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
-import com.reminder.financial.api.application.exceptions.ConflictException;
+import com.reminder.financial.api.application.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,11 @@ public class GetPaymentReminderUseCaseImpl implements GetPaymentReminderUseCase 
 
     public PaymentReminderResult execute(GetPaymentReminderQuery dto) {
         PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderByIdOrThrow(dto.id());
-        paymentReminder.getAudit().validateIsActive("PaymentReminder");
 
         if (!Objects.equals(paymentReminder.getUser().getEmail(), dto.email()))
-            throw new ConflictException("This reminder does not belong to the logged in user");
+            throw new NotFoundException("Payment Reminder not found.");
+
+        paymentReminder.getAudit().validateIsActive("PaymentReminder");
 
         return new PaymentReminderResult(
                 paymentReminder.getTitle(),
