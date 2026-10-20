@@ -12,7 +12,7 @@ import com.reminder.financial.api.application.usecases.paymenttransaction.Update
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,19 +25,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/payments/transactions")
 @Tag(name = "Payment Transactions", description = "Handles individual payment transactions, including processing payments and listing transactions for a specific reminder.")
+@RequiredArgsConstructor
 public class PaymentTransactionController {
 
-    @Autowired
-    private PaymentTransactionMapper paymentTransactionMapper;
+    private final PaymentTransactionMapper paymentTransactionMapper;
 
-    @Autowired
-    PayTransactionUseCase payTransactionUseCase;
+    private final PayTransactionUseCase payTransactionUseCase;
 
-    @Autowired
-    ListTransactionsUseCase listTransactionsUseCase;
+    private final ListTransactionsUseCase listTransactionsUseCase;
 
-    @Autowired
-    private UpdatePaymentTransactionUseCase updateTransactionUseCase;
+    private final UpdatePaymentTransactionUseCase updateTransactionUseCase;
 
 
     @PostMapping("/{transactionId}/pay")

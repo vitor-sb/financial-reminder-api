@@ -7,7 +7,7 @@ import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,13 +19,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/users")
 @PreAuthorize("hasAuthority('ADMIN_PERMISSION')")
+@RequiredArgsConstructor
 public class UserAdminController {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private ListUsersUseCase listUsersUseCase;
+    private final ListUsersUseCase listUsersUseCase;
 
     @GetMapping("/list")
     public ResponseEntity<Page<ListUsersSingleResponse>> listAll(

@@ -1,6 +1,6 @@
 package com.reminder.financial.api.adapters.mappers;
 
-import com.reminder.financial.api.adapters.dtos.paymentremider.*;
+import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

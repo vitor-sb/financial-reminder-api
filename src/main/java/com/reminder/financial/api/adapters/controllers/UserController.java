@@ -13,7 +13,7 @@ import com.reminder.financial.api.application.usecases.user.ToggleSelfUserAccoun
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,25 +22,20 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("users")
 @Tag(name = "Users", description = "Handles user self-service actions, such as registration and personal account management (disable, enable, delete).")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private CreateUserUseCase createUserUseCase;
+    private final CreateUserUseCase createUserUseCase;
 
-    @Autowired
-    private ListUsersUseCase listUsersUseCase;
+    private final ListUsersUseCase listUsersUseCase;
 
-    @Autowired
-    private ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
+    private final ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
 
-    @Autowired
-    private EnableUserUseCase enableUserUseCase;
+    private final EnableUserUseCase enableUserUseCase;
 
-    @Autowired
-    private DeleteSelfUserAccountUseCase deleteSelfUserAccountUseCase;
+    private final DeleteSelfUserAccountUseCase deleteSelfUserAccountUseCase;
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Public endpoint to register a new user in the system.")

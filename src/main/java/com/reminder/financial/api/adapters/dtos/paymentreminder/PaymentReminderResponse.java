@@ -1,17 +1,17 @@
-package com.reminder.financial.api.adapters.dtos.paymentremider;
+package com.reminder.financial.api.adapters.dtos.paymentreminder;
 
 import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionMethodEnum;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 
-public record ListPaymentRemindersFilterRequest(
-        String reminderId,
+public record PaymentReminderResponse(
         String title,
-        LocalDate dueDateFrom,
-        LocalDate dueDateUntil,
+        String description,
+        String date,
         RecurrenceEnum recurrence,
         TransactionMethodEnum method,
-        Boolean enabled
+        BigDecimal value,
+        Integer installmentsNumber
 ) {
 }

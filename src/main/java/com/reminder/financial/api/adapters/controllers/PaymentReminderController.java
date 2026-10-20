@@ -1,13 +1,13 @@
 package com.reminder.financial.api.adapters.controllers;
 
-import com.reminder.financial.api.adapters.dtos.paymentremider.*;
+import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
 import com.reminder.financial.api.adapters.mappers.PaymentReminderMapper;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.usecases.paymentreminder.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,33 +21,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/payments/reminders")
 @Tag(name = "Payment Reminders", description = "Manages all aspects of payment reminders, from creation and updates to fetching monthly bill forecasts.")
+@RequiredArgsConstructor
 public class PaymentReminderController {
 
     private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
 
-    @Autowired
-    private PaymentReminderMapper paymentReminderMapper;
+    private final PaymentReminderMapper paymentReminderMapper;
 
-    @Autowired
-    private CreatePaymentReminderUseCase createUseCase;
+    private final CreatePaymentReminderUseCase createUseCase;
 
-    @Autowired
-    private GetPaymentReminderUseCase getByIdUseCase;
+    private final GetPaymentReminderUseCase getByIdUseCase;
 
-    @Autowired
-    private UpdatePaymentReminderUseCase updateUseCase;
+    private final UpdatePaymentReminderUseCase updateUseCase;
 
-    @Autowired
-    private ToggleReminderStatusUseCase toggleReminderStatusUseCase;
+    private final ToggleReminderStatusUseCase toggleReminderStatusUseCase;
 
-    @Autowired
-    private DeletePaymentReminderUseCase deletePaymentReminderUseCase;
+    private final DeletePaymentReminderUseCase deletePaymentReminderUseCase;
 
-    @Autowired
-    private ListMonthlyBillsUseCase listMonthlyBillsUseCase;
+    private final ListMonthlyBillsUseCase listMonthlyBillsUseCase;
 
-    @Autowired
-    private ListPaymentRemindersByUserUseCase listPaymentRemindersByUserUseCase;
+    private final ListPaymentRemindersByUserUseCase listPaymentRemindersByUserUseCase;
 
 
     @PostMapping

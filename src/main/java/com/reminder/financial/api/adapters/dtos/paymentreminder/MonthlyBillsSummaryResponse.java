@@ -1,4 +1,4 @@
-package com.reminder.financial.api.adapters.dtos.paymentremider;
+package com.reminder.financial.api.adapters.dtos.paymentreminder;
 
 import org.springframework.data.domain.Page;
 

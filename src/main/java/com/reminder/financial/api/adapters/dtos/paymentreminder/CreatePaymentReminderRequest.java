@@ -1,4 +1,4 @@
-package com.reminder.financial.api.adapters.dtos.paymentremider;
+package com.reminder.financial.api.adapters.dtos.paymentreminder;
 
 import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionMethodEnum;
