@@ -250,6 +250,8 @@ Cada feature é fatiada em stories por camada, para que cada story seja pequena 
 
 ### Feature G — Documentação (migração `API_REFERENCE.md` → `openapi.yaml`)
 
+> **Status (2026-10-20):** US-017, US-018 e US-019 concluídas no commit `92edf73` (openapi reescrito, `API_REFERENCE.md` removido, README aponta para o openapi). O delta das features novas é conferido na US-017 do `scripts/ralph/prd.json`.
+
 > **Fonte da verdade:** as **controllers reais** (`adapters/controllers/*`) e seus DTOs/mappers — **não** o `API_REFERENCE.md`, que está incompleto e desatualizado. O `API_REFERENCE.md` pode no máximo servir de pista do que existia; toda rota, parâmetro, corpo e código de resposta no `openapi.yaml` deve ser conferido contra a assinatura efetiva do controller e do DTO correspondente.
 
 #### US-017: Auditar controllers e mapear lacunas do `openapi.yaml`

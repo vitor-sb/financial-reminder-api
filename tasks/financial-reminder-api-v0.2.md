@@ -396,8 +396,8 @@ Monorepo com módulos Maven separados (não microsserviços):
 
 ## 12. O que falta para fechar a v1
 
-- [ ] Todos os endpoints documentados no `openapi.yaml`
-- [ ] Remover `api_reference` desatualizada
+- [x] Todos os endpoints documentados no `openapi.yaml`
+- [x] Remover `api_reference` desatualizada
 - [ ] Implementar **Categorias** (CRUD + associação com lembretes)
 - [ ] Campo `hasDiscount` + `discountValue` nas transações
 - [ ] **Endpoints de métricas** (annual summary + by-category)
