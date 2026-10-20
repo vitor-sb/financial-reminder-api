@@ -6,14 +6,13 @@ import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRe
 import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.user.User;
+import com.reminder.financial.api.domains.repositories.PaymentReminderSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
 import com.reminder.financial.api.application.exceptions.ConflictException;
-import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,6 +27,7 @@ public class PaymentReminderService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentReminderService.class);
 
     private final PaymentReminderRepository paymentReminderRepository;
+    private final PaymentReminderSearch paymentReminderSearch;
 
 
     public PaymentReminder savePaymentReminder(PaymentReminder reminder) {
@@ -60,17 +60,7 @@ public class PaymentReminderService {
             ListPaymentRemindersFilterQuery query,
             Pageable pageable
     ) {
-        Specification<PaymentReminder> spec = Specification
-                .where(SpecificationFactory.<PaymentReminder>equal("user", user))
-                .and(SpecificationFactory.equal("id", query.reminderId()))
-                .and(SpecificationFactory.isGreaterThanOrEqualTo("dueDate", query.dueDateFrom()))
-                .and(SpecificationFactory.isLessThanOrEqualTo("dueDate", query.dueDateUntil()))
-                .and(SpecificationFactory.equal("recurrence", query.recurrence()))
-                .and(SpecificationFactory.equal("method", query.method()))
-                .and(SpecificationFactory.equalInJoin("audit", "enabled", query.enabled()))
-                .and(SpecificationFactory.equalInJoin("audit", "deleted", false));
-
-        return paymentReminderRepository.findAll(spec, pageable);
+        return paymentReminderSearch.searchByUserAndFilters(user, query, pageable);
     }
 
     public List<PaymentReminder> getRelevantRemindersForSimulation(String email, YearMonth yearMonth) {

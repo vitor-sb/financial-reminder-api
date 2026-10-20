@@ -4,6 +4,7 @@ import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
+import com.reminder.financial.api.infrastructure.persistence.UserSpecificationSearch;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
@@ -39,7 +40,7 @@ class UserServiceTest {
     @BeforeEach
     void setup() {
         this.closeable = MockitoAnnotations.openMocks(this);
-        this.userService = new UserService(repository);
+        this.userService = new UserService(repository, new UserSpecificationSearch(repository));
     }
 
     @AfterEach
