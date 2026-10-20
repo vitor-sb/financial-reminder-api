@@ -48,9 +48,8 @@ public class LoginIpRateLimitFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
 
-        // 403: e-mail inexistente ainda responde 403 até a SEC04 uniformizar para 401
         int status = response.getStatus();
-        if (status == HttpStatus.UNAUTHORIZED.value() || status == HttpStatus.FORBIDDEN.value()) {
+        if (status == HttpStatus.UNAUTHORIZED.value()) {
             loginAttemptService.incrementIpFailures(ip);
         }
     }

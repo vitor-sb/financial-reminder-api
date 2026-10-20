@@ -46,4 +46,13 @@ class AuthenticationServiceTest {
         assertEquals("johndoe@example.com", userDetails.getUsername());
         assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("USER_PERMISSION")));
     }
+
+    @Test
+    @DisplayName("Should throw UsernameNotFoundException when user is missing, disabled or deleted")
+    void loadUserByUsernameHidesAccountState() {
+        when(userService.findValidUserByEmail("x@example.com")).thenThrow(new RuntimeException("User is disabled."));
+
+        assertThrows(org.springframework.security.core.userdetails.UsernameNotFoundException.class,
+                () -> authenticationService.loadUserByUsername("x@example.com"));
+    }
 }

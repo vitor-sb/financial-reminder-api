@@ -53,7 +53,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
         '401':
-          description: Invalid credentials
+          description: Invalid email or password. Same status and body for wrong password, unknown e-mail and disabled/deleted account.
           content:
             application/json:
               schema:

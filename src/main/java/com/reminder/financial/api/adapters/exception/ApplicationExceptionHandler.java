@@ -76,12 +76,12 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleAuthenticationException(AuthenticationException exception, HttpServletRequest request) {
         return new ErrorResponse(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.name(),
-                exception.getMessage(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.name(),
+                "Invalid email or password",
                 request.getServletPath()
         );
     }
