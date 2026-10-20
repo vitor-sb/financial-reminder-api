@@ -33,7 +33,7 @@ class JwtHardeningTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Jwt\",\"email\":\"jwt@example.com\",\"password\":\"password123\"}"))
                 .andExpect(status().isOk());
-        var token = tokenProvider.generateToken(userRepository.findUserByEmail("jwt@example.com").orElseThrow());
+        var token = tokenProvider.issue(userRepository.findUserByEmail("jwt@example.com").orElseThrow());
 
         var jwt = JWT.decode(token);
         assertNotNull(jwt.getId());

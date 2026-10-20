@@ -38,7 +38,7 @@ class UserSignUpRoleTest {
         assertEquals(RoleEnum.USER, user.getRole());
 
         mockMvc.perform(get("/admin/users/list")
-                        .header("Authorization", "Bearer " + tokenProvider.generateToken(user)))
+                        .header("Authorization", "Bearer " + tokenProvider.issue(user)))
                 .andExpect(status().isForbidden());
     }
 }

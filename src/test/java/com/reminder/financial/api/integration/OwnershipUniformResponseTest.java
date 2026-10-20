@@ -35,7 +35,7 @@ class OwnershipUniformResponseTest {
     private String signUp(String email) throws Exception {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"N\",\"email\":\"" + email + "\",\"password\":\"password123\"}"));
-        return "Bearer " + tokenProvider.generateToken(userRepository.findUserByEmail(email).orElseThrow());
+        return "Bearer " + tokenProvider.issue(userRepository.findUserByEmail(email).orElseThrow());
     }
 
     /** status + body without the timestamp */

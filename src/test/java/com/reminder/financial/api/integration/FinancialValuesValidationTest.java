@@ -39,7 +39,7 @@ class FinancialValuesValidationTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"N\",\"email\":\"fin@example.com\",\"password\":\"password123\"}"));
         var user = userRepository.findUserByEmail("fin@example.com").orElseThrow();
-        return tokenProvider.generateToken(user);
+        return tokenProvider.issue(user);
     }
 
     private static String reminder(String value, String installments) {

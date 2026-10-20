@@ -1,6 +1,7 @@
 package com.reminder.financial.api.application.usecases.user.impl;
 
 import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
+import com.reminder.financial.api.application.security.PasswordHasher;
 import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
 import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
 import com.reminder.financial.api.application.usecases.user.EnableUserUseCase;
@@ -11,7 +12,6 @@ import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -24,7 +24,7 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHasher passwordHasher;
 
     private final LoginAttemptService loginAttemptService;
 
@@ -45,7 +45,7 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
         User user = userRepository.findUserByEmail(email).orElse(null);
         // hash dummy iguala o custo quando o e-mail não existe
         String hash = user != null ? user.getPassword() : dummyHash();
-        boolean passwordMatches = passwordEncoder.matches(command.password(), hash);
+        boolean passwordMatches = passwordHasher.matches(command.password(), hash);
 
         if (user == null || !passwordMatches || Boolean.TRUE.equals(user.getAudit().getDeleted())) {
             loginAttemptService.incrementAttempts(email);
@@ -59,7 +59,7 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
 
     private String dummyHash() {
         if (dummyHash == null) {
-            dummyHash = passwordEncoder.encode("dummy-password");
+            dummyHash = passwordHasher.encode("dummy-password");
         }
         return dummyHash;
     }

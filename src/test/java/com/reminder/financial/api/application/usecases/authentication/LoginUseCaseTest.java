@@ -7,7 +7,8 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
 import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
 import com.reminder.financial.api.domains.services.LoginAttemptService;
-import com.reminder.financial.api.infrastructure.security.TokenProvider;
+import com.reminder.financial.api.application.security.CredentialsAuthenticator;
+import com.reminder.financial.api.application.security.TokenIssuer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,10 +23,10 @@ import static org.mockito.Mockito.*;
 class LoginUseCaseTest {
 
     @Mock
-    private AuthenticationManager authenticationManager;
+    private CredentialsAuthenticator authenticator;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private TokenIssuer tokenIssuer;
 
     @Mock
     private LoginAttemptService loginAttemptService;
@@ -58,11 +56,9 @@ class LoginUseCaseTest {
     void testExecuteSuccessfulLogin() {
         // Arrange
         AuthenticationCommand dto = new AuthenticationCommand(validEmail, validPassword);
-        org.springframework.security.core.Authentication authResult = mock(org.springframework.security.core.Authentication.class);
         User user = new User();
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authResult);
-        when(authResult.getPrincipal()).thenReturn(user);
-        when(tokenProvider.generateToken(user)).thenReturn("mockedToken");
+        when(authenticator.authenticate(validEmail, validPassword)).thenReturn(user);
+        when(tokenIssuer.issue(user)).thenReturn("mockedToken");
 
         // Act
         AuthenticationResult response = loginUseCase.execute(dto);
@@ -78,8 +74,8 @@ class LoginUseCaseTest {
     void testExecuteInvalidCredentialsAndHandleAttempts() {
         // Arrange
         AuthenticationCommand dto = new AuthenticationCommand(invalidEmail, invalidPassword);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new BadCredentialsException("Invalid credentials") {});
+        when(authenticator.authenticate(invalidEmail, invalidPassword))
+                .thenThrow(new InvalidCredentialsException("Invalid email or password"));
 
         when(loginAttemptService.isBlocked(invalidEmail)).thenReturn(false);
 
@@ -99,6 +95,6 @@ class LoginUseCaseTest {
 
         // Act & Assert
         assertThrows(TooManyLoginAttemptsException.class, () -> loginUseCase.execute(dto));
-        verify(authenticationManager, never()).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(authenticator, never()).authenticate(anyString(), anyString());
     }
 }

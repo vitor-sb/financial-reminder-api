@@ -83,7 +83,7 @@ class AuthorizationMatrixTest {
     }
 
     private String bearerFor(User user) {
-        return "Bearer " + tokenProvider.generateToken(user);
+        return "Bearer " + tokenProvider.issue(user);
     }
 
     private String signUp() throws Exception {
