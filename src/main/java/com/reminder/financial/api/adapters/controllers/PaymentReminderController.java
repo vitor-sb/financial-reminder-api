@@ -24,7 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class PaymentReminderController {
 
-    private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
 
     private final PaymentReminderMapper paymentReminderMapper;
 
