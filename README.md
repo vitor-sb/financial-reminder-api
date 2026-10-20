@@ -91,7 +91,7 @@ docker compose up -d                  # PostgreSQL (5432) e Redis (6379)
    ./mvnw spring-boot:run
    ```
 
-   O Liquibase cria as tabelas na subida. API em `http://localhost:8080`, Swagger UI em `/swagger-ui.html`. O serviço da API no `docker-compose.yaml` está comentado; para rodá-la em container, descomente-o e mantenha os hosts dos containers no `.env`.
+   O Liquibase cria as tabelas na subida. API em `http://localhost:8080`, Swagger UI em `/swagger-ui.html`. O `docker-compose.yaml` sobe só PostgreSQL e Redis; a API roda pelo Maven (acima) ou em cluster pelos manifests de `k8s/`.
 3. **Crie o `OWNER` (uma vez)**, com as tabelas já criadas: edite `docker/scripts/db/create-owner-user.sql` (e-mail, nome e **hash bcrypt** da senha, nunca texto puro) e execute com `API_DB_USER`. O script não duplica se o e-mail já existir.
 
 ### Problemas comuns
