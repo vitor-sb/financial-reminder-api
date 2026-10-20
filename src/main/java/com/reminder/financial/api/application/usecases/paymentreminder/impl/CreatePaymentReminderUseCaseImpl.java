@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 @RequiredArgsConstructor
 @Component
@@ -33,7 +32,7 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
         User user = userService.findUserByEmailOrThrow(userEmail);
         user.getAudit().validateIsActive("Authenticated user");
 
-        LocalDate reminderDate = parseAndValidateReminderDate(dto.date());
+        LocalDate reminderDate = validateReminderDate(dto.date());
 
         PaymentReminder reminder = new PaymentReminder(
                 user,
@@ -55,18 +54,10 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
         return persistedReminder;
     }
 
-    private LocalDate parseAndValidateReminderDate(String dateString) {
-        try {
-            LocalDate parsedDate = LocalDate.parse(dateString);
-
-            if (parsedDate.isBefore(LocalDate.now())) {
-                throw new IllegalArgumentException("Reminder date cannot be in the past.");
-            }
-
-            return parsedDate;
-
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format for reminder. Expected 'YYYY-MM-DD'");
+    private LocalDate validateReminderDate(LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Reminder date cannot be in the past.");
         }
+        return date;
     }
 }

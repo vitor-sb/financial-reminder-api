@@ -1,5 +1,7 @@
 package com.reminder.financial.api.adapters.mappers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
 import jakarta.validation.Valid;
@@ -25,12 +27,20 @@ public class PaymentReminderMapper {
         return new CreatePaymentReminderCommand(
                 request.title(),
                 request.description(),
-                request.date(),
+                parseDate(request.date()),
                 request.recurrence(),
                 request.method(),
                 request.value(),
                 request.installmentsNumber()
         );
+    }
+
+    private LocalDate parseDate(String date) {
+        try {
+            return LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format for reminder. Expected 'YYYY-MM-DD'");
+        }
     }
 
     public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest request) {

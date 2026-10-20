@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record CreatePaymentReminderCommand(
         @NotBlank
@@ -15,7 +16,7 @@ public record CreatePaymentReminderCommand(
         @Size(max=100)
         String description,
         @NotNull
-        String date,
+        LocalDate date,
         @NotNull
         RecurrenceEnum recurrence,
         @NotNull
