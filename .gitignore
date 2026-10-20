@@ -1,8 +1,8 @@
-# Arquivos e diretórios gerados pelo Build
+# Build
 target/
 *.log
 
-# Arquivos de configuração de IDEs
+# IDEs
 .idea/
 .vscode/
 .classpath
@@ -13,6 +13,19 @@ target/
 .springBeans
 .sts4-cache
 
+# Ambiente / segredos (use .env.example como modelo)
 .env
 
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Maven wrapper
 !.mvn/wrapper/maven-wrapper.jar
+
+# IA / Ralph: estado local (ralph.sh, prompts e tasks/ são versionados)
+.claude/
+scripts/ralph/prd.json
+scripts/ralph/progress.txt
+scripts/ralph/.last-branch
+scripts/ralph/archive/
