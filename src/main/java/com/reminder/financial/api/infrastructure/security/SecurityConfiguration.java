@@ -1,5 +1,6 @@
 package com.reminder.financial.api.infrastructure.security;
 
+import com.reminder.financial.api.adapters.in.web.filter.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;

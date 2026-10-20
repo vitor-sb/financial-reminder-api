@@ -1,0 +1,115 @@
+package com.reminder.financial.api.adapters.in.web.mappers;
+
+import com.reminder.financial.api.domains.filters.ReminderFilter;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import com.reminder.financial.api.adapters.in.web.dtos.paymentreminder.*;
+import com.reminder.financial.api.application.dtos.paymentreminder.*;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
+@Component
+public class PaymentReminderMapper {
+
+    public PaymentReminderResponse toResponse(PaymentReminderResult result) {
+        return new PaymentReminderResponse(
+                result.title(),
+                result.description(),
+                result.date(),
+                result.recurrence(),
+                result.method(),
+                result.value(),
+                result.installmentsNumber()
+        );
+    }
+
+    public CreatePaymentReminderCommand toCommand(@Valid CreatePaymentReminderRequest request) {
+        return new CreatePaymentReminderCommand(
+                request.title(),
+                request.description(),
+                parseDate(request.date()),
+                request.recurrence(),
+                request.method(),
+                request.value(),
+                request.installmentsNumber()
+        );
+    }
+
+    private LocalDate parseDate(String date) {
+        try {
+            return LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format for reminder. Expected 'YYYY-MM-DD'");
+        }
+    }
+
+    public UpdatePaymentReminderCommand toCommand(@Valid UpdatePaymentReminderRequest request) {
+        return new UpdatePaymentReminderCommand(
+                request.title(),
+                request.description(),
+                request.method(),
+                request.value()
+        );
+    }
+
+    public GetPaymentReminderQuery toQuery(String id, String name) {
+        return new GetPaymentReminderQuery(
+                id, name
+        );
+    }
+
+    public MonthlyBillResponse toResponse(ListMonthlyBillsResult result) {
+        return new MonthlyBillResponse(
+                result.transactionId(),
+                result.reminderId(),
+                result.title(),
+                result.dueDate(),
+                result.value(),
+                result.method(),
+                result.status(),
+                result.installmentNumber()
+        );
+    }
+
+    public MonthlyBillsSummaryResponse toSummaryResponse(MonthlyBillsSummaryResult result, Pageable pageable) {
+        Page<MonthlyBillResponse> billsResponsePage = PageAdapter.toPage(result.bills().map(this::toResponse), pageable);
+
+        var totals = new MonthlyBillsSummaryResponse.Totals(
+                result.totalPaid(),
+                result.totalPending(),
+                result.totalOverdue()
+        );
+
+        return new MonthlyBillsSummaryResponse(billsResponsePage, totals);
+    }
+
+    public ListPaymentRemindersResponse toListPaymentRemindersResponse(ListPaymentRemindersResult result) {
+        return new ListPaymentRemindersResponse(
+                result.id(),
+                result.title(),
+                result.description(),
+                result.baseDate(),
+                result.recurrence(),
+                result.method(),
+                result.baseValue(),
+                result.installmentsNumber()
+        );
+    }
+
+    public ReminderFilter toListTransactionsFilterQuery(ListPaymentRemindersFilterRequest request) {
+        if (request == null)
+            return new ReminderFilter(null, null, null, null, null, null, null);
+
+        return new ReminderFilter(
+                request.reminderId(),
+                request.title(),
+                request.dueDateFrom(),
+                request.dueDateUntil(),
+                request.recurrence(),
+                request.method(),
+                request.enabled()
+        );
+    }
+}

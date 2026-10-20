@@ -1,5 +1,6 @@
 package com.reminder.financial.api.infrastructure.security;
 
+import com.reminder.financial.api.application.security.TokenValidator;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -15,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Component
-public class TokenProvider implements TokenIssuer {
+public class TokenProvider implements TokenIssuer, TokenValidator {
     @Value("${infrastructure.security.authentication.token.secret-key}")
     private String secretKey;
 
