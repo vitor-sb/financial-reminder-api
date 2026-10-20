@@ -1,7 +1,5 @@
 package com.reminder.financial.api.domains.services;
 
-import lombok.RequiredArgsConstructor;
-
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
 import com.reminder.financial.api.domains.models.reminder.NextTransactionFactory;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
@@ -15,14 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
-
 
 @RequiredArgsConstructor
 @Service
@@ -38,19 +35,7 @@ public class PaymentTransactionService {
 
     public void createInitialTransactionForReminder(PaymentReminder reminder) {
         logger.info("Creating initial transaction for reminder: {}", reminder.getId());
-
-        Integer initialInstallment = (reminder.getInstallmentsNumber() == null) ? null : 1;
-
-        PaymentTransaction transaction = new PaymentTransaction(
-                reminder,
-                reminder.getBaseDate(),
-                reminder.getMethod(),
-                initialInstallment,
-                reminder.getBaseValue(),
-                TransactionStatusEnum.PENDENTE
-        );
-
-        transactionRepository.save(transaction);
+        transactionRepository.save(PaymentTransaction.initialFor(reminder));
     }
 
     public Optional<PaymentTransaction> getTransactionById(String id) {
@@ -62,7 +47,7 @@ public class PaymentTransactionService {
     }
 
     public Page<PaymentTransaction> listTransactionsByUserAndFilters(User user, ListTransactionsFilterQuery query, Pageable pageable) {
-        Specification<PaymentTransaction> spec = Specification
+        var spec = Specification
                 .where(SpecificationFactory.<PaymentTransaction>equalInJoin("reminder", "user", user))
                 .and(SpecificationFactory.equal("id", query.transactionId()))
                 .and(SpecificationFactory.equalInJoin("reminder", "id", query.reminderId()))
@@ -89,40 +74,23 @@ public class PaymentTransactionService {
     }
 
     public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
-        findPendingTransactionByReminderId(reminderId)
-                .ifPresent(transaction -> {
-                    transaction.getAudit().setEnabled(enable);
-                    if (enable) {
-                        transaction.getAudit().setEnabledAt(Instant.now());
-                        transaction.getAudit().setToggledBy(userEmail);
-                    }
-                    save(transaction);
-                });
+        findPendingTransactionByReminderId(reminderId).ifPresent(transaction -> {
+            transaction.getAudit().toggle(enable, userEmail);
+            save(transaction);
+        });
     }
 
     public void cancelAndSoftDeletePendingTransaction(String reminderId, String userEmail) {
-        logger.info("Cancelling and soft-deleting pending transaction for reminder: {}", reminderId);
-
-        findPendingTransactionByReminderId(reminderId)
-                .ifPresentOrElse(transaction -> {
-                    transaction.setStatus(TransactionStatusEnum.CANCELADO);
-                    transaction.getAudit().setDeleted(true);
-                    transaction.getAudit().setDeletedBy(userEmail);
-                    transaction.getAudit().setDeletedAt(Instant.now());
-                    save(transaction);
-                    logger.info("Transaction {} cancelled successfully.", transaction.getId());
-                }, () -> logger.warn("No pending transaction found to cancel for reminder: {}", reminderId));
+        findPendingTransactionByReminderId(reminderId).ifPresentOrElse(transaction -> {
+            transaction.setStatus(TransactionStatusEnum.CANCELADO);
+            transaction.getAudit().softDelete(userEmail);
+            save(transaction);
+            logger.info("Transaction {} cancelled successfully.", transaction.getId());
+        }, () -> logger.warn("No pending transaction found to cancel for reminder: {}", reminderId));
     }
 
     public List<PaymentTransaction> findTransactionsForMonth(String userEmail, YearMonth yearMonth) {
-        LocalDate startDate = yearMonth.atDay(1);
-        LocalDate endDate = yearMonth.atEndOfMonth();
         return transactionRepository.findAllByReminderUserEmailAndDueDateBetweenAndAuditEnabledAndAuditDeleted(
-                userEmail,
-                startDate,
-                endDate,
-                true,
-                false
-        );
+                userEmail, yearMonth.atDay(1), yearMonth.atEndOfMonth(), true, false);
     }
 }

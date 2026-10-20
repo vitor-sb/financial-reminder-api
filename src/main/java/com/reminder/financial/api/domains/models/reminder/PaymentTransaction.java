@@ -72,4 +72,15 @@ public class PaymentTransaction implements Serializable {
         this.status = status;
         this.paymentDate = null;
     }
+
+    public static PaymentTransaction initialFor(PaymentReminder reminder) {
+        return new PaymentTransaction(
+                reminder,
+                reminder.getBaseDate(),
+                reminder.getMethod(),
+                reminder.getInstallmentsNumber() == null ? null : 1,
+                reminder.getBaseValue(),
+                TransactionStatusEnum.PENDENTE
+        );
+    }
 }

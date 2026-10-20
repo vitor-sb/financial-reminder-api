@@ -77,4 +77,18 @@ public abstract class AbstractAudit implements Serializable {
         this.validateIsDeleted(resourceName);
         this.validateIsEnabled(resourceName);
     }
+
+    public void toggle(boolean enable, String userEmail) {
+        this.enabled = enable;
+        if (enable) {
+            this.enabledAt = Instant.now();
+            this.toggledBy = userEmail;
+        }
+    }
+
+    public void softDelete(String userEmail) {
+        this.deleted = true;
+        this.deletedBy = userEmail;
+        this.deletedAt = Instant.now();
+    }
 }
