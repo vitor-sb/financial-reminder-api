@@ -45,7 +45,7 @@ public class PaymentTransactionController {
     public ResponseEntity<Void> payTransaction(
             @AuthenticationPrincipal(expression = "username") String loggedUserEmail,
             @PathVariable String transactionId,
-            @RequestBody PayTransactionRequest request
+            @RequestBody @Valid PayTransactionRequest request
     ) {
         var command = paymentTransactionMapper.toPayTransactionDetailsCommand(
                 request

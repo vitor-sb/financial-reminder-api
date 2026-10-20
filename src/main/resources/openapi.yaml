@@ -768,9 +768,13 @@ components:
         value:
           type: number
           format: decimal
+          exclusiveMinimum: 0
+          maximum: 999999999999.99
           example: 1500.00
         installmentsNumber:
           type: integer
+          minimum: 1
+          maximum: 600
           description: Number of installments. Null means indefinite recurrence.
           example: 12
           nullable: true
@@ -804,6 +808,8 @@ components:
           type: number
           format: decimal
           description: Actual amount paid. May differ from base value (e.g. with a discount).
+          exclusiveMinimum: 0
+          maximum: 999999999999.99
           example: 1450.00
           nullable: true
         method:
@@ -816,6 +822,8 @@ components:
         paymentValue:
           type: number
           format: decimal
+          exclusiveMinimum: 0
+          maximum: 999999999999.99
           example: 1400.00
           nullable: true
         method:
