@@ -38,6 +38,21 @@ class ArchitectureTest {
             .should().dependOnClassesThat().resideInAPackage("..infrastructure..");
 
     @ArchTest
+    static final ArchRule adaptersInNaoDependemDeAdaptersOut = noClasses()
+            .that().resideInAPackage("..adapters.in..")
+            .should().dependOnClassesThat().resideInAPackage("..adapters.out..");
+
+    @ArchTest
+    static final ArchRule adaptersOutNaoDependemDeAdaptersIn = noClasses()
+            .that().resideInAPackage("..adapters.out..")
+            .should().dependOnClassesThat().resideInAPackage("..adapters.in..");
+
+    @ArchTest
+    static final ArchRule domainsEApplicationSemSpringDataRedis = noClasses()
+            .that().resideInAnyPackage("..domains..", "..application..")
+            .should().dependOnClassesThat().resideInAPackage("org.springframework.data.redis..");
+
+    @ArchTest
     static final ArchRule semCiclosEntrePacotes = slices()
             .matching("com.reminder.financial.api.(*)..").should().beFreeOfCycles();
 
