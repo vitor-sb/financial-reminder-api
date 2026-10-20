@@ -4,8 +4,8 @@ import com.reminder.financial.api.application.dtos.authentication.Authentication
 import com.reminder.financial.api.application.dtos.authentication.AuthenticationResult;
 import com.reminder.financial.api.application.usecases.authentication.LoginUseCase;
 import com.reminder.financial.api.domains.models.user.User;
-import com.reminder.financial.api.application.exceptions.InvalidCredentialsException;
-import com.reminder.financial.api.application.exceptions.TooManyLoginAttemptsException;
+import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
+import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
 import com.reminder.financial.api.domains.services.LoginAttemptService;
 import com.reminder.financial.api.infrastructure.security.TokenProvider;
 import org.slf4j.Logger;

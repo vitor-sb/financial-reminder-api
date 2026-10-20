@@ -1,8 +1,8 @@
 package com.reminder.financial.api.application.usecases.user.impl;
 
 import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
-import com.reminder.financial.api.application.exceptions.InvalidCredentialsException;
-import com.reminder.financial.api.application.exceptions.TooManyLoginAttemptsException;
+import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
+import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
 import com.reminder.financial.api.application.usecases.user.EnableUserUseCase;
 import com.reminder.financial.api.application.usecases.user.ToggleSelfUserAccountUseCase;
 import com.reminder.financial.api.domains.models.user.User;

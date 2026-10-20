@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymentreminder.impl;
 
-import com.reminder.financial.api.application.exceptions.NotFoundException;
+import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import com.reminder.financial.api.application.usecases.paymentreminder.DeletePaymentReminderUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;

@@ -4,7 +4,7 @@ import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.UserService;
-import com.reminder.financial.api.application.exceptions.ConflictException;
+import com.reminder.financial.api.domains.exceptions.ConflictException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;

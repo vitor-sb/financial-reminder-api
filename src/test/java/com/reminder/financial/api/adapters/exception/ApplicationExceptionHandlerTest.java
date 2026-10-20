@@ -1,8 +1,8 @@
 package com.reminder.financial.api.adapters.exception;
 
-import com.reminder.financial.api.application.exceptions.ConflictException;
-import com.reminder.financial.api.application.exceptions.NotFoundException;
-import com.reminder.financial.api.application.exceptions.UnauthorizedException;
+import com.reminder.financial.api.domains.exceptions.ConflictException;
+import com.reminder.financial.api.domains.exceptions.NotFoundException;
+import com.reminder.financial.api.domains.exceptions.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -3,12 +3,12 @@ package com.reminder.financial.api.domains.services;
 import lombok.RequiredArgsConstructor;
 
 import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersFilterQuery;
-import com.reminder.financial.api.application.exceptions.NotFoundException;
+import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.PaymentReminderSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
-import com.reminder.financial.api.application.exceptions.ConflictException;
+import com.reminder.financial.api.domains.exceptions.ConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

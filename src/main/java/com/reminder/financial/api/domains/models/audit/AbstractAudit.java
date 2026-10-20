@@ -1,7 +1,7 @@
 package com.reminder.financial.api.domains.models.audit;
 
-import com.reminder.financial.api.application.exceptions.ResourceDeletedException;
-import com.reminder.financial.api.application.exceptions.ResourceDisabledException;
+import com.reminder.financial.api.domains.exceptions.ResourceDeletedException;
+import com.reminder.financial.api.domains.exceptions.ResourceDisabledException;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;

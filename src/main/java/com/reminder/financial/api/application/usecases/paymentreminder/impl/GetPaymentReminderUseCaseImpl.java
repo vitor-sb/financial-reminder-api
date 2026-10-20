@@ -5,7 +5,7 @@ import com.reminder.financial.api.application.dtos.paymentreminder.PaymentRemind
 import com.reminder.financial.api.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
-import com.reminder.financial.api.application.exceptions.NotFoundException;
+import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

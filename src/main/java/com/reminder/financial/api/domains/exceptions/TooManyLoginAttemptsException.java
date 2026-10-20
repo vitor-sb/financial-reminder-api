@@ -1,4 +1,4 @@
-package com.reminder.financial.api.application.exceptions;
+package com.reminder.financial.api.domains.exceptions;
 
 import org.springframework.security.core.AuthenticationException;
 

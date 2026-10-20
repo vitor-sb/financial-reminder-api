@@ -1,6 +1,6 @@
 package com.reminder.financial.api.adapters.exception;
 
-import com.reminder.financial.api.application.exceptions.*;
+import com.reminder.financial.api.domains.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;

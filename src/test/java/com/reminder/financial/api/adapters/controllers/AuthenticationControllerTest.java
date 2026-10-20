@@ -5,8 +5,8 @@ import com.reminder.financial.api.adapters.dtos.authentication.AuthenticationReq
 import com.reminder.financial.api.application.dtos.authentication.AuthenticationCommand;
 import com.reminder.financial.api.application.dtos.authentication.AuthenticationResult;
 import com.reminder.financial.api.application.usecases.authentication.LoginUseCase;
-import com.reminder.financial.api.application.exceptions.InvalidCredentialsException;
-import com.reminder.financial.api.application.exceptions.TooManyLoginAttemptsException;
+import com.reminder.financial.api.domains.exceptions.InvalidCredentialsException;
+import com.reminder.financial.api.domains.exceptions.TooManyLoginAttemptsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
 import com.reminder.financial.api.application.dtos.paymenttransaction.UpdatePaymentTransactionCommand;
-import com.reminder.financial.api.application.exceptions.NotFoundException;
+import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
