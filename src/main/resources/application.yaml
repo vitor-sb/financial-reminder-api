@@ -51,8 +51,15 @@ management:
       probes:
         enabled: true
 
+# Swagger/OpenAPI desligado por padrão; ligado no perfil dev ou com DOCS_ENABLED=true
+docs:
+  enabled: ${DOCS_ENABLED:false}
+
 springdoc:
+  api-docs:
+    enabled: ${docs.enabled}
   swagger-ui:
+    enabled: ${docs.enabled}
     url: /openapi.yaml
 
 logging:

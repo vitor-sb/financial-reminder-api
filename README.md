@@ -23,7 +23,7 @@ Lembretes podem ser desativados e reativados (`/disable`, `/enable`). A exclusã
 
 JWT no header `Authorization: Bearer <token>`, sessão stateless, expiração de 30 minutos (`infrastructure.security.authentication.token.expiration-minutes`).
 
-Públicos: `POST /users`, `POST /users/me/enable`, `POST /auth/login` e o Swagger. Todo o resto exige token.
+Públicos: `POST /users`, `POST /users/me/enable` e `POST /auth/login`. Todo o resto exige token.
 
 | Perfil | Permissões |
 |---|---|
@@ -48,7 +48,7 @@ Os erros de login são contados no Redis por usuário. A partir de 5 tentativas 
 | Lembretes | `POST /payments/reminders`, `GET /payments/reminders/{id}`, `PATCH /payments/reminders/{id}`, `DELETE /payments/reminders/{id}`, `POST /payments/reminders/{id}/disable`, `POST /payments/reminders/{id}/enable`, `GET /payments/reminders/list`, `GET /payments/reminders/monthly-bills` |
 | Transações | `POST /payments/transactions/{transactionId}/pay`, `PATCH /payments/transactions/{id}`, `GET /payments/transactions/list` |
 
-O contrato completo está em [`src/main/resources/openapi.yaml`](src/main/resources/openapi.yaml). Com a API no ar, o Swagger UI fica em `http://localhost:8080/swagger-ui.html`.
+O contrato completo está em [`src/main/resources/openapi.yaml`](src/main/resources/openapi.yaml). O Swagger UI fica desligado por padrão; com `DOCS_ENABLED=true` ou o perfil `dev` ele sobe em `http://localhost:8080/swagger-ui.html` (público).
 
 ## Stack
 
@@ -91,7 +91,7 @@ docker compose up -d                  # PostgreSQL (5432) e Redis (6379)
    ./mvnw spring-boot:run
    ```
 
-   O Liquibase cria as tabelas na subida. API em `http://localhost:8080`, Swagger UI em `/swagger-ui.html`. O `docker-compose.yaml` sobe só PostgreSQL e Redis; a API roda pelo Maven (acima) ou em cluster pelos manifests de `k8s/`.
+   O Liquibase cria as tabelas na subida. API em `http://localhost:8080`, Swagger UI em `/swagger-ui.html` (com `DOCS_ENABLED=true`). O `docker-compose.yaml` sobe só PostgreSQL e Redis; a API roda pelo Maven (acima) ou em cluster pelos manifests de `k8s/`.
 3. **Crie o `OWNER` (uma vez)**, com as tabelas já criadas: edite `docker/scripts/db/create-owner-user.sql` (e-mail, nome e **hash bcrypt** da senha, nunca texto puro) e execute com `API_DB_USER`. O script não duplica se o e-mail já existir.
 
 ### Problemas comuns

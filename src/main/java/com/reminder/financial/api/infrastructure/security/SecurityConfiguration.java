@@ -1,9 +1,11 @@
 package com.reminder.financial.api.infrastructure.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
@@ -27,6 +30,9 @@ public class SecurityConfiguration {
 
     @Autowired
     SecurityFilter securityFilter;
+
+    @Value("${docs.enabled:false}")
+    private boolean docsEnabled;
 
     private static final int ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
@@ -51,13 +57,18 @@ public class SecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN_PERMISSION")
-                        .requestMatchers(PUBLIC_SWAGGER_ENDPOINTS).permitAll()
-                        .requestMatchers(PUBLIC_HEALTH_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(authorize -> {
+                    authorize
+                            .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                            .requestMatchers("/admin/**").hasAuthority("ADMIN_PERMISSION");
+                    if (docsEnabled) {
+                        authorize.requestMatchers(PUBLIC_SWAGGER_ENDPOINTS).permitAll();
+                    }
+                    authorize
+                            .requestMatchers(PUBLIC_HEALTH_ENDPOINTS).permitAll()
+                            .anyRequest().authenticated();
+                })
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .headers(this::configureHttpHeaders)
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
