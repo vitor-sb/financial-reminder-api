@@ -95,7 +95,7 @@ public class ApplicationExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.status());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.name(), response.error());
-        assertEquals("Server error", response.message());
+        assertEquals("Unexpected error", response.message());
         assertEquals("/test", response.path());
     }
 

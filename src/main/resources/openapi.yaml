@@ -222,6 +222,7 @@ paths:
       tags:
         - Payment Reminders
       summary: Create a payment reminder
+      description: Returns 400 for an invalid body, a malformed date or a date in the past.
       operationId: createPaymentReminder
       requestBody:
         required: true

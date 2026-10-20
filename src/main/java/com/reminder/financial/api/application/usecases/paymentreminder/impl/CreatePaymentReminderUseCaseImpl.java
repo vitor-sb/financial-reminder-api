@@ -1,7 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymentreminder.impl;
 
 import com.reminder.financial.api.application.dtos.paymentreminder.CreatePaymentReminderCommand;
-import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.application.usecases.paymentreminder.CreatePaymentReminderUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.user.User;
@@ -57,7 +56,7 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
             LocalDate parsedDate = LocalDate.parse(dateString);
 
             if (parsedDate.isBefore(LocalDate.now())) {
-                throw new ConflictException("Reminder date cannot be in the past.");
+                throw new IllegalArgumentException("Reminder date cannot be in the past.");
             }
 
             return parsedDate;
