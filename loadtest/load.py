@@ -49,6 +49,7 @@ def run(u, sc, conc, dur, warm):
     boot = new_conn(u)
     tokens = [login(boot, i) for i in range(USERS)]
     today = datetime.date.today()
+    run_id = "%x" % random.getrandbits(32)  # títulos únicos entre rodadas (409 se repetir)
     lat, errs, lock = [], {}, threading.Lock()
     measure_from = time.monotonic() + warm
     end = measure_from + dur
@@ -60,7 +61,7 @@ def run(u, sc, conc, dur, warm):
             return call(conn, "POST", "/auth/login", {"email": email(i), "password": PASSWORD})[0] == 200
         if sc == "B":
             return call(conn, "GET", "/payments/reminders/monthly-bills?withSimulatedBills=true&year=%d&month=%d" % (today.year, today.month), None, tok)[0] == 200
-        s, _, loc = call(conn, "POST", "/payments/reminders", reminder("w%d-%d" % (wid, n), today + datetime.timedelta(days=1 + n % 28)), tok)
+        s, _, loc = call(conn, "POST", "/payments/reminders", reminder("w%s-%d-%d" % (run_id, wid, n), today + datetime.timedelta(days=1 + n % 28)), tok)
         if s != 201:
             return False
         s, b, _ = call(conn, "GET", "/payments/transactions/list?reminderId=" + loc.rsplit("/", 1)[1], None, tok)
