@@ -2,6 +2,8 @@ package com.reminder.financial.api.adapters.exception;
 
 import com.reminder.financial.api.application.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -86,7 +88,10 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(TooManyLoginAttemptsException.class)
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
-    public ErrorResponse handleTooManyLoginAttemptsException(TooManyLoginAttemptsException exception, HttpServletRequest request) {
+    public ErrorResponse handleTooManyLoginAttemptsException(TooManyLoginAttemptsException exception, HttpServletRequest request, HttpServletResponse response) {
+        if (exception.getRetryAfterSeconds() > 0) {
+            response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(exception.getRetryAfterSeconds()));
+        }
         return new ErrorResponse(
                 HttpStatus.TOO_MANY_REQUESTS.value(),
                 HttpStatus.TOO_MANY_REQUESTS.name(),

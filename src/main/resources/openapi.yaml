@@ -59,7 +59,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '429':
-          description: Too many failed login attempts
+          description: Too many failed login attempts (temporary block, same response for correct or wrong password). Wait the number of seconds in the Retry-After header.
+          headers:
+            Retry-After:
+              description: Seconds until a new attempt is allowed
+              schema:
+                type: integer
           content:
             application/json:
               schema:

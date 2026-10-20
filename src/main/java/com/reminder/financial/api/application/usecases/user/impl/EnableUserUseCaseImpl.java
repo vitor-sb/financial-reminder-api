@@ -36,8 +36,8 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
         String email = command.email();
 
         if (loginAttemptService.isBlocked(email)) {
-            long waitTime = loginAttemptService.getBlockUntil(email) - System.currentTimeMillis();
-            throw new TooManyLoginAttemptsException("Account blocked. Try again in " + TimeUnit.MILLISECONDS.toSeconds(waitTime) + " seconds.");
+            long waitSeconds = TimeUnit.MILLISECONDS.toSeconds(loginAttemptService.getBlockUntil(email) - System.currentTimeMillis());
+            throw new TooManyLoginAttemptsException("Too many login attempts. Try again later.", Math.max(waitSeconds, 1));
         }
 
         User user = userRepository.findUserByEmail(email).orElse(null);

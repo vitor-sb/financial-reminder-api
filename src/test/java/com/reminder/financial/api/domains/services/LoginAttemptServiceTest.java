@@ -1,189 +1,125 @@
 package com.reminder.financial.api.domains.services;
 
-import com.reminder.financial.api.common.TestUtils;
-import com.reminder.financial.api.domains.models.authentication.LoginAttempt;
-import com.reminder.financial.api.domains.repositories.redis.LoginAttemptRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.script.RedisScript;
 
-import java.util.Optional;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static com.reminder.financial.api.domains.services.LoginAttemptService.*;
+import static com.reminder.financial.api.domains.services.LoginAttemptService.MAX_ATTEMPTS;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class LoginAttemptServiceTest {
 
+    private static final String EMAIL = "test@example.com";
+
     @Mock
-    private LoginAttemptRepository loginAttemptRepository;
+    private StringRedisTemplate redis;
+
+    @Mock
+    private ValueOperations<String, String> ops;
 
     @InjectMocks
-    private LoginAttemptService loginAttemptService;
+    private LoginAttemptService service;
 
-    private AutoCloseable closeable;
-
-    private final String TEST_EMAIL = "test@example.com";
+    private final AtomicLong counter = new AtomicLong();
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
-        this.closeable = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        this.closeable.close();
-    }
-
-    @Test
-    @DisplayName("Should increment attempts and save LoginAttempt")
-    void incrementAttempts_shouldIncrementAndSave() {
-        LoginAttempt initialAttempt = new LoginAttempt(TEST_EMAIL);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(initialAttempt));
-        when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        loginAttemptService.incrementAttempts(TEST_EMAIL);
-
-        assertEquals(1, initialAttempt.getAttempts());
-        verify(loginAttemptRepository).save(initialAttempt);
+        MockitoAnnotations.openMocks(this);
+        when(redis.opsForValue()).thenReturn(ops);
+        // simula o script INCR+EXPIRE atômico do Redis
+        when(redis.execute(any(RedisScript.class), anyList(), any(Object[].class))).thenAnswer(i -> counter.incrementAndGet());
+        when(redis.delete(anyCollection())).thenAnswer(i -> {
+            counter.set(0);
+            return 2L;
+        });
     }
 
     @Test
-    @DisplayName("Should create new LoginAttempt if not exists, increment and save")
-    void incrementAttempts_shouldCreateIncrementAndSave() {
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.empty());
-        when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
+    @DisplayName("Fewer than MAX_ATTEMPTS failures do not block")
+    void belowLimitDoesNotBlock() {
+        for (int i = 0; i < MAX_ATTEMPTS - 1; i++) service.incrementAttempts(EMAIL);
 
-        loginAttemptService.incrementAttempts(TEST_EMAIL);
-
-        verify(loginAttemptRepository).save(any(LoginAttempt.class));
+        verify(ops, never()).set(anyString(), anyString(), any(Duration.class));
     }
 
     @Test
-    @DisplayName("Should block user when max attempts reached")
-    void incrementAttempts_shouldBlockUser() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setAttempts(MAX_ATTEMPTS - 1);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
-        when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
+    @DisplayName("MAX_ATTEMPTS failures block for 10 minutes")
+    void limitBlocks() {
+        for (int i = 0; i < MAX_ATTEMPTS; i++) service.incrementAttempts(EMAIL);
 
-        loginAttemptService.incrementAttempts(TEST_EMAIL);
-
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
-                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
-        );
-        assertNotNull(attempt.getBlockUntil());
-        TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should be calculated correctly");
-        verify(loginAttemptRepository).save(attempt);
+        ArgumentCaptor<Duration> ttl = ArgumentCaptor.forClass(Duration.class);
+        verify(ops).set(eq("login:block:" + EMAIL), anyString(), ttl.capture());
+        assertEquals(Duration.ofMinutes(10), ttl.getValue());
     }
 
     @Test
-    @DisplayName("Should reset attempts by deleting LoginAttempt")
-    void resetAttempts_shouldDelete() {
-        loginAttemptService.resetAttempts(TEST_EMAIL);
-        verify(loginAttemptRepository).deleteById(TEST_EMAIL);
+    @DisplayName("Block time is capped at 30 minutes")
+    void blockTimeIsCapped() {
+        counter.set(50);
+        service.incrementAttempts(EMAIL);
+
+        ArgumentCaptor<Duration> ttl = ArgumentCaptor.forClass(Duration.class);
+        verify(ops).set(eq("login:block:" + EMAIL), anyString(), ttl.capture());
+        assertEquals(Duration.ofMinutes(30), ttl.getValue());
     }
 
     @Test
-    @DisplayName("Should return true if user is blocked")
-    void isBlocked_shouldReturnTrueIfBlocked() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setBlockUntil(System.currentTimeMillis() + 60000);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
+    @DisplayName("4 failures + 1 success resets the counter")
+    void successResetsCounter() {
+        for (int i = 0; i < 4; i++) service.incrementAttempts(EMAIL);
+        service.resetAttempts(EMAIL);
 
-        assertTrue(loginAttemptService.isBlocked(TEST_EMAIL));
+        verify(redis).delete(List.of("login:fail:" + EMAIL, "login:block:" + EMAIL));
+        service.incrementAttempts(EMAIL);
+        assertEquals(1, counter.get());
     }
 
     @Test
-    @DisplayName("Should return false if user is not blocked")
-    void isBlocked_shouldReturnFalseIfNotBlocked() {
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.empty());
-        assertFalse(loginAttemptService.isBlocked(TEST_EMAIL));
+    @DisplayName("20 parallel failures increment exactly 20")
+    void parallelIncrements() throws Exception {
+        ExecutorService pool = Executors.newFixedThreadPool(8);
+        for (int i = 0; i < 20; i++) pool.submit(() -> service.incrementAttempts(EMAIL));
+        pool.shutdown();
+        assertTrue(pool.awaitTermination(5, TimeUnit.SECONDS));
 
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(new LoginAttempt(TEST_EMAIL)));
-        assertFalse(loginAttemptService.isBlocked(TEST_EMAIL));
+        assertEquals(20, counter.get());
     }
 
     @Test
-    @DisplayName("Should block user until specified time")
-    void blockUntil_shouldBlockUntil() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
-        when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
+    @DisplayName("isBlocked reflects the block key")
+    void isBlocked() {
+        when(ops.get("login:block:" + EMAIL)).thenReturn(String.valueOf(System.currentTimeMillis() + 60000));
+        assertTrue(service.isBlocked(EMAIL));
 
-        loginAttemptService.blockUntil(TEST_EMAIL);
-
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
-                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
-        );
-
-        assertNotNull(attempt.getBlockUntil());
-        TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should be calculated and set");
-        verify(loginAttemptRepository).save(attempt);
+        when(ops.get("login:block:" + EMAIL)).thenReturn(null);
+        assertFalse(service.isBlocked(EMAIL));
+        assertEquals(0L, service.getBlockUntil(EMAIL));
     }
 
     @Test
-    @DisplayName("Should get block until time")
-    void getBlockUntil_shouldGetBlockUntil() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        long blockUntil = System.currentTimeMillis() + 60000;
-        attempt.setBlockUntil(blockUntil);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
+    @DisplayName("getAttempts reads the failure counter")
+    void getAttempts() {
+        when(ops.get("login:fail:" + EMAIL)).thenReturn("2");
+        assertEquals(2, service.getAttempts(EMAIL));
 
-        Long result = loginAttemptService.getBlockUntil(TEST_EMAIL);
-
-        assertEquals(blockUntil, result);
-    }
-
-    @Test
-    @DisplayName("Should return 0 if LoginAttempt not found for getBlockUntil")
-    void getBlockUntil_shouldReturnZeroIfNotFound() {
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.empty());
-        assertEquals(0L, loginAttemptService.getBlockUntil(TEST_EMAIL));
-    }
-
-    @Test
-    @DisplayName("Should get number of attempts")
-    void getAttempts_shouldGetAttempts() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setAttempts(2);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
-
-        int attempts = loginAttemptService.getAttempts(TEST_EMAIL);
-
-        assertEquals(2, attempts);
-    }
-
-    @Test
-    @DisplayName("Should return 0 attempts if LoginAttempt not found")
-    void getAttempts_shouldReturnZeroIfNotFound() {
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.empty());
-        assertEquals(0, loginAttemptService.getAttempts(TEST_EMAIL));
-    }
-
-    @Test
-    @DisplayName("Should calculate block time correctly")
-    void calculateBlockTime_shouldCalculateCorrectly() {
-        LoginAttempt attempt = new LoginAttempt(TEST_EMAIL);
-        attempt.setAttempts(MAX_ATTEMPTS);
-        when(loginAttemptRepository.findById(TEST_EMAIL)).thenReturn(Optional.of(attempt));
-        when(loginAttemptRepository.save(any(LoginAttempt.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        loginAttemptService.incrementAttempts(TEST_EMAIL);
-
-        long expectedBlockUntil = TestUtils.calculateExpectedBlockUntil(
-                MAX_ATTEMPTS, BLOCK_TIME_MINUTES, BLOCK_TIME_MULTIPLIER, attempt.getAttempts()
-        );
-
-        assertNotNull(attempt.getBlockUntil());
-        TestUtils.assertTimeEqualsWithTolerance(expectedBlockUntil, attempt.getBlockUntil(), "Block until time should match calculated time");
+        when(ops.get("login:fail:" + EMAIL)).thenReturn(null);
+        assertEquals(0, service.getAttempts(EMAIL));
     }
 }

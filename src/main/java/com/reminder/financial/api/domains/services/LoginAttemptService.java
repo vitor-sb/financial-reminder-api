@@ -1,18 +1,19 @@
 package com.reminder.financial.api.domains.services;
 
-import com.reminder.financial.api.application.exceptions.TooManyLoginAttemptsException;
-import com.reminder.financial.api.domains.models.authentication.LoginAttempt;
-import com.reminder.financial.api.domains.repositories.redis.LoginAttemptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.List;
 
+/**
+ * Conta apenas tentativas de login que falharam. O contador usa INCR + EXPIRE num único script Lua
+ * (atômico) e o bloqueio é uma chave separada com TTL, que cresce com as falhas até um teto.
+ */
 @Service
 public class LoginAttemptService {
-
-    @Autowired
-    private LoginAttemptRepository loginAttemptRepository;
 
     public static final int MAX_ATTEMPTS = 5;
 
@@ -20,75 +21,51 @@ public class LoginAttemptService {
 
     public static final long BLOCK_TIME_MULTIPLIER = 2;
 
-    public static final long THROTTLE_TIME_SECONDS = 15;
+    public static final long MAX_BLOCK_MINUTES = 30;
 
+    private static final long FAILURE_WINDOW_SECONDS = Duration.ofMinutes(MAX_BLOCK_MINUTES).toSeconds();
 
-    public void checkAndRecordRequestRate(String email) {
-        long currentTime = System.currentTimeMillis();
-        LoginAttempt attempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
+    private static final DefaultRedisScript<Long> INCR_WITH_TTL = new DefaultRedisScript<>(
+            "local n = redis.call('INCR', KEYS[1]) redis.call('EXPIRE', KEYS[1], ARGV[1]) return n", Long.class);
 
-        if (attempt.getLastAttemptTimestamp() != null) {
-            long timeSinceLastAttempt = currentTime - attempt.getLastAttemptTimestamp();
-            long throttleTimeMillis = TimeUnit.SECONDS.toMillis(THROTTLE_TIME_SECONDS);
-
-            if (timeSinceLastAttempt < throttleTimeMillis) {
-                long waitTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(throttleTimeMillis - timeSinceLastAttempt);
-                throw new TooManyLoginAttemptsException("Muitas tentativas em um curto período. Por favor, aguarde " + waitTimeSeconds + " segundos.");
-            }
-        }
-
-        attempt.setLastAttemptTimestamp(currentTime);
-        loginAttemptRepository.save(attempt);
-    }
+    @Autowired
+    private StringRedisTemplate redis;
 
     public void incrementAttempts(String email) {
-        LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
-        loginAttempt.setAttempts(loginAttempt.getAttempts() + 1);
-
-        if (loginAttempt.getAttempts() >= MAX_ATTEMPTS) {
-            blockUntil(loginAttempt);
+        Long attempts = redis.execute(INCR_WITH_TTL, List.of(failKey(email)), String.valueOf(FAILURE_WINDOW_SECONDS));
+        if (attempts != null && attempts >= MAX_ATTEMPTS) {
+            Duration block = Duration.ofMinutes(calculateBlockTime(attempts));
+            redis.opsForValue().set(blockKey(email), String.valueOf(System.currentTimeMillis() + block.toMillis()), block);
         }
-
-        loginAttemptRepository.save(loginAttempt);
     }
 
     public void resetAttempts(String email) {
-        loginAttemptRepository.deleteById(email);
+        redis.delete(List.of(failKey(email), blockKey(email)));
     }
 
     public boolean isBlocked(String email) {
-        LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElse(null);
-        if (loginAttempt == null) {
-            return false;
-        }
-        return loginAttempt.getBlockUntil() != null && loginAttempt.getBlockUntil() > System.currentTimeMillis();
-    }
-
-    public void blockUntil(String email) {
-        LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
-        blockUntil(loginAttempt);
-        loginAttemptRepository.save(loginAttempt);
-    }
-
-    public void blockUntil(LoginAttempt loginAttempt) {
-        long blockTime = calculateBlockTime(loginAttempt.getAttempts());
-        loginAttempt.setBlockUntil(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(blockTime));
+        return getBlockUntil(email) > System.currentTimeMillis();
     }
 
     public Long getBlockUntil(String email) {
-        LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElse(null);
-        if (loginAttempt == null) {
-            return 0L;
-        }
-        return loginAttempt.getBlockUntil();
+        String value = redis.opsForValue().get(blockKey(email));
+        return value == null ? 0L : Long.parseLong(value);
     }
 
     public int getAttempts(String email) {
-        LoginAttempt loginAttempt = loginAttemptRepository.findById(email).orElseGet(() -> new LoginAttempt(email));
-        return loginAttempt.getAttempts();
+        String value = redis.opsForValue().get(failKey(email));
+        return value == null ? 0 : Integer.parseInt(value);
     }
 
     private long calculateBlockTime(long attempts) {
-        return BLOCK_TIME_MINUTES * (attempts - MAX_ATTEMPTS + 1) * BLOCK_TIME_MULTIPLIER;
+        return Math.min(BLOCK_TIME_MINUTES * (attempts - MAX_ATTEMPTS + 1) * BLOCK_TIME_MULTIPLIER, MAX_BLOCK_MINUTES);
+    }
+
+    private String failKey(String email) {
+        return "login:fail:" + email;
+    }
+
+    private String blockKey(String email) {
+        return "login:block:" + email;
     }
 }

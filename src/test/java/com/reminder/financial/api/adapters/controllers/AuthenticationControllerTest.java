@@ -93,6 +93,20 @@ class AuthenticationControllerTest {
     }
 
     @Test
+    @DisplayName("Should return Retry-After header when the login is blocked")
+    public void testLoginBlockedHasRetryAfter() throws Exception {
+        AuthenticationRequest dto = new AuthenticationRequest(validUserEmail, validUserPassword);
+        Mockito.when(loginUseCase.execute(Mockito.any(AuthenticationCommand.class)))
+                .thenThrow(new TooManyLoginAttemptsException("Too many login attempts. Try again later.", 120));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(MockMvcResultMatchers.status().is(429))
+                .andExpect(MockMvcResultMatchers.header().string("Retry-After", "120"));
+    }
+
+    @Test
     @DisplayName("Should return Bad Request if email is missing")
     public void testLoginWithMissingEmail() throws Exception {
         // Arrange
