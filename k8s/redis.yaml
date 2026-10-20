@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: financial
+spec:
+  selector: { app: redis }
+  ports: [{ port: 6379 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: financial
+spec:
+  selector:
+    matchLabels: { app: redis }
+  template:
+    metadata:
+      labels: { app: redis }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.2-alpine
+          # ponytail: sem volume, cache perde dados ao reiniciar; PVC se virar fonte de verdade
+          command: [sh, -c, 'exec redis-server --requirepass "$REDIS_PASSWORD"']
+          ports: [{ containerPort: 6379 }]
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom: { secretKeyRef: { name: financial-env, key: REDIS_PASSWORD } }
+          readinessProbe:
+            tcpSocket: { port: 6379 }

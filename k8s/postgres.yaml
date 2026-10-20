@@ -1,0 +1,68 @@
+# Cria o role da API no primeiro boot (mesmo papel de docker/scripts/db/create-api-db-user.sql).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: financial
+data:
+  10-api-user.sh: |
+    #!/bin/sh
+    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" <<SQL
+    CREATE ROLE "$API_DB_USER" WITH LOGIN PASSWORD '$API_DB_PASSWORD';
+    GRANT CONNECT ON DATABASE "$POSTGRES_DB" TO "$API_DB_USER";
+    GRANT USAGE, CREATE ON SCHEMA public TO "$API_DB_USER";
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON TABLES TO "$API_DB_USER";
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO "$API_DB_USER";
+    SQL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: financial
+spec:
+  selector: { app: postgres }
+  ports: [{ port: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: financial
+spec:
+  serviceName: postgres
+  selector:
+    matchLabels: { app: postgres }
+  template:
+    metadata:
+      labels: { app: postgres }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_DB, value: finance-management }
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: financial-env, key: ROOT_DB_USER } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: financial-env, key: ROOT_DB_PASSWORD } }
+            - name: API_DB_USER
+              valueFrom: { secretKeyRef: { name: financial-env, key: API_DB_USER } }
+            - name: API_DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: financial-env, key: API_DB_PASSWORD } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          readinessProbe:
+            exec: { command: [sh, -c, 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'] }
+            periodSeconds: 10
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+            - { name: init, mountPath: /docker-entrypoint-initdb.d }
+      volumes:
+        - name: init
+          configMap: { name: postgres-init }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: { requests: { storage: 1Gi } }
