@@ -8,6 +8,10 @@ public record EnableUserRequest(
         @NotBlank
         @Email
         @Size(max=254)
-        String email
+        String email,
+
+        @NotBlank
+        @Size(max=72)
+        String password
 ) {
 }

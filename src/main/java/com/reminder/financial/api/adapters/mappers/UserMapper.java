@@ -49,7 +49,8 @@ public class UserMapper {
 
     public EnableUserCommand toCommand(@Valid EnableUserRequest dto) {
         return new EnableUserCommand(
-                dto.email()
+                dto.email(),
+                dto.password()
         );
     }
 }

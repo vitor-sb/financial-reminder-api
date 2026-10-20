@@ -117,7 +117,7 @@ paths:
       tags:
         - Users
       summary: Reactivate own account
-      description: Reactivates the user account identified by the provided email.
+      description: Reactivates the account after validating email and password. Wrong password, unknown email and deleted account all return the same 401. Shares the login attempt limit (429 when blocked).
       operationId: enableSelf
       requestBody:
         required: true
@@ -130,8 +130,10 @@ paths:
           description: Account reactivated
         '400':
           $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          description: Too many failed attempts
 
   /users/me:
     delete:
@@ -715,12 +717,17 @@ components:
       type: object
       required:
         - email
+        - password
       properties:
         email:
           type: string
           format: email
           maxLength: 254
           example: user@example.com
+        password:
+          type: string
+          format: password
+          maxLength: 72
 
     CreatePaymentReminderRequest:
       type: object

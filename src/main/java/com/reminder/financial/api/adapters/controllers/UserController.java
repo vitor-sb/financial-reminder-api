@@ -6,6 +6,7 @@ import com.reminder.financial.api.adapters.mappers.UserMapper;
 import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
 import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
 import com.reminder.financial.api.application.usecases.user.DeleteSelfUserAccountUseCase;
+import com.reminder.financial.api.application.usecases.user.EnableUserUseCase;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.application.usecases.user.CreateUserUseCase;
 import com.reminder.financial.api.application.usecases.user.ToggleSelfUserAccountUseCase;
@@ -36,6 +37,9 @@ public class UserController {
     private ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
 
     @Autowired
+    private EnableUserUseCase enableUserUseCase;
+
+    @Autowired
     private DeleteSelfUserAccountUseCase deleteSelfUserAccountUseCase;
 
     @PostMapping
@@ -60,7 +64,7 @@ public class UserController {
     public ResponseEntity<Void> enableSelf(@RequestBody @Valid EnableUserRequest dto) {
         EnableUserCommand command = userMapper.toCommand(dto);
 
-        toggleSelfUserAccountUseCase.execute(command.email(), true);
+        enableUserUseCase.execute(command);
         return ResponseEntity.noContent().build();
     }
 
