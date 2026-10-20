@@ -1,5 +1,7 @@
 package com.reminder.financial.api.domains.services;
 
+import lombok.RequiredArgsConstructor;
+
 import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
@@ -7,7 +9,6 @@ import com.reminder.financial.api.infrastructure.utils.AppConstants;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,11 +17,11 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public User save(User user) {
         return userRepository.save(user);

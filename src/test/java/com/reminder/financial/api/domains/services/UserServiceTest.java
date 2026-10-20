@@ -29,7 +29,6 @@ class UserServiceTest {
     @Mock
     private UserRepository repository;
 
-    @InjectMocks
     private UserService userService;
 
     @Autowired
@@ -40,6 +39,7 @@ class UserServiceTest {
     @BeforeEach
     void setup() {
         this.closeable = MockitoAnnotations.openMocks(this);
+        this.userService = new UserService(repository);
     }
 
     @AfterEach

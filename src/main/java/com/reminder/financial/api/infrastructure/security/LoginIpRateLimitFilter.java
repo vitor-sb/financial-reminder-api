@@ -1,11 +1,12 @@
 package com.reminder.financial.api.infrastructure.security;
 
+import lombok.RequiredArgsConstructor;
+
 import com.reminder.financial.api.domains.services.LoginAttemptService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,13 +21,13 @@ import java.util.Set;
  * então o 429 sai sem consultar o banco. O IP é {@code getRemoteAddr()}; X-Forwarded-For só vale
  * se {@code server.forward-headers-strategy} for habilitado.
  */
+@RequiredArgsConstructor
 @Component
 public class LoginIpRateLimitFilter extends OncePerRequestFilter {
 
     private static final Set<String> PROTECTED_PATHS = Set.of("/auth/login", "/users/me/enable");
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

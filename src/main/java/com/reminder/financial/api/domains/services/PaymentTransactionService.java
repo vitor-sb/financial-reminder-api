@@ -1,5 +1,7 @@
 package com.reminder.financial.api.domains.services;
 
+import lombok.RequiredArgsConstructor;
+
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
@@ -10,7 +12,6 @@ import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRep
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,13 +24,13 @@ import java.util.List;
 import java.util.Optional;
 
 
+@RequiredArgsConstructor
 @Service
 public class PaymentTransactionService {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentTransactionService.class);
 
-    @Autowired
-    private PaymentTransactionRepository transactionRepository;
+    private final PaymentTransactionRepository transactionRepository;
 
     public PaymentTransaction save(PaymentTransaction transaction) {
         return transactionRepository.save(transaction);

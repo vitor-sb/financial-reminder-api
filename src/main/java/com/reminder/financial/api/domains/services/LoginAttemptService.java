@@ -1,6 +1,7 @@
 package com.reminder.financial.api.domains.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -13,6 +14,7 @@ import java.util.List;
  * Conta apenas tentativas de login que falharam. O contador usa INCR + EXPIRE num único script Lua
  * (atômico) e o bloqueio é uma chave separada com TTL, que cresce com as falhas até um teto.
  */
+@RequiredArgsConstructor
 @Service
 public class LoginAttemptService {
 
@@ -29,8 +31,7 @@ public class LoginAttemptService {
     private static final DefaultRedisScript<Long> INCR_WITH_TTL = new DefaultRedisScript<>(
             "local n = redis.call('INCR', KEYS[1]) redis.call('EXPIRE', KEYS[1], ARGV[1]) return n", Long.class);
 
-    @Autowired
-    private StringRedisTemplate redis;
+    private final StringRedisTemplate redis;
 
     @Value("${login.ip-limit.max-failures:20}")
     private long ipMaxFailures;

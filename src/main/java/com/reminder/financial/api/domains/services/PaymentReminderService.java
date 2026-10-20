@@ -1,5 +1,7 @@
 package com.reminder.financial.api.domains.services;
 
+import lombok.RequiredArgsConstructor;
+
 import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersFilterQuery;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
@@ -9,7 +11,6 @@ import com.reminder.financial.api.application.exceptions.ConflictException;
 import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,13 +21,13 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class PaymentReminderService {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentReminderService.class);
 
-    @Autowired
-    private PaymentReminderRepository paymentReminderRepository;
+    private final PaymentReminderRepository paymentReminderRepository;
 
 
     public PaymentReminder savePaymentReminder(PaymentReminder reminder) {

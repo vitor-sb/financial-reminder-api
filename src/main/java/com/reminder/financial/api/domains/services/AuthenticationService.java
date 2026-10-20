@@ -1,16 +1,17 @@
 package com.reminder.financial.api.domains.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class AuthenticationService implements UserDetailsService {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
