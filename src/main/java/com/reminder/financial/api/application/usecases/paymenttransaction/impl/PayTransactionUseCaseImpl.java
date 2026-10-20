@@ -9,6 +9,8 @@ import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.util.Set;
 
 @Component
 public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(PayTransactionUseCaseImpl.class);
 
     @Autowired
     private PaymentTransactionService paymentTransactionService;
@@ -49,6 +53,7 @@ public class PayTransactionUseCaseImpl implements PayTransactionUseCase {
         this.updateTransactionFromPaymentDetails(command, transaction);
 
         paymentTransactionService.processSuccessfulPayment(transaction);
+        logger.info("transaction paid transactionId={} reminderId={} userId={}", transactionId, reminder.getId(), reminder.getUser().getId());
     }
 
     private void updateTransactionFromPaymentDetails(PayTransactionDetailsCommand details, PaymentTransaction transaction) {

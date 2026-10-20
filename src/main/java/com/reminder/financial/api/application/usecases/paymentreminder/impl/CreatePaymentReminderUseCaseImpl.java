@@ -7,6 +7,8 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import java.time.format.DateTimeParseException;
 
 @Component
 public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreatePaymentReminderUseCaseImpl.class);
 
     @Autowired
     PaymentReminderService paymentReminderService;
@@ -47,6 +51,8 @@ public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUs
         var persistedReminder = paymentReminderService.savePaymentReminder(reminder);
 
         transactionService.createInitialTransactionForReminder(reminder);
+
+        logger.info("reminder created reminderId={} userId={}", persistedReminder.getId(), user.getId());
 
         return persistedReminder;
     }

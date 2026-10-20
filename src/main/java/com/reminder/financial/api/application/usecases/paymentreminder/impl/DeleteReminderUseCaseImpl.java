@@ -5,6 +5,8 @@ import com.reminder.financial.api.application.usecases.paymentreminder.DeletePay
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,8 @@ import java.time.Instant;
 
 @Component
 public class DeleteReminderUseCaseImpl implements DeletePaymentReminderUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeleteReminderUseCaseImpl.class);
     @Autowired
     private PaymentReminderService paymentReminderService;
 
@@ -34,5 +38,6 @@ public class DeleteReminderUseCaseImpl implements DeletePaymentReminderUseCase {
         reminder.getAudit().setDeletedBy(userEmail);
         reminder.getAudit().setDeletedAt(Instant.now());
         paymentReminderService.savePaymentReminder(reminder);
+        logger.info("reminder deleted reminderId={} userId={}", reminderId, reminder.getUser().getId());
     }
 }

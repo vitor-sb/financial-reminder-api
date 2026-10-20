@@ -8,6 +8,8 @@ import com.reminder.financial.api.application.exceptions.InvalidCredentialsExcep
 import com.reminder.financial.api.application.exceptions.TooManyLoginAttemptsException;
 import com.reminder.financial.api.domains.services.LoginAttemptService;
 import com.reminder.financial.api.infrastructure.security.TokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class LoginUseCaseImpl implements LoginUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginUseCaseImpl.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -33,6 +37,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
         String email = dto.email();
 
         if (loginAttemptService.isBlocked(email)) {
+            logger.warn("login blocked reason=too_many_attempts");
             long waitSeconds = TimeUnit.MILLISECONDS.toSeconds(loginAttemptService.getBlockUntil(email) - System.currentTimeMillis());
             throw new TooManyLoginAttemptsException("Too many login attempts. Try again later.", Math.max(waitSeconds, 1));
         }
@@ -47,6 +52,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
 
         } catch (AuthenticationException e) {
             loginAttemptService.incrementAttempts(email);
+            logger.warn("login failed reason={}", e.getClass().getSimpleName());
             if (e instanceof BadCredentialsException)
                 throw new InvalidCredentialsException("Invalid email or password");
             throw e;

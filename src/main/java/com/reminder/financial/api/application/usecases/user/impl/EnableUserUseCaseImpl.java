@@ -8,6 +8,8 @@ import com.reminder.financial.api.application.usecases.user.ToggleSelfUserAccoun
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.LoginAttemptService;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class EnableUserUseCaseImpl implements EnableUserUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnableUserUseCaseImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -36,6 +40,7 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
         String email = command.email();
 
         if (loginAttemptService.isBlocked(email)) {
+            logger.warn("enable user blocked reason=too_many_attempts");
             long waitSeconds = TimeUnit.MILLISECONDS.toSeconds(loginAttemptService.getBlockUntil(email) - System.currentTimeMillis());
             throw new TooManyLoginAttemptsException("Too many login attempts. Try again later.", Math.max(waitSeconds, 1));
         }
@@ -47,6 +52,7 @@ public class EnableUserUseCaseImpl implements EnableUserUseCase {
 
         if (user == null || !passwordMatches || Boolean.TRUE.equals(user.getAudit().getDeleted())) {
             loginAttemptService.incrementAttempts(email);
+            logger.warn("enable user failed reason=invalid_credentials");
             throw new InvalidCredentialsException("Invalid email or password");
         }
 

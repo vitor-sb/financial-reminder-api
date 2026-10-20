@@ -5,6 +5,8 @@ import com.reminder.financial.api.application.usecases.paymentreminder.ToggleRem
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,8 @@ import java.time.Instant;
 
 @Component
 public class ToggleReminderStatusUseCaseImpl implements ToggleReminderStatusUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(ToggleReminderStatusUseCaseImpl.class);
     @Autowired
     private PaymentReminderService paymentReminderService;
 
@@ -37,5 +41,6 @@ public class ToggleReminderStatusUseCaseImpl implements ToggleReminderStatusUseC
         }
 
         paymentReminderService.savePaymentReminder(reminder);
+        logger.info("reminder toggled reminderId={} userId={} enabled={}", reminderId, reminder.getUser().getId(), enable);
     }
 }

@@ -5,11 +5,15 @@ import com.reminder.financial.api.application.exceptions.NotFoundException;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UpdatePaymentTransactionUseCaseImpl implements UpdatePaymentTransactionUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(UpdatePaymentTransactionUseCaseImpl.class);
 
     @Autowired
     private PaymentTransactionService paymentTransactionService;
@@ -28,6 +32,7 @@ public class UpdatePaymentTransactionUseCaseImpl implements UpdatePaymentTransac
         this.updateTransactionFields(command, transaction);
 
         paymentTransactionService.save(transaction);
+        logger.info("transaction updated transactionId={} reminderId={}", transactionId, transaction.getReminder().getId());
     }
 
     private void updateTransactionFields(UpdatePaymentTransactionCommand command, PaymentTransaction transaction) {

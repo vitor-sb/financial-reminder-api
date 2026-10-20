@@ -5,6 +5,8 @@ import com.reminder.financial.api.application.usecases.user.DeleteSelfUserAccoun
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,8 @@ import java.time.Instant;
 
 @Component
 public class DeleteSelfUserAccountUseCaseImpl implements DeleteSelfUserAccountUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeleteSelfUserAccountUseCaseImpl.class);
     @Autowired
     private UserService userService;
 
@@ -38,5 +42,6 @@ public class DeleteSelfUserAccountUseCaseImpl implements DeleteSelfUserAccountUs
         user.getAudit().setDeletedAt(Instant.now());
         user.getAudit().setDeletedBy(userEmail);
         userService.save(user);
+        logger.info("user deleted userId={}", user.getId());
     }
 }
