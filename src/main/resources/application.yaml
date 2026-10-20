@@ -5,6 +5,15 @@ infrastructure:
         secret-key: ${JWT_SECRET}
         expiration-minutes: 30
 
+server:
+  # "native" ou "framework" só atrás de proxy confiável; com "none" X-Forwarded-For é ignorado
+  forward-headers-strategy: ${FORWARD_HEADERS_STRATEGY:none}
+
+login:
+  ip-limit:
+    max-failures: 20
+    window-seconds: 900
+
 spring:
   application:
     name: financial-reminder-api

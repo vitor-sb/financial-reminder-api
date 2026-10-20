@@ -1,6 +1,7 @@
 package com.reminder.financial.api.domains.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -31,12 +32,32 @@ public class LoginAttemptService {
     @Autowired
     private StringRedisTemplate redis;
 
+    @Value("${login.ip-limit.max-failures:20}")
+    private long ipMaxFailures;
+
+    @Value("${login.ip-limit.window-seconds:900}")
+    private long ipWindowSeconds;
+
     public void incrementAttempts(String email) {
         Long attempts = redis.execute(INCR_WITH_TTL, List.of(failKey(email)), String.valueOf(FAILURE_WINDOW_SECONDS));
         if (attempts != null && attempts >= MAX_ATTEMPTS) {
             Duration block = Duration.ofMinutes(calculateBlockTime(attempts));
             redis.opsForValue().set(blockKey(email), String.valueOf(System.currentTimeMillis() + block.toMillis()), block);
         }
+    }
+
+    public void incrementIpFailures(String ip) {
+        redis.execute(INCR_WITH_TTL, List.of(ipKey(ip)), String.valueOf(ipWindowSeconds));
+    }
+
+    public boolean isIpBlocked(String ip) {
+        String value = redis.opsForValue().get(ipKey(ip));
+        return value != null && Long.parseLong(value) >= ipMaxFailures;
+    }
+
+    public long ipRetryAfterSeconds(String ip) {
+        Long ttl = redis.getExpire(ipKey(ip));
+        return ttl == null || ttl < 1 ? ipWindowSeconds : ttl;
     }
 
     public void resetAttempts(String email) {
@@ -63,6 +84,10 @@ public class LoginAttemptService {
 
     private String failKey(String email) {
         return "login:fail:" + email;
+    }
+
+    private String ipKey(String ip) {
+        return "login:ip:" + ip;
     }
 
     private String blockKey(String email) {
