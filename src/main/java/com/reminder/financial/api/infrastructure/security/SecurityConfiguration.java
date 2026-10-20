@@ -42,6 +42,10 @@ public class SecurityConfiguration {
             "/swagger-ui.html"
     };
 
+    private static final String[] PUBLIC_HEALTH_ENDPOINTS = {
+            "/actuator/health/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -51,6 +55,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN_PERMISSION")
                         .requestMatchers(PUBLIC_SWAGGER_ENDPOINTS).permitAll()
+                        .requestMatchers(PUBLIC_HEALTH_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(this::configureHttpHeaders)

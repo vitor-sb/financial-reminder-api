@@ -32,6 +32,16 @@ spring:
     livereload:
       enabled: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
 springdoc:
   swagger-ui:
     url: /openapi.yaml
