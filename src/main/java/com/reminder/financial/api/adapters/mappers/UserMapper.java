@@ -18,8 +18,7 @@ public class UserMapper {
         return new CreateUserCommand(
                 dto.name(),
                 dto.email(),
-                dto.password(),
-                dto.role()
+                dto.password()
         );
     }
 

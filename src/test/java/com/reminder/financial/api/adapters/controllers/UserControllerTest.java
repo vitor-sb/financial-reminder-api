@@ -7,7 +7,6 @@ import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.application.usecases.user.CreateUserUseCase;
-import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,8 +55,7 @@ public class UserControllerTest {
         createUserRequestDTO = new CreateUserRequest(
                 "Test User",
                 "test@example.com",
-                "password123",
-                RoleEnum.USER
+                "password123"
         );
     }
 
@@ -78,7 +76,7 @@ public class UserControllerTest {
     @DisplayName("Should return Bad Request for invalid CreateDTO")
     public void testCreaterUserBadRequest() throws Exception {
         // Arrange
-        CreateUserRequest invalidDTO = new CreateUserRequest(null, null, null, null);
+        CreateUserRequest invalidDTO = new CreateUserRequest(null, null, null);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/users")

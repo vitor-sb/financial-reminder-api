@@ -44,7 +44,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Should create user with encrypted password and valid email")
     void executeCreatesUser() {
-        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
+        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123");
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         createUserUseCase.execute(createUserDTO);
@@ -61,7 +61,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Should throw ConflictException if user already exists")
     void executeCreateUserThrowsConflictException() {
-        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123", RoleEnum.USER);
+        CreateUserCommand createUserDTO = new CreateUserCommand("John Doe", "johndoe@example.com", "password123");
         doThrow(new ConflictException("Email already in use."))
                 .when(userService)
                 .checkEmailAvailability("johndoe@example.com");

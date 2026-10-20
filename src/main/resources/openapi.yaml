@@ -695,7 +695,7 @@ components:
         - name
         - email
         - password
-        - role
+      description: Public sign-up always creates a USER. A `role` property in the body is ignored.
       properties:
         name:
           type: string
@@ -710,8 +710,6 @@ components:
           type: string
           format: password
           example: strongPassword123
-        role:
-          $ref: '#/components/schemas/RoleEnum'
 
     EnableUserRequest:
       type: object
