@@ -5,7 +5,7 @@ import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransacti
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactionRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.UpdatePaymentTransactionRequest;
 import com.reminder.financial.api.adapters.mappers.PaymentTransactionMapper;
-import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.domains.filters.TransactionFilter;
 import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.PayTransactionUseCase;
 import com.reminder.financial.api.application.usecases.paymenttransaction.UpdatePaymentTransactionUseCase;
@@ -68,7 +68,7 @@ public class PaymentTransactionController {
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        ListTransactionsFilterQuery query = paymentTransactionMapper.toListTransactionsFilterQuery(filter);
+        TransactionFilter query = paymentTransactionMapper.toListTransactionsFilterQuery(filter);
         var result = listTransactionsUseCase.execute(loggedUserEmail, query, pageable);
 
         Page<ListTransactionsResponse> response = result.map(paymentTransactionMapper::toListTransactionsResponse);

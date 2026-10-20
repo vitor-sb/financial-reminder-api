@@ -2,7 +2,7 @@ package com.reminder.financial.api.domains.services;
 
 import lombok.RequiredArgsConstructor;
 
-import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersFilterQuery;
+import com.reminder.financial.api.domains.filters.ReminderFilter;
 import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.user.User;
@@ -57,7 +57,7 @@ public class PaymentReminderService {
 
     public Page<PaymentReminder> listPaymentRemindersByUserAndFilters(
             User user,
-            ListPaymentRemindersFilterQuery query,
+            ReminderFilter query,
             Pageable pageable
     ) {
         return paymentReminderSearch.searchByUserAndFilters(user, query, pageable);

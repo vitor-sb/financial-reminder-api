@@ -1,6 +1,6 @@
 package com.reminder.financial.api.infrastructure.persistence;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.UserSearch;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
@@ -21,7 +21,7 @@ public class UserSpecificationSearch implements UserSearch {
     private final UserRepository userRepository;
 
     @Override
-    public Page<User> searchByFilters(ListUsersFilterQuery query, Pageable pageable) {
+    public Page<User> searchByFilters(UserFilter query, Pageable pageable) {
         Instant fromInstant = null;
         if (query.createdFrom() != null) {
             fromInstant = query.createdFrom().atStartOfDay(AppConstants.DEFAULT_ZONE_ID).toInstant();

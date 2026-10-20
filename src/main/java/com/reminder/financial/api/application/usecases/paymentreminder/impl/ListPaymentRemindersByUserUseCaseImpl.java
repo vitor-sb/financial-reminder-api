@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymentreminder.impl;
 
-import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersFilterQuery;
+import com.reminder.financial.api.domains.filters.ReminderFilter;
 import com.reminder.financial.api.application.dtos.paymentreminder.ListPaymentRemindersResult;
 import com.reminder.financial.api.application.usecases.paymentreminder.ListPaymentRemindersByUserUseCase;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
@@ -26,7 +26,7 @@ public class ListPaymentRemindersByUserUseCaseImpl implements ListPaymentReminde
     @Override
     public Page<ListPaymentRemindersResult> execute(
             String loggedUserEmail,
-            ListPaymentRemindersFilterQuery query,
+            ReminderFilter query,
             Pageable pageable) {
         User user = userService.findValidUserByEmail(loggedUserEmail);
 

@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.user.impl;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.domains.services.UserService;
@@ -16,7 +16,7 @@ public class ListUsersUseCaseImpl implements ListUsersUseCase {
     private final UserService userService;
 
     @Override
-    public Page<ListUsersSingleResult> execute(ListUsersFilterQuery query, Pageable pageable) {
+    public Page<ListUsersSingleResult> execute(UserFilter query, Pageable pageable) {
         var usersPage = userService.listUsers(query, pageable);
 
         return usersPage.map(user -> new ListUsersSingleResult(

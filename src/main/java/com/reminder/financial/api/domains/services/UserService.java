@@ -2,7 +2,7 @@ package com.reminder.financial.api.domains.services;
 
 import lombok.RequiredArgsConstructor;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.UserSearch;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findUserByEmailAndAuditEnabledTrueAndAuditDeletedFalse(email);
     }
 
-    public Page<User> listUsers(ListUsersFilterQuery query, Pageable pageable) {
+    public Page<User> listUsers(UserFilter query, Pageable pageable) {
         return userSearch.searchByFilters(query, pageable);
     }
 

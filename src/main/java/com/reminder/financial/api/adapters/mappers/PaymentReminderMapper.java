@@ -1,5 +1,6 @@
 package com.reminder.financial.api.adapters.mappers;
 
+import com.reminder.financial.api.domains.filters.ReminderFilter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
@@ -96,11 +97,11 @@ public class PaymentReminderMapper {
         );
     }
 
-    public ListPaymentRemindersFilterQuery toListTransactionsFilterQuery(ListPaymentRemindersFilterRequest request) {
+    public ReminderFilter toListTransactionsFilterQuery(ListPaymentRemindersFilterRequest request) {
         if (request == null)
-            return new ListPaymentRemindersFilterQuery(null, null, null, null, null, null, null);
+            return new ReminderFilter(null, null, null, null, null, null, null);
 
-        return new ListPaymentRemindersFilterQuery(
+        return new ReminderFilter(
                 request.reminderId(),
                 request.title(),
                 request.dueDateFrom(),

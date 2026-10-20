@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.paymenttransaction.impl;
 
-import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.domains.filters.TransactionFilter;
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsResult;
 import com.reminder.financial.api.application.usecases.paymenttransaction.ListTransactionsUseCase;
 import com.reminder.financial.api.domains.models.user.User;
@@ -20,7 +20,7 @@ public class ListTransactionsUseCaseImpl implements ListTransactionsUseCase {
     private final UserService userService;
 
     @Override
-    public Page<ListTransactionsResult> execute(String loggedUserEmail, ListTransactionsFilterQuery query, Pageable pageable) {
+    public Page<ListTransactionsResult> execute(String loggedUserEmail, TransactionFilter query, Pageable pageable) {
         User user = userService.findValidUserByEmail(loggedUserEmail);
 
         var transactionPage = transactionService.listTransactionsByUserAndFilters(user, query, pageable);

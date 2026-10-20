@@ -1,17 +1,17 @@
-package com.reminder.financial.api.application.dtos.paymentreminder;
+package com.reminder.financial.api.domains.filters;
 
-import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionMethodEnum;
+import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
 
 import java.time.LocalDate;
 
-public record ListPaymentRemindersFilterQuery(
+public record TransactionFilter(
+        String transactionId,
         String reminderId,
-        String title,
         LocalDate dueDateFrom,
         LocalDate dueDateUntil,
-        RecurrenceEnum recurrence,
         TransactionMethodEnum method,
+        TransactionStatusEnum status,
         Boolean enabled
 ) {
 }

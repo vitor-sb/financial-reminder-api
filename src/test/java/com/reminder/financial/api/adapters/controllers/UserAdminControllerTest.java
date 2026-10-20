@@ -1,6 +1,6 @@
 package com.reminder.financial.api.adapters.controllers;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
@@ -58,7 +58,7 @@ public class UserAdminControllerTest {
                 List.of(userResult), PageRequest.of(0, 10), 1
         );
 
-        when(listUsersUseCase.execute(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(resultPage);
+        when(listUsersUseCase.execute(any(UserFilter.class), any(Pageable.class))).thenReturn(resultPage);
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/list")

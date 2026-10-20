@@ -1,6 +1,6 @@
 package com.reminder.financial.api.application.usecases.user;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import com.reminder.financial.api.application.usecases.user.impl.ListUsersUseCaseImpl;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
@@ -41,7 +41,7 @@ class ListUsersUseCaseTest {
     @DisplayName("Should return page of ListUsersSingleResult")
     void execute_shouldReturnPageOfListUsersSingleResult() {
         // Arrange
-        ListUsersFilterQuery filter = new ListUsersFilterQuery(
+        UserFilter filter = new UserFilter(
                 null, null, RoleEnum.USER, null, null, null, null
         );
         Pageable pageable = PageRequest.of(0, 10);
@@ -49,7 +49,7 @@ class ListUsersUseCaseTest {
         User user1 = new User("John Doe", "johndoe@example.com", "password", RoleEnum.USER);
         Page<User> userPage = new PageImpl<>(List.of(user1), pageable, 1);
 
-        when(userService.listUsers(any(ListUsersFilterQuery.class), any(Pageable.class))).thenReturn(userPage);
+        when(userService.listUsers(any(UserFilter.class), any(Pageable.class))).thenReturn(userPage);
 
         // Act
         Page<ListUsersSingleResult> resultPage = listUsersUseCase.execute(filter, pageable);

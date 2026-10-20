@@ -1,5 +1,6 @@
 package com.reminder.financial.api.adapters.controllers;
 
+import com.reminder.financial.api.domains.filters.ReminderFilter;
 import com.reminder.financial.api.adapters.dtos.paymentreminder.*;
 import com.reminder.financial.api.adapters.mappers.PaymentReminderMapper;
 import com.reminder.financial.api.application.dtos.paymentreminder.*;
@@ -142,7 +143,7 @@ public class PaymentReminderController {
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        ListPaymentRemindersFilterQuery query = paymentReminderMapper.toListTransactionsFilterQuery(filter);
+        ReminderFilter query = paymentReminderMapper.toListTransactionsFilterQuery(filter);
         var result = listPaymentRemindersByUserUseCase.execute(loggedUserEmail, query, pageable);
 
         Page<ListPaymentRemindersResponse> response = result.map(paymentReminderMapper::toListPaymentRemindersResponse);

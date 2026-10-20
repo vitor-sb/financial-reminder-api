@@ -14,4 +14,9 @@ class ArchitectureTest {
     static final ArchRule domainsNaoDependemDeInfrastructureNemAdapters = noClasses()
             .that().resideInAPackage("..domains..")
             .should().dependOnClassesThat().resideInAnyPackage("..infrastructure..", "..adapters..");
+
+    @ArchTest
+    static final ArchRule domainsNaoDependemDeApplication = noClasses()
+            .that().resideInAPackage("..domains..")
+            .should().dependOnClassesThat().resideInAPackage("..application..");
 }

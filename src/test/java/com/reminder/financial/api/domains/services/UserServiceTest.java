@@ -1,6 +1,6 @@
 package com.reminder.financial.api.domains.services;
 
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
@@ -89,7 +89,7 @@ class UserServiceTest {
     @DisplayName("Should return a page of users")
     void listUsersReturnsPageOfUsers() {
         // Arrange
-        ListUsersFilterQuery filter = new ListUsersFilterQuery(
+        UserFilter filter = new UserFilter(
                 null, null, null, null, null, null, null
         );
         Pageable pageable = PageRequest.of(0, 10);

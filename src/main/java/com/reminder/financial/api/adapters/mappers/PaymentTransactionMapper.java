@@ -1,5 +1,6 @@
 package com.reminder.financial.api.adapters.mappers;
 
+import com.reminder.financial.api.domains.filters.TransactionFilter;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsFilterRequest;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.ListTransactionsResponse;
 import com.reminder.financial.api.adapters.dtos.paymenttransaction.PayTransactionRequest;
@@ -20,11 +21,11 @@ public class PaymentTransactionMapper {
         );
     }
 
-    public ListTransactionsFilterQuery toListTransactionsFilterQuery(ListTransactionsFilterRequest request) {
+    public TransactionFilter toListTransactionsFilterQuery(ListTransactionsFilterRequest request) {
         if (request == null)
-            return new ListTransactionsFilterQuery( null, null, null, null, null, null, null);
+            return new TransactionFilter( null, null, null, null, null, null, null);
 
-        return new ListTransactionsFilterQuery(
+        return new TransactionFilter(
                 request.transactionId(),
                 request.reminderId(),
                 request.dueDateFrom(),

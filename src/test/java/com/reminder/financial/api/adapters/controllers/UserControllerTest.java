@@ -3,7 +3,7 @@ package com.reminder.financial.api.adapters.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reminder.financial.api.adapters.dtos.user.CreateUserRequest;
 import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import com.reminder.financial.api.application.usecases.user.CreateUserUseCase;

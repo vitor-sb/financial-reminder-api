@@ -6,7 +6,7 @@ import com.reminder.financial.api.adapters.dtos.user.ListUsersFilterRequest;
 import com.reminder.financial.api.adapters.dtos.user.ListUsersSingleResponse;
 import com.reminder.financial.api.application.dtos.user.CreateUserCommand;
 import com.reminder.financial.api.application.dtos.user.EnableUserCommand;
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.dtos.user.ListUsersSingleResult;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
@@ -32,11 +32,11 @@ public class UserMapper {
                 result.deleted());
     }
 
-    public ListUsersFilterQuery toListUsersFilterQuery(ListUsersFilterRequest filter) {
+    public UserFilter toListUsersFilterQuery(ListUsersFilterRequest filter) {
         if (filter == null)
-            return new ListUsersFilterQuery(null, null, null, null, null, null, null);
+            return new UserFilter(null, null, null, null, null, null, null);
 
-        return new ListUsersFilterQuery(
+        return new UserFilter(
                 filter.name(),
                 filter.email(),
                 filter.role(),

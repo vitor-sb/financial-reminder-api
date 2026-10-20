@@ -1,6 +1,6 @@
 package com.reminder.financial.api.infrastructure.persistence;
 
-import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.domains.filters.TransactionFilter;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.PaymentTransactionSearch;
@@ -19,7 +19,7 @@ public class PaymentTransactionSpecificationSearch implements PaymentTransaction
     private final PaymentTransactionRepository transactionRepository;
 
     @Override
-    public Page<PaymentTransaction> searchByUserAndFilters(User user, ListTransactionsFilterQuery query, Pageable pageable) {
+    public Page<PaymentTransaction> searchByUserAndFilters(User user, TransactionFilter query, Pageable pageable) {
         var spec = Specification
                 .where(SpecificationFactory.<PaymentTransaction>equalInJoin("reminder", "user", user))
                 .and(SpecificationFactory.equal("id", query.transactionId()))

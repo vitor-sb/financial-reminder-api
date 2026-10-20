@@ -3,7 +3,7 @@ package com.reminder.financial.api.adapters.controllers;
 import com.reminder.financial.api.adapters.dtos.user.ListUsersFilterRequest;
 import com.reminder.financial.api.adapters.dtos.user.ListUsersSingleResponse;
 import com.reminder.financial.api.adapters.mappers.UserMapper;
-import com.reminder.financial.api.application.dtos.user.ListUsersFilterQuery;
+import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.application.usecases.user.ListUsersUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +36,7 @@ public class UserAdminController {
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {
-        ListUsersFilterQuery query = userMapper.toListUsersFilterQuery(filter);
+        UserFilter query = userMapper.toListUsersFilterQuery(filter);
         var result = listUsersUseCase.execute(query, pageable);
 
         Page<ListUsersSingleResponse> response = result.map(userMapper::toListUsersSingleResponse);

@@ -1,6 +1,6 @@
 package com.reminder.financial.api.domains.services;
 
-import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.domains.filters.TransactionFilter;
 import com.reminder.financial.api.domains.models.reminder.NextTransactionFactory;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
@@ -46,7 +46,7 @@ public class PaymentTransactionService {
         return transactionRepository.findFirstByReminderIdAndStatusAndAuditDeletedFalse(reminderId, TransactionStatusEnum.PENDENTE);
     }
 
-    public Page<PaymentTransaction> listTransactionsByUserAndFilters(User user, ListTransactionsFilterQuery query, Pageable pageable) {
+    public Page<PaymentTransaction> listTransactionsByUserAndFilters(User user, TransactionFilter query, Pageable pageable) {
         return transactionSearch.searchByUserAndFilters(user, query, pageable);
     }
 
