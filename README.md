@@ -111,6 +111,14 @@ docker compose up -d                  # PostgreSQL (5432) e Redis (6379)
 ./mvnw verify      # não precisa de Docker: os testes usam H2 (application-test.yaml)
 ```
 
+### Varredura de dependências
+
+```bash
+mvn -Psecurity verify   # OWASP dependency-check; falha com CVSS >= 7
+```
+
+Sem `-DnvdApiKey=<chave>` a primeira execução baixa a base NVD inteira e demora muito.
+
 ## O que ainda não existe
 
 Planejado para fechar a v1 e ainda não implementado: categorias, desconto nas transações, endpoints de métricas, campo `timezone` no usuário, remoção da redundância `deleted`/`deletedAt` na auditoria e o módulo agendador que marca transações como `VENCIDO` (hoje nada faz essa transição automaticamente). Detalhes em [`tasks/prd-financial-reminder-v1.md`](tasks/prd-financial-reminder-v1.md).
