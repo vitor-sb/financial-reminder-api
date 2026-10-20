@@ -6,16 +6,16 @@ import com.reminder.financial.api.application.usecases.paymentreminder.GetPaymen
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.application.exceptions.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Component
 public class GetPaymentReminderUseCaseImpl implements GetPaymentReminderUseCase {
 
-    @Autowired
-    PaymentReminderService paymentReminderService;
+    private final PaymentReminderService paymentReminderService;
 
     public PaymentReminderResult execute(GetPaymentReminderQuery dto) {
         PaymentReminder paymentReminder = paymentReminderService.getPaymentReminderByIdOrThrow(dto.id());

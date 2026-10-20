@@ -8,22 +8,20 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class ListPaymentRemindersByUserUseCaseImpl implements ListPaymentRemindersByUserUseCase {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private PaymentTransactionService transactionService;
+    private final PaymentTransactionService transactionService;
 
-    @Autowired
-    private PaymentReminderService paymentReminderService;
+    private final PaymentReminderService paymentReminderService;
 
     @Override
     public Page<ListPaymentRemindersResult> execute(

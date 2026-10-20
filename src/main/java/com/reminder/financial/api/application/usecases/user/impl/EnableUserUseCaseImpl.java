@@ -10,28 +10,25 @@ import com.reminder.financial.api.domains.services.LoginAttemptService;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Component
 public class EnableUserUseCaseImpl implements EnableUserUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(EnableUserUseCaseImpl.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
-    @Autowired
-    private ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
+    private final ToggleSelfUserAccountUseCase toggleSelfUserAccountUseCase;
 
     private volatile String dummyHash;
 

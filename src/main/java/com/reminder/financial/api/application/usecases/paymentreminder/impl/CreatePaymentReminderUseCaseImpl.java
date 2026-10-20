@@ -9,25 +9,23 @@ import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+@RequiredArgsConstructor
 @Component
 public class CreatePaymentReminderUseCaseImpl implements CreatePaymentReminderUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(CreatePaymentReminderUseCaseImpl.class);
 
-    @Autowired
-    PaymentReminderService paymentReminderService;
+    private final PaymentReminderService paymentReminderService;
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    PaymentTransactionService transactionService;
+    private final PaymentTransactionService transactionService;
 
     public PaymentReminder execute(String userEmail, CreatePaymentReminderCommand dto) {
         paymentReminderService.validateReminderTitleConflict(dto.title(), userEmail);

@@ -6,19 +6,18 @@ import com.reminder.financial.api.application.usecases.paymenttransaction.ListTr
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import com.reminder.financial.api.domains.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class ListTransactionsUseCaseImpl implements ListTransactionsUseCase {
 
-    @Autowired
-    private PaymentTransactionService transactionService;
+    private final PaymentTransactionService transactionService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Override
     public Page<ListTransactionsResult> execute(String loggedUserEmail, ListTransactionsFilterQuery query, Pageable pageable) {

@@ -7,24 +7,22 @@ import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+@RequiredArgsConstructor
 @Component
 public class DeleteSelfUserAccountUseCaseImpl implements DeleteSelfUserAccountUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(DeleteSelfUserAccountUseCaseImpl.class);
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private PaymentReminderService paymentReminderService;
+    private final PaymentReminderService paymentReminderService;
 
-    @Autowired
-    private DeletePaymentReminderUseCase deleteReminderUseCase;
+    private final DeletePaymentReminderUseCase deleteReminderUseCase;
 
     @Override
     @Transactional

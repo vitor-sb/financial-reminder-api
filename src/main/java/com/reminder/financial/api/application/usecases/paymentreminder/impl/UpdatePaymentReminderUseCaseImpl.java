@@ -9,21 +9,20 @@ import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 
+@RequiredArgsConstructor
 @Component
 public class UpdatePaymentReminderUseCaseImpl implements UpdatePaymentReminderUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdatePaymentReminderUseCaseImpl.class);
 
-    @Autowired
-    PaymentReminderService paymentReminderService;
+    private final PaymentReminderService paymentReminderService;
 
-    @Autowired
-    PaymentTransactionService paymentTransactionService;
+    private final PaymentTransactionService paymentTransactionService;
 
     public PaymentReminder execute(String userEmail, String reminderId, UpdatePaymentReminderCommand command) {
         PaymentReminder reminder = paymentReminderService.getPaymentReminderByIdOrThrow(reminderId);

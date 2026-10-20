@@ -7,20 +7,19 @@ import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateUserUseCaseImpl.class);
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public void execute(CreateUserCommand dto) {
         userService.checkEmailAvailability(dto.email());

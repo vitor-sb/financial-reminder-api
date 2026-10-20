@@ -11,7 +11,7 @@ import com.reminder.financial.api.domains.services.PaymentReminderService;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,17 +23,16 @@ import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class ListMonthlyBillsUseCaseImpl implements ListMonthlyBillsUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(ListMonthlyBillsUseCaseImpl.class);
     private static final int MAX_YEARS_IN_FUTURE_ALLOWED = 5;
 
-    @Autowired
-    private PaymentTransactionService transactionService;
+    private final PaymentTransactionService transactionService;
 
-    @Autowired
-    private PaymentReminderService reminderService;
+    private final PaymentReminderService reminderService;
 
 
     @Override

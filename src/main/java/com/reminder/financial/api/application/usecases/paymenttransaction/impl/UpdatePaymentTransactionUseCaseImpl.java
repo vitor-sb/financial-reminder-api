@@ -7,16 +7,16 @@ import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
 import com.reminder.financial.api.domains.services.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class UpdatePaymentTransactionUseCaseImpl implements UpdatePaymentTransactionUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdatePaymentTransactionUseCaseImpl.class);
 
-    @Autowired
-    private PaymentTransactionService paymentTransactionService;
+    private final PaymentTransactionService paymentTransactionService;
 
     @Override
     public void execute(String userEmail, String transactionId, UpdatePaymentTransactionCommand command) {

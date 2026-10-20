@@ -10,7 +10,7 @@ import com.reminder.financial.api.domains.services.LoginAttemptService;
 import com.reminder.financial.api.infrastructure.security.TokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,19 +19,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Component
 public class LoginUseCaseImpl implements LoginUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginUseCaseImpl.class);
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
     public AuthenticationResult execute(AuthenticationCommand dto) {
         String email = dto.email();
