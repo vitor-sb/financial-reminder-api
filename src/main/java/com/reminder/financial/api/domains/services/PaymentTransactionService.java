@@ -3,9 +3,9 @@ package com.reminder.financial.api.domains.services;
 import lombok.RequiredArgsConstructor;
 
 import com.reminder.financial.api.application.dtos.paymenttransaction.ListTransactionsFilterQuery;
+import com.reminder.financial.api.domains.models.reminder.NextTransactionFactory;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.reminder.PaymentTransaction;
-import com.reminder.financial.api.domains.models.reminder.enums.RecurrenceEnum;
 import com.reminder.financial.api.domains.models.reminder.enums.TransactionStatusEnum;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRepository;
@@ -77,53 +77,15 @@ public class PaymentTransactionService {
     }
 
     public PaymentTransaction processSuccessfulPayment(PaymentTransaction transaction) {
-        logger.info("Processing successful payment for Transaction ID: {} | Reminder: {}",
-                transaction.getId(), transaction.getReminder().getTitle());
+        logger.info("Processing successful payment transactionId={} reminderId={}",
+                transaction.getId(), transaction.getReminder().getId());
 
         transaction.setStatus(TransactionStatusEnum.PAGO);
         transaction.setPaymentDate(LocalDate.now());
         PaymentTransaction savedTransaction = transactionRepository.save(transaction);
 
-        PaymentReminder reminder = savedTransaction.getReminder();
-        if (reminder.getRecurrence() != RecurrenceEnum.UNICA) {
-            logger.info("Recurrence detected ({}). Generating next transaction.", reminder.getRecurrence());
-            generateNextTransaction(savedTransaction);
-        }
+        NextTransactionFactory.createNext(savedTransaction).ifPresent(transactionRepository::save);
         return savedTransaction;
-    }
-
-    private void generateNextTransaction(PaymentTransaction currentTransaction) {
-        PaymentReminder reminder = currentTransaction.getReminder();
-        Integer currentInstallment = currentTransaction.getInstallmentNumber();
-
-        if (reminder.getRecurrence() == RecurrenceEnum.UNICA)
-            throw new IllegalStateException("generateNextTransaction should not be called for UNICA recurrence. Reminder ID: " + reminder.getId());
-
-        if (reminder.getInstallmentsNumber() != null && currentInstallment != null &&
-                currentInstallment >= reminder.getInstallmentsNumber()) {
-            return;
-        }
-
-        LocalDate nextDueDate = reminder.getRecurrence().getNextDate(currentTransaction.getDueDate());
-
-        if (nextDueDate != null) {
-            Integer nextInstallmentNumber = null;
-
-            if (currentInstallment != null && currentInstallment != 0) {
-                nextInstallmentNumber = currentInstallment + 1;
-            }
-
-            PaymentTransaction nextTransaction = new PaymentTransaction(
-                    reminder,
-                    nextDueDate,
-                    reminder.getMethod(),
-                    nextInstallmentNumber,
-                    reminder.getBaseValue(),
-                    TransactionStatusEnum.PENDENTE
-            );
-
-            transactionRepository.save(nextTransaction);
-        }
     }
 
     public void togglePendingTransactionStatus(String reminderId, boolean enable, String userEmail) {
