@@ -716,6 +716,9 @@ components:
         password:
           type: string
           format: password
+          minLength: 10
+          maxLength: 72
+          description: 10 to 72 characters and different from the email.
           example: strongPassword123
 
     EnableUserRequest:
@@ -732,7 +735,9 @@ components:
         password:
           type: string
           format: password
+          minLength: 10
           maxLength: 72
+          description: 10 to 72 characters and different from the email.
 
     CreatePaymentReminderRequest:
       type: object
