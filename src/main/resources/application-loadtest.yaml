@@ -1,0 +1,4 @@
+# Só para loadtest/run.sh: o login do load test vem de um único IP; o padrão não muda.
+login:
+  ip-limit:
+    max-failures: 1000000000

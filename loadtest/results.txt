@@ -1,0 +1,15 @@
+date: 2026-10-20T20:08:30-03:00
+commit: 86c1f5f
+measured in: /tmp/fra-loadtest-BtdqOx/src (git worktree, outside /workspace)
+cpu:  AMD Ryzen 5 5600X 6-Core Processor x12
+mem_mb: 15956
+java: openjdk version "17.0.20.1" 2026-08-18 LTS
+postgres: 17.7 (docker, default config); hikari: defaults (pool 10)
+note: app, DB, Redis and driver share one machine
+setup: 64 users x 30 monthly reminders
+{"scenario": "A", "concurrency": 8, "duration_s": 30.0, "ok": 3712, "errors": {}, "throughput_per_s": 123.7, "p50_ms": 64.0, "p95_ms": 71.6, "p99_ms": 95.9, "max_ms": 142.3}
+  sampled (11 samples/2s): max active pg backends 1, max pg connections 10, pg cpu avg 4% max 6%
+{"scenario": "B", "concurrency": 8, "duration_s": 30.0, "ok": 12895, "errors": {}, "throughput_per_s": 429.8, "p50_ms": 17.8, "p95_ms": 23.7, "p99_ms": 32.8, "max_ms": 89.1}
+  sampled (11 samples/2s): max active pg backends 4, max pg connections 10, pg cpu avg 343% max 414%
+{"scenario": "C", "concurrency": 8, "duration_s": 30.0, "ok": 6705, "errors": {}, "throughput_per_s": 223.5, "p50_ms": 35.0, "p95_ms": 42.5, "p99_ms": 50.7, "max_ms": 131.2}
+  sampled (11 samples/2s): max active pg backends 3, max pg connections 10, pg cpu avg 81% max 95%

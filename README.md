@@ -119,6 +119,14 @@ mvn -Psecurity verify   # OWASP dependency-check; falha com CVSS >= 7
 
 Sem `-DnvdApiKey=<chave>` a primeira execução baixa a base NVD inteira e demora muito.
 
+### Teste de carga
+
+```bash
+loadtest/run.sh [concorrência...]   # padrão: 8 32 64; precisa de Docker, JDK 17, Maven e python3
+```
+
+Mede num `git worktree` em `/tmp` (o mount de `/workspace` mede ~35% pior), com Postgres e Redis descartáveis (`loadtest/docker-compose.yaml`) e a API no perfil Spring `loadtest`, que só relaxa o limite de login por IP. Rode com a máquina ociosa. Resultado em `loadtest/results.txt`.
+
 ## O que ainda não existe
 
 Planejado para fechar a v1 e ainda não implementado: categorias, desconto nas transações, endpoints de métricas, campo `timezone` no usuário, remoção da redundância `deleted`/`deletedAt` na auditoria e o módulo agendador que marca transações como `VENCIDO` (hoje nada faz essa transição automaticamente). Detalhes em [`tasks/prd-financial-reminder-v1.md`](tasks/prd-financial-reminder-v1.md).
