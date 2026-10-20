@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Component
 public class TokenProvider {
@@ -27,6 +28,9 @@ public class TokenProvider {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
+                    .withJWTId(UUID.randomUUID().toString())
+                    .withIssuedAt(Instant.now())
+                    .withNotBefore(Instant.now())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
 
@@ -41,6 +45,7 @@ public class TokenProvider {
 
             return JWT.require(algorithm)
                     .withIssuer("auth-api")
+                    .withClaimPresence("exp")
                     .build()
                     .verify(token)
                     .getSubject();
