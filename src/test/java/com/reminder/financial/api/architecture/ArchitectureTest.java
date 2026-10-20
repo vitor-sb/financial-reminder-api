@@ -6,6 +6,8 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.core.importer.ImportOption;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
+import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 @AnalyzeClasses(packages = "com.reminder.financial.api", importOptions = ImportOption.DoNotIncludeTests.class)
 class ArchitectureTest {
@@ -24,4 +26,22 @@ class ArchitectureTest {
     static final ArchRule applicationNaoDependeDeSpringData = noClasses()
             .that().resideInAPackage("..application..")
             .should().dependOnClassesThat().resideInAPackage("org.springframework.data..");
+
+    @ArchTest
+    static final ArchRule applicationDependeSoDeDomains = noClasses()
+            .that().resideInAPackage("..application..")
+            .should().dependOnClassesThat().resideInAnyPackage("..infrastructure..", "..adapters..");
+
+    @ArchTest
+    static final ArchRule adaptersNaoImportamInfrastructure = noClasses()
+            .that().resideInAPackage("..adapters..")
+            .should().dependOnClassesThat().resideInAPackage("..infrastructure..");
+
+    @ArchTest
+    static final ArchRule semCiclosEntrePacotes = slices()
+            .matching("com.reminder.financial.api.(*)..").should().beFreeOfCycles();
+
+    @ArchTest
+    static final ArchRule semAutowiredEmCampo = noFields()
+            .should().beAnnotatedWith("org.springframework.beans.factory.annotation.Autowired");
 }
