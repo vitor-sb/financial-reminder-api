@@ -1,4 +1,4 @@
-package com.reminder.financial.api.infrastructure.security;
+package com.reminder.financial.api.adapters.out.security;
 
 import com.reminder.financial.api.application.security.PasswordHasher;
 import lombok.RequiredArgsConstructor;

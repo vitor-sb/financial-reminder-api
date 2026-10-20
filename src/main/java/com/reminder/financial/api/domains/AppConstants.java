@@ -1,4 +1,4 @@
-package com.reminder.financial.api.infrastructure.utils;
+package com.reminder.financial.api.domains;
 
 import java.time.ZoneId;
 

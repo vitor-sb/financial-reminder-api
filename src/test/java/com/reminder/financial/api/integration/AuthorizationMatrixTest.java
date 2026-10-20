@@ -5,7 +5,7 @@ import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentTransactionRepository;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
-import com.reminder.financial.api.infrastructure.security.TokenProvider;
+import com.reminder.financial.api.adapters.out.security.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

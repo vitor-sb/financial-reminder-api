@@ -1,4 +1,4 @@
-package com.reminder.financial.api.infrastructure.utils;
+package com.reminder.financial.api.adapters.out.persistence;
 
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;

@@ -1,11 +1,10 @@
-package com.reminder.financial.api.infrastructure.persistence;
+package com.reminder.financial.api.adapters.out.persistence;
 
 import com.reminder.financial.api.domains.filters.ReminderFilter;
 import com.reminder.financial.api.domains.models.reminder.PaymentReminder;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.PaymentReminderSearch;
 import com.reminder.financial.api.domains.repositories.jpa.PaymentReminderRepository;
-import com.reminder.financial.api.infrastructure.utils.SpecificationFactory;
 import lombok.RequiredArgsConstructor;
 import com.reminder.financial.api.domains.pagination.PageResult;
 import com.reminder.financial.api.domains.pagination.PageRequest;

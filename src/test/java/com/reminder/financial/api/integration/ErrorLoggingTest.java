@@ -2,7 +2,7 @@ package com.reminder.financial.api.integration;
 
 import com.reminder.financial.api.application.usecases.paymentreminder.GetPaymentReminderUseCase;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
-import com.reminder.financial.api.infrastructure.security.TokenProvider;
+import com.reminder.financial.api.adapters.out.security.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

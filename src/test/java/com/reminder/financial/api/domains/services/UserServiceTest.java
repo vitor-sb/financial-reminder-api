@@ -4,7 +4,7 @@ import com.reminder.financial.api.domains.filters.UserFilter;
 import com.reminder.financial.api.domains.models.user.enums.RoleEnum;
 import com.reminder.financial.api.domains.models.user.User;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
-import com.reminder.financial.api.infrastructure.persistence.UserSpecificationSearch;
+import com.reminder.financial.api.adapters.out.persistence.UserSpecificationSearch;
 import com.reminder.financial.api.domains.exceptions.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;

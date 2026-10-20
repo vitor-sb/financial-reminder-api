@@ -1,4 +1,4 @@
-package com.reminder.financial.api.infrastructure.persistence;
+package com.reminder.financial.api.adapters.out.persistence;
 
 import com.reminder.financial.api.domains.pagination.PageRequest;
 import com.reminder.financial.api.domains.pagination.PageResult;

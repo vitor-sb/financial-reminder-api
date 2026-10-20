@@ -2,7 +2,7 @@ package com.reminder.financial.api.integration;
 
 import com.auth0.jwt.JWT;
 import com.reminder.financial.api.domains.repositories.jpa.UserRepository;
-import com.reminder.financial.api.infrastructure.security.TokenProvider;
+import com.reminder.financial.api.adapters.out.security.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
